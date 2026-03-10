@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 
 const app = express();
 const port = process.env.PORT || 8790;
+const adminPassword = process.env.ADMIN_PASSWORD || "";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.join(__dirname, "..");
@@ -17,6 +18,49 @@ const eventsPath = path.join(dataDir, "events.jsonl");
 async function appendJsonl(filePath, payload) {
   await fs.mkdir(dataDir, { recursive: true });
   await fs.appendFile(filePath, `${JSON.stringify(payload)}\n`, "utf8");
+}
+
+async function readJsonl(filePath, limit = 200) {
+  try {
+    const raw = await fs.readFile(filePath, "utf8");
+    return raw
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line) => {
+        try {
+          return JSON.parse(line);
+        } catch {
+          return null;
+        }
+      })
+      .filter(Boolean)
+      .slice(-limit)
+      .reverse();
+  } catch {
+    return [];
+  }
+}
+
+function requireAdmin(req, res, next) {
+  if (!adminPassword) {
+    return res.status(503).send("ADMIN_PASSWORD is not configured.");
+  }
+
+  const header = req.headers.authorization || "";
+  if (!header.startsWith("Basic ")) {
+    res.setHeader("WWW-Authenticate", 'Basic realm="Poet Personality Admin"');
+    return res.status(401).send("Authentication required.");
+  }
+
+  const decoded = Buffer.from(header.slice(6), "base64").toString("utf8");
+  const [, pass = ""] = decoded.split(":");
+  if (pass !== adminPassword) {
+    res.setHeader("WWW-Authenticate", 'Basic realm="Poet Personality Admin"');
+    return res.status(401).send("Invalid credentials.");
+  }
+
+  return next();
 }
 
 app.use(express.json({ limit: "256kb" }));
@@ -65,6 +109,31 @@ app.post("/api/events", async (req, res) => {
   } catch (error) {
     return res.status(500).json({ ok: false, error: "event_capture_failed", details: error.message });
   }
+});
+
+app.get("/admin", requireAdmin, async (_req, res) => {
+  const [leads, events] = await Promise.all([readJsonl(leadsPath), readJsonl(eventsPath)]);
+
+  const html = `<!doctype html>
+<html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Poet Personality Admin</title>
+<style>
+body{font-family:Inter,system-ui,sans-serif;background:#f8f4ec;color:#1f1a15;margin:0}
+.wrap{max-width:1100px;margin:24px auto;padding:0 16px}
+.card{background:#fff;border:1px solid #e3d4bf;border-radius:12px;padding:14px;margin:12px 0}
+pre{white-space:pre-wrap;word-break:break-word;background:#faf6ef;border:1px solid #eadfce;padding:10px;border-radius:8px}
+small{color:#6f6254}
+</style></head><body><main class="wrap">
+<h1>Admin Dashboard</h1>
+<div class="card"><h2>Leads (${leads.length})</h2>
+${leads.map((x) => `<pre>${JSON.stringify(x, null, 2)}</pre>`).join("") || "<small>No leads yet.</small>"}
+</div>
+<div class="card"><h2>Events (${events.length})</h2>
+${events.map((x) => `<pre>${JSON.stringify(x, null, 2)}</pre>`).join("") || "<small>No events yet.</small>"}
+</div>
+</main></body></html>`;
+
+  res.type("html").send(html);
 });
 
 app.get("/", (_req, res) => res.sendFile(path.join(publicDir, "index.html")));
