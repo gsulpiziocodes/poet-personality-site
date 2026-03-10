@@ -7,6 +7,7 @@ import { Resend } from "resend";
 
 const app = express();
 const port = process.env.PORT || 8790;
+const adminUsername = process.env.ADMIN_USERNAME || "admin";
 const adminPassword = process.env.ADMIN_PASSWORD || "";
 
 const resendApiKey = process.env.RESEND_API_KEY || "";
@@ -22,6 +23,37 @@ const contentPath = path.join(__dirname, "content", "poet-personality-content.js
 const dataDir = path.join(rootDir, "data");
 const leadsPath = path.join(dataDir, "leads.jsonl");
 const eventsPath = path.join(dataDir, "events.jsonl");
+
+const rateState = new Map();
+function getClientIp(req) {
+  const forwarded = String(req.headers["x-forwarded-for"] || "")
+    .split(",")
+    .map((x) => x.trim())
+    .filter(Boolean)[0];
+  return forwarded || req.ip || req.socket?.remoteAddress || "unknown";
+}
+
+function rateLimit({ keyPrefix, windowMs, maxHits }) {
+  return (req, res, next) => {
+    const key = `${keyPrefix}:${getClientIp(req)}`;
+    const now = Date.now();
+    const current = rateState.get(key);
+
+    if (!current || now > current.resetAt) {
+      rateState.set(key, { count: 1, resetAt: now + windowMs });
+      return next();
+    }
+
+    if (current.count >= maxHits) {
+      const retryAfterSec = Math.ceil((current.resetAt - now) / 1000);
+      res.setHeader("Retry-After", String(Math.max(retryAfterSec, 1)));
+      return res.status(429).json({ ok: false, error: "rate_limited" });
+    }
+
+    current.count += 1;
+    return next();
+  };
+}
 
 async function appendJsonl(filePath, payload) {
   await fs.mkdir(dataDir, { recursive: true });
@@ -84,8 +116,8 @@ function requireAdmin(req, res, next) {
   }
 
   const decoded = Buffer.from(header.slice(6), "base64").toString("utf8");
-  const [, pass = ""] = decoded.split(":");
-  if (pass !== adminPassword) {
+  const [user = "", pass = ""] = decoded.split(":");
+  if (user !== adminUsername || pass !== adminPassword) {
     res.setHeader("WWW-Authenticate", 'Basic realm="Poet Personality Admin"');
     return res.status(401).send("Invalid credentials.");
   }
@@ -101,7 +133,7 @@ app.get("/api/content", async (_req, res) => {
   res.type("application/json").send(raw);
 });
 
-app.post("/api/lead", async (req, res) => {
+app.post("/api/lead", rateLimit({ keyPrefix: "lead", windowMs: 60_000, maxHits: 10 }), async (req, res) => {
   try {
     const email = String(req.body?.email || "").trim().toLowerCase();
     if (!email || !email.includes("@")) {
@@ -157,7 +189,7 @@ app.post("/api/events", async (req, res) => {
   }
 });
 
-app.get("/admin", requireAdmin, async (_req, res) => {
+app.get("/admin", rateLimit({ keyPrefix: "admin", windowMs: 60_000, maxHits: 20 }), requireAdmin, async (_req, res) => {
   const [leads, events] = await Promise.all([readJsonl(leadsPath), readJsonl(eventsPath)]);
 
   const html = `<!doctype html>
