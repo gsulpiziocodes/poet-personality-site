@@ -2,6 +2,12 @@ async function loadContent(){const r=await fetch('/api/content');return r.json()
 const el=(tag,cls)=>{const x=document.createElement(tag);if(cls)x.className=cls;return x;};
 function card(inner,cls='card'){const d=el('div',cls);d.innerHTML=inner;return d;}
 
+async function track(name,meta={}){
+  try{
+    await fetch('/api/events',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,page:location.pathname,meta})});
+  }catch{}
+}
+
 function setupReveal(){
   const items=[...document.querySelectorAll('.reveal, .card')];
   if(!('IntersectionObserver' in window)){items.forEach(i=>i.classList.add('in'));return;}
@@ -11,24 +17,40 @@ function setupReveal(){
   items.forEach(i=>io.observe(i));
 }
 
+function setupClickTracking(){
+  document.querySelectorAll('a.btn, nav a').forEach((a)=>{
+    a.addEventListener('click',()=>track('cta_click',{label:a.textContent?.trim()||'',href:a.getAttribute('href')||''}));
+  });
+}
+
 function setupEmailCapture(){
   const form=document.getElementById('emailCaptureForm');
   const input=document.getElementById('emailInput');
   const status=document.getElementById('emailStatus');
   if(!form||!input||!status) return;
-  form.addEventListener('submit',(e)=>{
+
+  form.addEventListener('submit',async (e)=>{
     e.preventDefault();
     const email=input.value.trim();
-    if(!email){status.textContent='Please enter a valid email.';return;}
-    localStorage.setItem('poet_personality_email',email);
-    status.textContent='Saved. We\'ll send profile refinement prompts and updates.';
-    form.reset();
+    if(!email||!email.includes('@')){status.textContent='Please enter a valid email.';return;}
+
+    try{
+      const res=await fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,source:'results_capture',page:location.pathname})});
+      if(!res.ok) throw new Error('capture_failed');
+      localStorage.setItem('poet_personality_email',email);
+      status.textContent='Saved. We’ll send profile refinement prompts and updates.';
+      form.reset();
+      track('lead_captured',{source:'results_capture'});
+    }catch{
+      status.textContent='Could not save right now. Please try again.';
+    }
   });
 }
 
 (async()=>{
   const data=await loadContent();
   const path=location.pathname;
+  track('page_view',{path});
 
   if(path==='/'){
     const h=data.homepage.hero;
@@ -63,7 +85,7 @@ function setupEmailCapture(){
     const t=data.types.find(x=>x.slug===slug);
     const all=data.types;
     const elRoot=document.getElementById('typePage');
-    if(!t){elRoot?.append(card('<h2>Type not found</h2><p class="muted">Try browsing from the 16 types page.</p>'));setupReveal();return;}
+    if(!t){elRoot?.append(card('<h2>Type not found</h2><p class="muted">Try browsing from the 16 types page.</p>'));setupReveal();setupClickTracking();return;}
 
     const siblings=all.filter(x=>x.group===t.group && x.slug!==t.slug).slice(0,3);
 
@@ -87,5 +109,6 @@ function setupEmailCapture(){
   }
 
   setupReveal();
+  setupClickTracking();
   setupEmailCapture();
 })();
