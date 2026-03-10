@@ -1,0 +1,397 @@
+{
+  "brand": {
+    "name": "PoetDNA",
+    "feature": "Poet Personality Analyzer",
+    "voice": ["elegant", "modern", "insightful", "emotionally intelligent", "poetic but clear"]
+  },
+  "homepage": {
+    "hero": {
+      "kicker": "for voices in bloom",
+      "title": "Discover your Poet Personality",
+      "subtitle": "Your poems reveal more than style. They reveal how you feel, what you notice, and how you turn experience into language.",
+      "body": "The Poet Personality Analyzer studies your writing across imagery, emotional tone, themes, structure, rhythm, and voice to identify your poetic type. The more poems you submit, the more accurate your profile becomes.",
+      "primaryCta": "Analyze Your Poem",
+      "secondaryCta": "Explore the 16 Types"
+    },
+    "proofStrip": [
+      "Pattern-based analysis across your submitted poems",
+      "16 original poetry personality types",
+      "Confidence grows with every submission"
+    ]
+  },
+  "howItWorks": {
+    "title": "How the Analyzer Works",
+    "intro": "Your Poet Personality is based on recurring patterns in your writing over time.",
+    "steps": [
+      {
+        "title": "Submit your poems",
+        "body": "Start with one poem. Add more over time to improve precision."
+      },
+      {
+        "title": "Detect recurring signals",
+        "body": "The analyzer looks across emotional tone, imagery and symbolism, rhythm and sound, structure and lineation, vulnerability, recurring themes, narrative vs impressionistic tendencies, simplicity vs density, and directness vs ambiguity."
+      },
+      {
+        "title": "Map your poetic center",
+        "body": "You receive a primary type, adjacent traits, and profile-strength level."
+      },
+      {
+        "title": "Refine your profile",
+        "body": "One poem can reflect a mood. Several poems reveal a pattern."
+      }
+    ]
+  },
+  "profileStrength": [
+    { "label": "Emerging Profile", "range": "1-2 poems" },
+    { "label": "Developing Profile", "range": "3-5 poems" },
+    { "label": "Established Profile", "range": "6-10 poems" },
+    { "label": "Refined Profile", "range": "10+ poems" }
+  ],
+  "groups": [
+    {
+      "slug": "visionaries",
+      "name": "Visionaries",
+      "description": "Driven by intuition, meaning, depth, and discovery. They interpret the unseen and pursue truths that cannot be reached directly.",
+      "types": ["the-alchemist", "the-oracle", "the-architect", "the-seeker"]
+    },
+    {
+      "slug": "romantics",
+      "name": "Romantics",
+      "description": "Guided by beauty, intimacy, devotion, and emotional atmosphere. Their work centers on feeling deeply and expressing that depth with resonance.",
+      "types": ["the-lover", "the-dreamer", "the-muse", "the-devotee"]
+    },
+    {
+      "slug": "truth-tellers",
+      "name": "Truth-Tellers",
+      "description": "Defined by honesty, realism, and emotional courage. They face what hurts, what matters, and what deserves to be said.",
+      "types": ["the-confessor", "the-witness", "the-rebel", "the-mourner"]
+    },
+    {
+      "slug": "makers",
+      "name": "Makers",
+      "description": "Shaped by craft, form, delivery, and design. They build poems with structural intention and compositional control.",
+      "types": ["the-storyteller", "the-minimalist", "the-performer", "the-weaver"]
+    }
+  ],
+  "types": [
+    {
+      "slug": "the-alchemist",
+      "name": "The Alchemist",
+      "group": "Visionaries",
+      "shortBlurb": "Turns pain, memory, and longing into transformation.",
+      "subtitle": "The poet who makes beauty from what burns.",
+      "overview": "The Alchemist turns feeling into transformation. Their poems often process pain, desire, memory, and change into language that feels intimate and redemptive.",
+      "strengths": ["emotionally powerful", "deeply reflective", "transforms difficulty into insight", "often leaves readers changed"],
+      "challenges": ["can become abstract", "may over-intensify tone", "symbolism can obscure clarity"],
+      "analyzerDetects": ["themes of rebirth, ruin, becoming", "metaphoric transformation patterns", "emotion-forward language with reflective closure"],
+      "idealTagline": "You turn feeling into transformation.",
+      "famousPoetsWithSimilarEnergy": {
+        "disclaimer": "Illustrative creative affinities, not official classifications.",
+        "copy": "Readers who connect with The Alchemist might resonate with Rumi, Sylvia Plath, and Seamus Heaney."
+      }
+    },
+    {
+      "slug": "the-oracle",
+      "name": "The Oracle",
+      "group": "Visionaries",
+      "shortBlurb": "Writes in symbols, signs, and hidden truths.",
+      "subtitle": "The poet who senses what lies beneath the surface.",
+      "overview": "The Oracle writes as if truth arrives in flashes. Their work is intuitive, symbolic, and suggestive rather than explicit.",
+      "strengths": ["strong intuition", "symbolic imagination", "memorable atmosphere", "timeless tonal quality"],
+      "challenges": ["can become elusive", "clarity may drop", "mystique can overpower meaning"],
+      "analyzerDetects": ["high symbolic density", "dreamlike motifs and omens", "implied meanings over direct statements"],
+      "idealTagline": "You write what cannot be said directly.",
+      "famousPoetsWithSimilarEnergy": {
+        "disclaimer": "Illustrative creative affinities, not official classifications.",
+        "copy": "This type often feels close in spirit to Emily Dickinson, Rumi, and T. S. Eliot."
+      }
+    },
+    {
+      "slug": "the-architect",
+      "name": "The Architect",
+      "group": "Visionaries",
+      "shortBlurb": "Crafts poems with precision, structure, and control.",
+      "subtitle": "The poet who builds with intention.",
+      "overview": "The Architect values form. Their poems are deliberate, composed, and technically disciplined even when emotionally charged.",
+      "strengths": ["technical control", "disciplined structure", "precise diction", "polished execution"],
+      "challenges": ["can feel guarded", "may over-polish", "spontaneity can be limited"],
+      "analyzerDetects": ["intentional line breaks", "consistent rhythmic control", "logical structural progression"],
+      "idealTagline": "You shape emotion with discipline.",
+      "famousPoetsWithSimilarEnergy": {
+        "disclaimer": "Illustrative creative affinities, not official classifications.",
+        "copy": "People drawn to this type might also admire Elizabeth Bishop, Robert Frost, and T. S. Eliot."
+      }
+    },
+    {
+      "slug": "the-seeker",
+      "name": "The Seeker",
+      "group": "Visionaries",
+      "shortBlurb": "Writes to search, question, and understand.",
+      "subtitle": "The poet always moving toward something deeper.",
+      "overview": "The Seeker writes to discover. Their poems are driven by questions, longing, and the feeling that meaning is near but not fully grasped.",
+      "strengths": ["curious honesty", "introspective depth", "relatable longing", "strong sense of journey"],
+      "challenges": ["can feel unresolved", "may revisit same questions", "emotional center can stay diffuse"],
+      "analyzerDetects": ["searching language and questions", "themes of distance and becoming", "movement-oriented emotional arc"],
+      "idealTagline": "You write to find what matters.",
+      "famousPoetsWithSimilarEnergy": {
+        "disclaimer": "Illustrative creative affinities, not official classifications.",
+        "copy": "This type may resonate with Walt Whitman, John Keats, and Seamus Heaney."
+      }
+    },
+    {
+      "slug": "the-lover",
+      "name": "The Lover",
+      "group": "Romantics",
+      "shortBlurb": "Led by intimacy, desire, and emotional connection.",
+      "subtitle": "The poet who writes from the heart outward.",
+      "overview": "The Lover centers intimacy. Their poems are tender, desirous, and emotionally immediate, often shaped by devotion, longing, and memory.",
+      "strengths": ["deep emotional resonance", "strong intimacy", "memorable warmth", "immediate reader connection"],
+      "challenges": ["can drift into melodrama", "may idealize relationships", "intensity may outrun craft"],
+      "analyzerDetects": ["themes of closeness and absence", "sensory affection language", "repeated relational focus"],
+      "idealTagline": "You write to touch and be touched.",
+      "famousPoetsWithSimilarEnergy": {
+        "disclaimer": "Illustrative creative affinities, not official classifications.",
+        "copy": "Readers who identify with this type might feel drawn to Pablo Neruda, Sappho, and John Keats."
+      }
+    },
+    {
+      "slug": "the-dreamer",
+      "name": "The Dreamer",
+      "group": "Romantics",
+      "shortBlurb": "Lives in atmosphere, wonder, and emotional possibility.",
+      "subtitle": "The poet who drifts between reality and imagination.",
+      "overview": "The Dreamer writes in atmosphere. Their poems often feel luminous, wistful, and emotionally suspended between memory and imagination.",
+      "strengths": ["evocative mood-building", "rich imagination", "distinct aesthetic tone", "transportive emotional space"],
+      "challenges": ["can become vague", "may avoid confrontation", "substance can thin"],
+      "analyzerDetects": ["impressionistic transitions", "beauty-forward imagery", "soft tonal continuity"],
+      "idealTagline": "You write what longing looks like in the air.",
+      "famousPoetsWithSimilarEnergy": {
+        "disclaimer": "Illustrative creative affinities, not official classifications.",
+        "copy": "This type often shares a similar energy with John Keats, Bashō, and Emily Dickinson."
+      }
+    },
+    {
+      "slug": "the-muse",
+      "name": "The Muse",
+      "group": "Romantics",
+      "shortBlurb": "Drawn to beauty, elegance, and emotional allure.",
+      "subtitle": "The poet who makes language feel magnetic.",
+      "overview": "The Muse prioritizes beauty and tonal elegance. Their writing is often lyrical, polished, and emotionally attractive from the first line.",
+      "strengths": ["aesthetic fluency", "quotable phrasing", "image sensitivity", "strong tonal cohesion"],
+      "challenges": ["can favor beauty over depth", "stylization may dominate", "risk of performative refinement"],
+      "analyzerDetects": ["lyrical precision", "beauty-centered motifs", "consistent elegance in phrasing"],
+      "idealTagline": "You make beauty feel alive.",
+      "famousPoetsWithSimilarEnergy": {
+        "disclaimer": "Illustrative creative affinities, not official classifications.",
+        "copy": "People close to this type may admire Sappho, Pablo Neruda, and Mary Oliver."
+      }
+    },
+    {
+      "slug": "the-devotee",
+      "name": "The Devotee",
+      "group": "Romantics",
+      "shortBlurb": "Writes with sincerity, reverence, and care.",
+      "subtitle": "The poet who honors what matters.",
+      "overview": "The Devotee writes with reverence. Their poems return to what deserves care: memory, love, faith, grief, ritual, and place.",
+      "strengths": ["sincere emotional grounding", "steady tenderness", "reader trust", "quietly moving depth"],
+      "challenges": ["can become overly earnest", "irony may be underused", "emotional range may narrow"],
+      "analyzerDetects": ["ceremonial repetition", "sacred or reverent diction", "subjects treated with sustained care"],
+      "idealTagline": "You write with devotion, not distance.",
+      "famousPoetsWithSimilarEnergy": {
+        "disclaimer": "Illustrative creative affinities, not official classifications.",
+        "copy": "This type might resonate with Mary Oliver, Rumi, and Walt Whitman."
+      }
+    },
+    {
+      "slug": "the-confessor",
+      "name": "The Confessor",
+      "group": "Truth-Tellers",
+      "shortBlurb": "Speaks with raw honesty and emotional exposure.",
+      "subtitle": "The poet who says what others avoid.",
+      "overview": "The Confessor writes from exposure rather than distance. Their poems are direct, vulnerable, and emotionally fearless.",
+      "strengths": ["fearless honesty", "high emotional impact", "deep relatability", "unforgettable intimacy"],
+      "challenges": ["can overwhelm readers", "craft may lag disclosure", "vulnerability may overtake structure"],
+      "analyzerDetects": ["first-person intensity", "high disclosure density", "low emotional masking"],
+      "idealTagline": "You write the truth before it is comfortable.",
+      "famousPoetsWithSimilarEnergy": {
+        "disclaimer": "Illustrative creative affinities, not official classifications.",
+        "copy": "Readers drawn here might resonate with Sylvia Plath, Anne Sexton, and Maya Angelou."
+      }
+    },
+    {
+      "slug": "the-witness",
+      "name": "The Witness",
+      "group": "Truth-Tellers",
+      "shortBlurb": "Observes the world with quiet depth and realism.",
+      "subtitle": "The poet who notices what others miss.",
+      "overview": "The Witness writes through attention. Their poems preserve ordinary detail, social texture, and understated human truth.",
+      "strengths": ["keen observation", "grounded realism", "humane restraint", "scene-based emotional resonance"],
+      "challenges": ["can feel detached", "emotion may stay implicit", "recording can outweigh transformation"],
+      "analyzerDetects": ["concrete sensory detail", "external-world anchoring", "meaning emerging through scene"],
+      "idealTagline": "You make the ordinary impossible to ignore.",
+      "famousPoetsWithSimilarEnergy": {
+        "disclaimer": "Illustrative creative affinities, not official classifications.",
+        "copy": "This type often feels close to Elizabeth Bishop, Langston Hughes, and Seamus Heaney."
+      }
+    },
+    {
+      "slug": "the-rebel",
+      "name": "The Rebel",
+      "group": "Truth-Tellers",
+      "shortBlurb": "Challenges convention, restraint, and falsehood.",
+      "subtitle": "The poet who writes against what feels dead.",
+      "overview": "The Rebel resists the safe version. Their poems push against falsehood, inherited rules, and emotional or political silence.",
+      "strengths": ["bold originality", "strong viewpoint", "high risk tolerance", "energizing force"],
+      "challenges": ["can become reactionary", "coherence may loosen", "softness may be underused"],
+      "analyzerDetects": ["confrontational diction", "structural disruption", "resistance-centered themes"],
+      "idealTagline": "You would rather disrupt than pretend.",
+      "famousPoetsWithSimilarEnergy": {
+        "disclaimer": "Illustrative creative affinities, not official classifications.",
+        "copy": "People drawn to this type might admire Allen Ginsberg, Audre Lorde, and Adrienne Rich."
+      }
+    },
+    {
+      "slug": "the-mourner",
+      "name": "The Mourner",
+      "group": "Truth-Tellers",
+      "shortBlurb": "Holds grief, memory, and tenderness with dignity.",
+      "subtitle": "The poet who gives sorrow a voice.",
+      "overview": "The Mourner writes with elegiac gravity. Their poems hold endings, absence, and remembrance with tenderness and control.",
+      "strengths": ["emotional gravity", "reflective depth", "tender resonance", "shared humanity in loss"],
+      "challenges": ["tone can narrow", "sorrow may dominate range", "repetition risk"],
+      "analyzerDetects": ["elegiac pacing", "loss-centered motifs", "lingering-memory structures"],
+      "idealTagline": "You know how to hold what is gone.",
+      "famousPoetsWithSimilarEnergy": {
+        "disclaimer": "Illustrative creative affinities, not official classifications.",
+        "copy": "This type may resonate with readers who love Sylvia Plath, Anne Sexton, and Elizabeth Bishop."
+      }
+    },
+    {
+      "slug": "the-storyteller",
+      "name": "The Storyteller",
+      "group": "Makers",
+      "shortBlurb": "Builds poems through scene, character, and unfolding.",
+      "subtitle": "The poet who moves through moments.",
+      "overview": "The Storyteller thinks in scenes. Their poems unfold through sequence, character, and emotional progression.",
+      "strengths": ["narrative momentum", "reader accessibility", "strong emotional build", "memorable movement"],
+      "challenges": ["can become prose-like", "language may trail plot", "over-explaining risk"],
+      "analyzerDetects": ["temporal sequencing", "scene shifts", "event-led emotional reveals"],
+      "idealTagline": "You make poems feel lived.",
+      "famousPoetsWithSimilarEnergy": {
+        "disclaimer": "Illustrative creative affinities, not official classifications.",
+        "copy": "This type might resonate with Maya Angelou, Langston Hughes, and Seamus Heaney."
+      }
+    },
+    {
+      "slug": "the-minimalist",
+      "name": "The Minimalist",
+      "group": "Makers",
+      "shortBlurb": "Uses restraint, silence, and precision for impact.",
+      "subtitle": "The poet who trusts what is left unsaid.",
+      "overview": "The Minimalist writes with compression and intent. Their poems distill feeling into clean lines, controlled space, and exact language.",
+      "strengths": ["precision", "clarity", "high impact per line", "disciplined tone control"],
+      "challenges": ["can feel distant", "context may thin", "sparseness can limit access"],
+      "analyzerDetects": ["short-line density", "minimal ornamentation", "meaning through omission"],
+      "idealTagline": "You know how little a poem needs to stay.",
+      "famousPoetsWithSimilarEnergy": {
+        "disclaimer": "Illustrative creative affinities, not official classifications.",
+        "copy": "Readers close to this type might appreciate Bashō, Emily Dickinson, and Robert Frost."
+      }
+    },
+    {
+      "slug": "the-performer",
+      "name": "The Performer",
+      "group": "Makers",
+      "shortBlurb": "Writes with rhythm, voice, and spoken energy.",
+      "subtitle": "The poet who knows how a line lands out loud.",
+      "overview": "The Performer writes for breath and impact. Their poems carry cadence, momentum, and oral presence.",
+      "strengths": ["vocal force", "memorable cadence", "audience impact", "quotable lines"],
+      "challenges": ["can prioritize punch over depth", "subtlety may drop", "rhetorical overdrive risk"],
+      "analyzerDetects": ["cadential repetition", "spoken-word momentum", "high-impact line endings"],
+      "idealTagline": "You write to be heard and remembered.",
+      "famousPoetsWithSimilarEnergy": {
+        "disclaimer": "Illustrative creative affinities, not official classifications.",
+        "copy": "This type often shares energy with Maya Angelou, Langston Hughes, and Allen Ginsberg."
+      }
+    },
+    {
+      "slug": "the-weaver",
+      "name": "The Weaver",
+      "group": "Makers",
+      "shortBlurb": "Braids image, meaning, and emotion into layered work.",
+      "subtitle": "The poet who connects everything beneath the surface.",
+      "overview": "The Weaver creates layered coherence. Their poems braid symbol, thought, memory, and emotional tension into textured wholes.",
+      "strengths": ["rich thematic integration", "complex emotional range", "high reread value", "strong motif architecture"],
+      "challenges": ["can become dense", "central point may blur", "reader load can rise"],
+      "analyzerDetects": ["interlocking motifs", "multi-layer emotional structure", "cohesive symbolic braiding"],
+      "idealTagline": "You make complexity feel woven, not scattered.",
+      "famousPoetsWithSimilarEnergy": {
+        "disclaimer": "Illustrative creative affinities, not official classifications.",
+        "copy": "People who identify with this type may be drawn to Adrienne Rich, T. S. Eliot, and Emily Dickinson."
+      }
+    }
+  ],
+  "resultsPage": {
+    "title": "Your Poet Personality Profile",
+    "sections": [
+      {
+        "name": "primaryType",
+        "title": "Primary Type",
+        "description": "Your strongest recurring poetic center."
+      },
+      {
+        "name": "secondaryTraits",
+        "title": "Adjacent Traits",
+        "description": "Neighboring energies that regularly appear in your writing."
+      },
+      {
+        "name": "confidence",
+        "title": "Profile Strength",
+        "description": "Confidence increases with more submitted poems."
+      },
+      {
+        "name": "signalSummary",
+        "title": "Why this result",
+        "description": "A concise summary of recurring signals behind your match."
+      },
+      {
+        "name": "refineCta",
+        "title": "Refine your profile",
+        "description": "Submit another poem to strengthen precision over time."
+      }
+    ],
+    "footnote": "Poet Personalities are pattern maps, not fixed labels. Your profile can evolve as your writing evolves."
+  },
+  "uiCopy": {
+    "buttons": {
+      "analyze": "Analyze Poem",
+      "submitAnother": "Submit Another Poem",
+      "refineProfile": "Refine My Profile",
+      "exploreTypes": "Explore the 16 Types",
+      "viewCategory": "View Category",
+      "copyResults": "Copy Results"
+    },
+    "labels": {
+      "poemInput": "Paste your poem",
+      "titleOptional": "Poem title (optional)",
+      "profileStrength": "Profile Strength",
+      "confidence": "Confidence"
+    },
+    "states": {
+      "empty": "Start with one poem. Your profile deepens over time.",
+      "loading": [
+        "Reading your poem...",
+        "Mapping recurring signals...",
+        "Estimating your poetic center...",
+        "Refining your profile..."
+      ],
+      "errorShort": "This text may be too short for reliable analysis.",
+      "errorGeneric": "We couldn't analyze that poem. Please try again."
+    }
+  },
+  "positioningLines": [
+    "A personality system that reads your poems to reveal the kind of poet you are.",
+    "Submit your poems. Discover your poetic type. Refine it over time.",
+    "One poem captures a moment. A body of poems reveals a voice."
+  ]
+}
