@@ -2,10 +2,17 @@ import express from "express";
 import path from "path";
 import fs from "fs/promises";
 import { fileURLToPath } from "url";
+import { Resend } from "resend";
 
 const app = express();
 const port = process.env.PORT || 8790;
 const adminPassword = process.env.ADMIN_PASSWORD || "";
+
+const resendApiKey = process.env.RESEND_API_KEY || "";
+const leadsNotifyEmail = process.env.LEADS_NOTIFY_EMAIL || "";
+const leadsFromEmail = process.env.LEADS_FROM_EMAIL || "onboarding@resend.dev";
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.join(__dirname, "..");
@@ -40,6 +47,28 @@ async function readJsonl(filePath, limit = 200) {
   } catch {
     return [];
   }
+}
+
+async function notifyLead(lead) {
+  if (!resend || !leadsNotifyEmail) {
+    return { sent: false, reason: "resend_not_configured" };
+  }
+
+  await resend.emails.send({
+    from: leadsFromEmail,
+    to: leadsNotifyEmail,
+    subject: `New Poet Personality lead: ${lead.email}`,
+    html: `
+      <h2>New Lead Captured</h2>
+      <p><strong>Email:</strong> ${lead.email}</p>
+      <p><strong>Source:</strong> ${lead.source}</p>
+      <p><strong>Page:</strong> ${lead.page}</p>
+      <p><strong>Timestamp:</strong> ${lead.ts}</p>
+      <p><strong>User Agent:</strong> ${lead.ua}</p>
+    `
+  });
+
+  return { sent: true };
 }
 
 function requireAdmin(req, res, next) {
@@ -78,15 +107,31 @@ app.post("/api/lead", async (req, res) => {
       return res.status(400).json({ ok: false, error: "invalid_email" });
     }
 
-    await appendJsonl(leadsPath, {
+    const lead = {
       ts: new Date().toISOString(),
       email,
       source: req.body?.source || "unknown",
       page: req.body?.page || "",
       ua: req.headers["user-agent"] || ""
-    });
+    };
 
-    return res.json({ ok: true });
+    await appendJsonl(leadsPath, lead);
+
+    let notify = { sent: false, reason: "not_attempted" };
+    try {
+      notify = await notifyLead(lead);
+    } catch (error) {
+      notify = { sent: false, reason: "notify_failed", details: error.message };
+      await appendJsonl(eventsPath, {
+        ts: new Date().toISOString(),
+        name: "lead_notify_failed",
+        page: lead.page,
+        meta: { email: lead.email, error: error.message },
+        ua: lead.ua
+      });
+    }
+
+    return res.json({ ok: true, notify });
   } catch (error) {
     return res.status(500).json({ ok: false, error: "lead_capture_failed", details: error.message });
   }
