@@ -189,6 +189,25 @@ app.post("/api/events", async (req, res) => {
   }
 });
 
+function csvEscape(value) {
+  const s = String(value ?? "");
+  if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+  return s;
+}
+
+app.get("/admin/leads.csv", rateLimit({ keyPrefix: "admin", windowMs: 60_000, maxHits: 20 }), requireAdmin, async (_req, res) => {
+  const leads = await readJsonl(leadsPath, 5000);
+  const headers = ["ts", "email", "source", "page", "ua"];
+  const rows = [
+    headers.join(","),
+    ...leads.map((lead) => headers.map((h) => csvEscape(lead[h])).join(","))
+  ];
+
+  res.setHeader("Content-Type", "text/csv; charset=utf-8");
+  res.setHeader("Content-Disposition", `attachment; filename="poet-personality-leads-${Date.now()}.csv"`);
+  res.send(rows.join("\n"));
+});
+
 app.get("/admin", rateLimit({ keyPrefix: "admin", windowMs: 60_000, maxHits: 20 }), requireAdmin, async (_req, res) => {
   const [leads, events] = await Promise.all([readJsonl(leadsPath), readJsonl(eventsPath)]);
 
@@ -201,8 +220,10 @@ body{font-family:Inter,system-ui,sans-serif;background:#f8f4ec;color:#1f1a15;mar
 .card{background:#fff;border:1px solid #e3d4bf;border-radius:12px;padding:14px;margin:12px 0}
 pre{white-space:pre-wrap;word-break:break-word;background:#faf6ef;border:1px solid #eadfce;padding:10px;border-radius:8px}
 small{color:#6f6254}
+.button{display:inline-block;background:#1f1a15;color:#fff;padding:10px 14px;border-radius:10px;text-decoration:none;font-weight:600}
 </style></head><body><main class="wrap">
 <h1>Admin Dashboard</h1>
+<div class="card"><a class="button" href="/admin/leads.csv">Export Leads CSV</a></div>
 <div class="card"><h2>Leads (${leads.length})</h2>
 ${leads.map((x) => `<pre>${JSON.stringify(x, null, 2)}</pre>`).join("") || "<small>No leads yet.</small>"}
 </div>
