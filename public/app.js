@@ -2,6 +2,15 @@ async function loadContent(){const r=await fetch('/api/content');return r.json()
 const el=(tag,cls)=>{const x=document.createElement(tag);if(cls)x.className=cls;return x;};
 function card(inner,cls='card'){const d=el('div',cls);d.innerHTML=inner;return d;}
 
+function setupReveal(){
+  const items=[...document.querySelectorAll('.reveal, .card')];
+  if(!('IntersectionObserver' in window)){items.forEach(i=>i.classList.add('in'));return;}
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach((e)=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:.08,rootMargin:'0px 0px -20px 0px'});
+  items.forEach(i=>io.observe(i));
+}
+
 (async()=>{
   const data=await loadContent();
   const path=location.pathname;
@@ -35,7 +44,7 @@ function card(inner,cls='card'){const d=el('div',cls);d.innerHTML=inner;return d
     const t=data.types.find(x=>x.slug===slug);
     const all=data.types;
     const elRoot=document.getElementById('typePage');
-    if(!t){elRoot?.append(card('<h2>Type not found</h2><p class="muted">Try browsing from the 16 types page.</p>'));return;}
+    if(!t){elRoot?.append(card('<h2>Type not found</h2><p class="muted">Try browsing from the 16 types page.</p>'));setupReveal();return;}
 
     const siblings=all.filter(x=>x.group===t.group && x.slug!==t.slug).slice(0,3);
 
@@ -57,4 +66,6 @@ function card(inner,cls='card'){const d=el('div',cls);d.innerHTML=inner;return d
       c?.append(card(`<h2>${g.name}</h2><p>${g.description}</p><p class='inline-links'>${list}</p>`));
     });
   }
+
+  setupReveal();
 })();

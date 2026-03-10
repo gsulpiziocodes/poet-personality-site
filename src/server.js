@@ -23,4 +23,4 @@ app.get("/type/:slug", (_req, res) => res.sendFile(path.join(publicDir, "type.ht
 app.get("/categories", (_req, res) => res.sendFile(path.join(publicDir, "categories.html")));
 app.get("/results-demo", (_req, res) => res.sendFile(path.join(publicDir, "results.html")));
 
-app.listen(port, () => console.log(`Poet Personality site running at http://localhost:${port}`));
+app.listen(port, () => console.log(`Poet Personality web running at http://localhost:${port}`));
