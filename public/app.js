@@ -11,6 +11,21 @@ function setupReveal(){
   items.forEach(i=>io.observe(i));
 }
 
+function setupEmailCapture(){
+  const form=document.getElementById('emailCaptureForm');
+  const input=document.getElementById('emailInput');
+  const status=document.getElementById('emailStatus');
+  if(!form||!input||!status) return;
+  form.addEventListener('submit',(e)=>{
+    e.preventDefault();
+    const email=input.value.trim();
+    if(!email){status.textContent='Please enter a valid email.';return;}
+    localStorage.setItem('poet_personality_email',email);
+    status.textContent='Saved. We\'ll send profile refinement prompts and updates.';
+    form.reset();
+  });
+}
+
 (async()=>{
   const data=await loadContent();
   const path=location.pathname;
@@ -20,6 +35,7 @@ function setupReveal(){
     document.getElementById('hero')?.append(
       card(`<section class='hero'><p class='kicker'>${h.kicker}</p><h1>${h.title}</h1><p class='lead'>${h.subtitle}</p><p>${h.body}</p><div class='cta-row'><a class='btn primary' href='/results-demo'>${h.primaryCta}</a><a class='btn secondary' href='/types'>${h.secondaryCta}</a></div></section>`,'')
     );
+
     const proof=document.getElementById('proof');
     (data.homepage.proofStrip||[]).forEach(line=>proof?.append(card(`<p>${line}</p>`)));
 
@@ -32,6 +48,9 @@ function setupReveal(){
     const tiers=el('section','card');
     tiers.innerHTML=`<h2>Profile Strength</h2><div class='statline'>${data.profileStrength.map(p=>`<span class='stat'>${p.label} · ${p.range}</span>`).join('')}</div><p class='footer-note'>One poem can reflect a mood. Multiple poems reveal durable patterns.</p>`;
     how?.append(tiers);
+
+    const funnel=document.getElementById('funnel');
+    funnel?.append(card(`<h2>Start in 3 steps</h2><div class='funnel-steps'><div class='funnel-step'><p class='kicker'>Step 1</p><h3>Submit your poem</h3><p>Start your profile with one piece.</p></div><div class='funnel-step'><p class='kicker'>Step 2</p><h3>Get your type</h3><p>See your primary type and adjacent traits.</p></div><div class='funnel-step'><p class='kicker'>Step 3</p><h3>Refine over time</h3><p>Add more poems to increase confidence and nuance.</p></div></div><div class='cta-row'><a class='btn primary' href='/results-demo'>See a results preview</a><a class='btn secondary' href='/types'>Browse type profiles</a></div>`));
   }
 
   if(path==='/types'){
@@ -68,4 +87,5 @@ function setupReveal(){
   }
 
   setupReveal();
+  setupEmailCapture();
 })();
