@@ -15,6 +15,7 @@ const adminSessionSecret = process.env.ADMIN_SESSION_SECRET || `${adminUsername}
 const resendApiKey = process.env.RESEND_API_KEY || "";
 const leadsNotifyEmail = process.env.LEADS_NOTIFY_EMAIL || "";
 const leadsFromEmail = process.env.LEADS_FROM_EMAIL || "onboarding@resend.dev";
+const adminRecoveryEmail = process.env.ADMIN_RECOVERY_EMAIL || leadsNotifyEmail;
 const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
 const __filename = fileURLToPath(import.meta.url);
@@ -27,6 +28,7 @@ const leadsPath = path.join(dataDir, "leads.jsonl");
 const eventsPath = path.join(dataDir, "events.jsonl");
 
 const rateState = new Map();
+const adminRecoveryTokens = new Map();
 
 function getClientIp(req) {
   const forwarded = String(req.headers["x-forwarded-for"] || "")
@@ -129,6 +131,25 @@ async function notifyLead(lead) {
   return { sent: true };
 }
 
+async function sendAdminRecoveryEmail({ link, ip, ua }) {
+  if (!resend || !adminRecoveryEmail) return { sent: false, reason: "recovery_not_configured" };
+
+  await resend.emails.send({
+    from: leadsFromEmail,
+    to: adminRecoveryEmail,
+    subject: "Poet Personality admin recovery link",
+    html: `
+      <h2>Admin recovery requested</h2>
+      <p>Use this one-time sign-in link (valid for 15 minutes):</p>
+      <p><a href="${link}">${link}</a></p>
+      <p><strong>IP:</strong> ${ip}</p>
+      <p><strong>User Agent:</strong> ${ua}</p>
+    `
+  });
+
+  return { sent: true };
+}
+
 function csvEscape(value) {
   const s = String(value ?? "");
   if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
@@ -198,7 +219,8 @@ app.post("/api/events", async (req, res) => {
   }
 });
 
-app.get("/admin/login", rateLimit({ keyPrefix: "admin", windowMs: 60_000, maxHits: 20 }), (_req, res) => {
+app.get("/admin/login", rateLimit({ keyPrefix: "admin", windowMs: 60_000, maxHits: 20 }), (req, res) => {
+  const error = req.query?.error === "1";
   res.type("html").send(`<!doctype html>
 <html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Admin Login</title>
@@ -209,15 +231,19 @@ label{display:block;font-size:14px;margin:10px 0 6px}
 input{width:100%;padding:10px;border:1px solid #d8c8b1;border-radius:8px}
 button{margin-top:14px;width:100%;padding:10px;border:0;border-radius:8px;background:#1f1a15;color:#fff;font-weight:600;cursor:pointer}
 small{color:#6f6254}
+.error{margin-top:10px;background:#fff1f0;color:#8a1f11;border:1px solid #f3c8c1;padding:9px;border-radius:8px}
+.link{display:inline-block;margin-top:10px;color:#5b3b1e;text-decoration:underline}
 </style></head><body>
 <form class="card" method="post" action="/admin/login">
 <h2>Poet Personality Admin</h2>
 <small>Sign in to view leads and events.</small>
+${error ? '<div class="error">Invalid username or password.</div>' : ""}
 <label>Username</label>
 <input name="username" autocomplete="username" required />
 <label>Password</label>
 <input name="password" type="password" autocomplete="current-password" required />
 <button type="submit">Sign in</button>
+<a class="link" href="/admin/recovery">Forgot password / recovery link</a>
 </form></body></html>`);
 });
 
@@ -227,7 +253,7 @@ app.post("/admin/login", rateLimit({ keyPrefix: "admin", windowMs: 60_000, maxHi
   const user = String(req.body?.username || "");
   const pass = String(req.body?.password || "");
   if (user !== adminUsername || pass !== adminPassword) {
-    return res.status(401).send("Invalid login. <a href=\"/admin/login\">Try again</a>");
+    return res.redirect("/admin/login?error=1");
   }
 
   const token = makeAdminSessionToken();
@@ -239,6 +265,67 @@ app.post("/admin/login", rateLimit({ keyPrefix: "admin", windowMs: 60_000, maxHi
 app.post("/admin/logout", requireAdminSession, (req, res) => {
   res.setHeader("Set-Cookie", "admin_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0");
   return res.redirect("/admin/login");
+});
+
+app.get("/admin/recovery", rateLimit({ keyPrefix: "admin", windowMs: 60_000, maxHits: 20 }), (req, res) => {
+  const sent = req.query?.sent === "1";
+  res.type("html").send(`<!doctype html>
+<html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Admin Recovery</title>
+<style>
+body{font-family:Inter,system-ui,sans-serif;background:#f8f4ec;color:#1f1a15;margin:0;display:grid;place-items:center;min-height:100vh}
+.card{background:#fff;border:1px solid #e3d4bf;border-radius:12px;padding:18px;max-width:480px;width:100%}
+label{display:block;font-size:14px;margin:10px 0 6px}
+input{width:100%;padding:10px;border:1px solid #d8c8b1;border-radius:8px}
+button{margin-top:14px;width:100%;padding:10px;border:0;border-radius:8px;background:#1f1a15;color:#fff;font-weight:600;cursor:pointer}
+small{color:#6f6254}
+.ok{margin-top:10px;background:#f2fff4;color:#205b2a;border:1px solid #c7efcf;padding:9px;border-radius:8px}
+.link{display:inline-block;margin-top:10px;color:#5b3b1e;text-decoration:underline}
+</style></head><body>
+<form class="card" method="post" action="/admin/recovery">
+<h2>Admin Recovery</h2>
+<small>Request a one-time sign-in link sent to your configured recovery email.</small>
+${sent ? '<div class="ok">If configured, a recovery link has been sent.</div>' : ""}
+<label>Username</label>
+<input name="username" autocomplete="username" required />
+<button type="submit">Send recovery link</button>
+<a class="link" href="/admin/login">Back to login</a>
+</form></body></html>`);
+});
+
+app.post("/admin/recovery", rateLimit({ keyPrefix: "admin", windowMs: 60_000, maxHits: 20 }), async (req, res) => {
+  const user = String(req.body?.username || "");
+  if (user === adminUsername && resend && adminRecoveryEmail) {
+    const token = crypto.randomBytes(24).toString("hex");
+    const expiresAt = Date.now() + 15 * 60 * 1000;
+    adminRecoveryTokens.set(token, expiresAt);
+
+    const origin = `${req.protocol}://${req.get("host")}`;
+    const link = `${origin}/admin/recovery/verify?token=${encodeURIComponent(token)}`;
+
+    try {
+      await sendAdminRecoveryEmail({ link, ip: getClientIp(req), ua: req.headers["user-agent"] || "" });
+    } catch {
+      // Avoid user enumeration or leaking email transport errors
+    }
+  }
+
+  return res.redirect("/admin/recovery?sent=1");
+});
+
+app.get("/admin/recovery/verify", rateLimit({ keyPrefix: "admin", windowMs: 60_000, maxHits: 20 }), (req, res) => {
+  const token = String(req.query?.token || "");
+  const expiresAt = adminRecoveryTokens.get(token);
+  if (!expiresAt || Date.now() > expiresAt) {
+    if (token) adminRecoveryTokens.delete(token);
+    return res.status(401).send('Recovery link is invalid or expired. <a href="/admin/recovery">Request a new one</a>.');
+  }
+
+  adminRecoveryTokens.delete(token);
+  const session = makeAdminSessionToken();
+  const secureFlag = process.env.NODE_ENV === "production" ? "; Secure" : "";
+  res.setHeader("Set-Cookie", `admin_session=${session}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400${secureFlag}`);
+  return res.redirect("/admin");
 });
 
 app.get("/admin/leads.csv", rateLimit({ keyPrefix: "admin", windowMs: 60_000, maxHits: 20 }), requireAdminSession, async (_req, res) => {
