@@ -5,6 +5,7 @@ import fs from "fs/promises";
 import crypto from "crypto";
 import { fileURLToPath } from "url";
 import { Resend } from "resend";
+import { createClient } from "@supabase/supabase-js";
 
 const app = express();
 const port = process.env.PORT || 8790;
@@ -17,6 +18,11 @@ const leadsNotifyEmail = process.env.LEADS_NOTIFY_EMAIL || "";
 const leadsFromEmail = process.env.LEADS_FROM_EMAIL || "onboarding@resend.dev";
 const adminRecoveryEmail = process.env.ADMIN_RECOVERY_EMAIL || leadsNotifyEmail;
 const resend = resendApiKey ? new Resend(resendApiKey) : null;
+
+const supabaseUrl = process.env.SUPABASE_URL || "";
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+const supabase = supabaseUrl && supabaseServiceRoleKey ? createClient(supabaseUrl, supabaseServiceRoleKey) : null;
+const usingSupabase = Boolean(supabase);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -111,6 +117,62 @@ async function readJsonl(filePath, limit = 200) {
   }
 }
 
+async function saveLead(lead) {
+  if (!supabase) {
+    await appendJsonl(leadsPath, lead);
+    return;
+  }
+
+  const { error } = await supabase.from("leads").insert({
+    ts: lead.ts,
+    email: lead.email,
+    source: lead.source,
+    page: lead.page,
+    ua: lead.ua
+  });
+  if (error) throw error;
+}
+
+async function saveEvent(event) {
+  if (!supabase) {
+    await appendJsonl(eventsPath, event);
+    return;
+  }
+
+  const { error } = await supabase.from("events").insert({
+    ts: event.ts,
+    name: event.name,
+    page: event.page,
+    meta: event.meta,
+    ua: event.ua
+  });
+  if (error) throw error;
+}
+
+async function getLeads(limit = 200) {
+  if (!supabase) return readJsonl(leadsPath, limit);
+
+  const { data, error } = await supabase
+    .from("leads")
+    .select("ts,email,source,page,ua")
+    .order("ts", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return data || [];
+}
+
+async function getEvents(limit = 200) {
+  if (!supabase) return readJsonl(eventsPath, limit);
+
+  const { data, error } = await supabase
+    .from("events")
+    .select("ts,name,page,meta,ua")
+    .order("ts", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return data || [];
+}
+
 async function notifyLead(lead) {
   if (!resend || !leadsNotifyEmail) return { sent: false, reason: "resend_not_configured" };
 
@@ -165,6 +227,10 @@ app.get("/api/content", async (_req, res) => {
   res.type("application/json").send(raw);
 });
 
+app.get("/api/health", (_req, res) => {
+  res.json({ ok: true, storage: usingSupabase ? "supabase" : "jsonl" });
+});
+
 app.post("/api/lead", rateLimit({ keyPrefix: "lead", windowMs: 60_000, maxHits: 10 }), async (req, res) => {
   try {
     const email = String(req.body?.email || "").trim().toLowerCase();
@@ -178,14 +244,14 @@ app.post("/api/lead", rateLimit({ keyPrefix: "lead", windowMs: 60_000, maxHits: 
       ua: req.headers["user-agent"] || ""
     };
 
-    await appendJsonl(leadsPath, lead);
+    await saveLead(lead);
 
     let notify = { sent: false, reason: "not_attempted" };
     try {
       notify = await notifyLead(lead);
     } catch (error) {
       notify = { sent: false, reason: "notify_failed", details: error.message };
-      await appendJsonl(eventsPath, {
+      await saveEvent({
         ts: new Date().toISOString(),
         name: "lead_notify_failed",
         page: lead.page,
@@ -194,7 +260,7 @@ app.post("/api/lead", rateLimit({ keyPrefix: "lead", windowMs: 60_000, maxHits: 
       });
     }
 
-    return res.json({ ok: true, notify });
+    return res.json({ ok: true, notify, storage: usingSupabase ? "supabase" : "jsonl" });
   } catch (error) {
     return res.status(500).json({ ok: false, error: "lead_capture_failed", details: error.message });
   }
@@ -205,7 +271,7 @@ app.post("/api/events", async (req, res) => {
     const name = String(req.body?.name || "").trim();
     if (!name) return res.status(400).json({ ok: false, error: "invalid_event" });
 
-    await appendJsonl(eventsPath, {
+    await saveEvent({
       ts: new Date().toISOString(),
       name,
       page: req.body?.page || "",
@@ -213,7 +279,7 @@ app.post("/api/events", async (req, res) => {
       ua: req.headers["user-agent"] || ""
     });
 
-    return res.json({ ok: true });
+    return res.json({ ok: true, storage: usingSupabase ? "supabase" : "jsonl" });
   } catch (error) {
     return res.status(500).json({ ok: false, error: "event_capture_failed", details: error.message });
   }
@@ -252,9 +318,7 @@ app.post("/admin/login", rateLimit({ keyPrefix: "admin", windowMs: 60_000, maxHi
 
   const user = String(req.body?.username || "");
   const pass = String(req.body?.password || "");
-  if (user !== adminUsername || pass !== adminPassword) {
-    return res.redirect("/admin/login?error=1");
-  }
+  if (user !== adminUsername || pass !== adminPassword) return res.redirect("/admin/login?error=1");
 
   const token = makeAdminSessionToken();
   const secureFlag = process.env.NODE_ENV === "production" ? "; Secure" : "";
@@ -329,7 +393,7 @@ app.get("/admin/recovery/verify", rateLimit({ keyPrefix: "admin", windowMs: 60_0
 });
 
 app.get("/admin/leads.csv", rateLimit({ keyPrefix: "admin", windowMs: 60_000, maxHits: 20 }), requireAdminSession, async (_req, res) => {
-  const leads = await readJsonl(leadsPath, 5000);
+  const leads = await getLeads(5000);
   const headers = ["ts", "email", "source", "page", "ua"];
   const rows = [headers.join(","), ...leads.map((lead) => headers.map((h) => csvEscape(lead[h])).join(","))];
 
@@ -339,7 +403,7 @@ app.get("/admin/leads.csv", rateLimit({ keyPrefix: "admin", windowMs: 60_000, ma
 });
 
 app.get("/admin", rateLimit({ keyPrefix: "admin", windowMs: 60_000, maxHits: 20 }), requireAdminSession, async (_req, res) => {
-  const [leads, events] = await Promise.all([readJsonl(leadsPath), readJsonl(eventsPath)]);
+  const [leads, events] = await Promise.all([getLeads(), getEvents()]);
 
   const html = `<!doctype html>
 <html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -354,6 +418,7 @@ small{color:#6f6254}
 .row{display:flex;gap:10px;align-items:center}
 </style></head><body><main class="wrap">
 <h1>Admin Dashboard</h1>
+<div class="card"><small>Storage backend: ${usingSupabase ? "Supabase" : "Local JSONL"}</small></div>
 <div class="card"><div class="row"><a class="button" href="/admin/leads.csv">Export Leads CSV</a><form method="post" action="/admin/logout"><button class="button" type="submit">Sign out</button></form></div></div>
 <div class="card"><h2>Leads (${leads.length})</h2>
 ${leads.map((x) => `<pre>${JSON.stringify(x, null, 2)}</pre>`).join("") || "<small>No leads yet.</small>"}
@@ -372,4 +437,7 @@ app.get("/type/:slug", (_req, res) => res.sendFile(path.join(publicDir, "type.ht
 app.get("/categories", (_req, res) => res.sendFile(path.join(publicDir, "categories.html")));
 app.get("/results-demo", (_req, res) => res.sendFile(path.join(publicDir, "results.html")));
 
-app.listen(port, () => console.log(`Poet Personality web running at http://localhost:${port}`));
+app.listen(port, () => {
+  console.log(`Poet Personality web running at http://localhost:${port}`);
+  console.log(`Storage backend: ${usingSupabase ? "Supabase" : "Local JSONL"}`);
+});
