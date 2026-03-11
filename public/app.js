@@ -184,11 +184,51 @@ function setupPoemUploader(targetId='funnel'){
     queueSave();
   };
 
+  const pickTraitChips=(a)=>{
+    const base=[...(a?.observations?.recurringThemes||[])];
+    const mood=String(a?.observations?.emotionalPattern||'').toLowerCase();
+    if(mood.includes('tender')||mood.includes('ardent')) base.push('Romantic');
+    if(mood.includes('contemplative')||mood.includes('inquisitive')) base.push('Philosophical');
+    if(mood.includes('elegiac')||mood.includes('vulnerable')) base.push('Melancholic');
+    if(mood.includes('controlled')||mood.includes('deliberate')) base.push('Controlled');
+    if(mood.includes('luminous')||mood.includes('intense')) base.push('Dreamlike');
+    return [...new Set(base)].slice(0,6);
+  };
+
   const renderAnalysis=(payload)=>{
     const a=payload?.analysis;
     if(!a){analysisResult.innerHTML='No analysis yet.';return;}
+    const chips=pickTraitChips(a);
     analysisResult.classList.remove('muted');
-    analysisResult.innerHTML=`<p class='kicker'>Matched Personality</p><h2>${a.personalityTitle}</h2><p class='lead'>${a.summary}</p><p>${a.commentary}</p><div class='analysis-grid'><div><h4>Themes</h4><p>${(a.observations?.recurringThemes||[]).join(' · ')}</p></div><div><h4>Emotion</h4><p>${a.observations?.emotionalPattern||''}</p></div><div><h4>Imagery + Tone</h4><p>${a.observations?.imageryAndTone||''}</p></div><div><h4>Structure + Voice</h4><p>${a.observations?.structureAndVoice||''}</p></div><div><h4>Worldview</h4><p>${a.observations?.worldview||''}</p></div></div>`;
+    analysisResult.innerHTML=`
+      <div class='analysis-stage stage-1'>
+        <div class='analysis-hero'>
+          <p class='kicker'>Matched Archetype</p>
+          <h2>${a.personalityTitle}</h2>
+          <p class='lead'>${a.summary}</p>
+        </div>
+      </div>
+      <div class='analysis-stage stage-2'>
+        <div class='analysis-chips'>${chips.map((t)=>`<span class='analysis-chip'>${t}</span>`).join('')}</div>
+      </div>
+      <div class='analysis-stage stage-3'>
+        <div class='analysis-prose'>
+          <h3>Why this personality fits</h3>
+          <p>${a.commentary}</p>
+        </div>
+      </div>
+      <div class='analysis-stage stage-4'>
+        <div class='analysis-grid'>
+          <div><h4>Core emotional signature</h4><p>${a.observations?.emotionalPattern||''}</p></div>
+          <div><h4>Recurring themes</h4><p>${(a.observations?.recurringThemes||[]).join(' · ')}</p></div>
+          <div><h4>Imagery and symbols</h4><p>${a.observations?.imageryAndTone||''}</p></div>
+          <div><h4>Voice and tone</h4><p>${a.observations?.structureAndVoice||''}</p></div>
+          <div><h4>Worldview / poetic instincts</h4><p>${a.observations?.worldview||''}</p></div>
+        </div>
+      </div>`;
+
+    const stages=[...analysisResult.querySelectorAll('.analysis-stage')];
+    stages.forEach((node,idx)=>setTimeout(()=>node.classList.add('in'),140*idx+120));
   };
 
   addBtn.addEventListener('click',()=>addPoem({title:'',text:''}));
@@ -197,7 +237,7 @@ function setupPoemUploader(targetId='funnel'){
     if(!payload.length){analysisResult.classList.add('muted');analysisResult.textContent='Add poem text first, then analyze.';return;}
     analyzeBtn.disabled=true;
     analysisResult.classList.add('muted');
-    analysisResult.textContent='Reading your poems...';
+    analysisResult.innerHTML=`<div class='analysis-loading'><span class='pulse-dot'></span><span>Analyzing voice, themes, and poetic identity…</span></div>`;
     try{
       const res=await fetch('/api/poems/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({collectionToken:getCollectionToken(),poems:payload})});
       const data=await res.json();

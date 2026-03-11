@@ -51,7 +51,20 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .analysis-zone{margin-top:14px;padding:16px 6px 4px}
 .analysis-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .analysis-result{margin-top:10px;line-height:1.6}
+.analysis-loading{display:flex;align-items:center;gap:10px;color:#6d5d4a}
+.pulse-dot{width:8px;height:8px;border-radius:999px;background:#9a6a36;animation:pulse 1.4s infinite}
+@keyframes pulse{0%{opacity:.25;transform:scale(.9)}50%{opacity:1;transform:scale(1.15)}100%{opacity:.25;transform:scale(.9)}}
+.analysis-stage{opacity:0;transform:translateY(8px);transition:opacity .35s ease,transform .35s ease}
+.analysis-stage.in{opacity:1;transform:none}
+.analysis-hero{padding:18px;border-radius:16px;border:1px solid #e7d6bd;background:linear-gradient(180deg,#fbf5ea,#f4e7d2)}
+.analysis-hero h2{font-size:2.2rem;margin-bottom:6px}
+.analysis-hero .lead{margin:0;color:#3d3024}
+.analysis-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.analysis-chip{display:inline-block;padding:5px 10px;border-radius:999px;background:#f2e6d4;border:1px solid #dfc8a7;font-size:.82rem}
+.analysis-prose{margin-top:8px}
+.analysis-prose h3{margin-bottom:6px}
 .analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.analysis-grid > div{padding:10px;border-radius:12px;background:#fcf8f1;border:1px solid #efe3d2}
 .analysis-grid h4{margin:0 0 4px;font-size:.9rem;color:#6d5d4a}
 .analysis-grid p{margin:0}
 @media(max-width:900px){.poems-shell{grid-template-columns:1fr}.poems-sidebar{min-height:unset;border-right:0;border-bottom:1px solid #efe5d6}#editorText{min-height:320px}.analysis-grid{grid-template-columns:1fr}}
