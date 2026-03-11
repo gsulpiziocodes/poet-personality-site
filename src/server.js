@@ -23,15 +23,29 @@ const supabaseUrl = process.env.SUPABASE_URL || "";
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 const supabase = supabaseUrl && supabaseServiceRoleKey ? createClient(supabaseUrl, supabaseServiceRoleKey) : null;
 const usingSupabase = Boolean(supabase);
+let poemStorageUsingSupabase = Boolean(supabase);
+
+if (poemStorageUsingSupabase) {
+  try {
+    const { error } = await supabase.from("poem_collections").select("id").limit(1);
+    if (error) throw error;
+  } catch {
+    poemStorageUsingSupabase = false;
+  }
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.join(__dirname, "..");
 const publicDir = path.join(rootDir, "public");
 const contentPath = path.join(__dirname, "content", "poet-personality-content.json");
+const contentData = JSON.parse(await fs.readFile(contentPath, "utf8"));
+const typeBySlug = new Map((contentData.types || []).map((t) => [t.slug, t]));
 const dataDir = path.join(rootDir, "data");
 const leadsPath = path.join(dataDir, "leads.jsonl");
 const eventsPath = path.join(dataDir, "events.jsonl");
+const poemCollectionsPath = path.join(dataDir, "poem-collections.json");
+const poemsPath = path.join(dataDir, "poems.jsonl");
 
 const rateState = new Map();
 const adminRecoveryTokens = new Map();
@@ -117,6 +131,35 @@ async function readJsonl(filePath, limit = 200) {
   }
 }
 
+async function readJson(filePath, fallback = []) {
+  try {
+    const raw = await fs.readFile(filePath, "utf8");
+    return JSON.parse(raw);
+  } catch {
+    return fallback;
+  }
+}
+
+async function writeJson(filePath, payload) {
+  await fs.mkdir(dataDir, { recursive: true });
+  await fs.writeFile(filePath, JSON.stringify(payload, null, 2), "utf8");
+}
+
+function makeCollectionToken() {
+  return crypto.randomBytes(18).toString("hex");
+}
+
+function hashPoemText(text) {
+  return crypto.createHash("sha256").update(String(text || "")).digest("hex");
+}
+
+function normalizePoemInput(raw, idx = 0) {
+  const title = String(raw?.title || `Poem ${idx + 1}`).trim().slice(0, 160) || `Poem ${idx + 1}`;
+  const text = String(raw?.text || "").trim();
+  const status = raw?.status === "draft" ? "draft" : "final";
+  return { title, text, status };
+}
+
 async function saveLead(lead) {
   if (!supabase) {
     await appendJsonl(leadsPath, lead);
@@ -168,6 +211,206 @@ async function getEvents(limit = 200) {
     .from("events")
     .select("ts,name,page,meta,ua")
     .order("ts", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return data || [];
+}
+
+async function getCollection(token) {
+  if (!token) return null;
+
+  if (!poemStorageUsingSupabase) {
+    const collections = await readJson(poemCollectionsPath, []);
+    return collections.find((x) => x.token === token) || null;
+  }
+
+  const { data, error } = await supabase.from("poem_collections").select("id,token,email,created_at,updated_at").eq("token", token).maybeSingle();
+  if (error) throw error;
+  return data || null;
+}
+
+async function createOrUpdateCollection({ token, email }) {
+  const now = new Date().toISOString();
+
+  if (!poemStorageUsingSupabase) {
+    const collections = await readJson(poemCollectionsPath, []);
+    let current = collections.find((x) => x.token === token);
+    if (!current) {
+      current = { id: crypto.randomUUID(), token, email: email || null, created_at: now, updated_at: now };
+      collections.push(current);
+    } else {
+      current.updated_at = now;
+      if (email) current.email = email;
+    }
+    await writeJson(poemCollectionsPath, collections);
+    return current;
+  }
+
+  let existing = await getCollection(token);
+  if (!existing) {
+    const { data, error } = await supabase
+      .from("poem_collections")
+      .insert({ token, email: email || null })
+      .select("id,token,email,created_at,updated_at")
+      .single();
+    if (error) throw error;
+    return data;
+  }
+
+  const patch = { updated_at: now };
+  if (email) patch.email = email;
+
+  const { data, error } = await supabase
+    .from("poem_collections")
+    .update(patch)
+    .eq("id", existing.id)
+    .select("id,token,email,created_at,updated_at")
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+async function getPoemsByCollectionToken(token) {
+  if (!token) return [];
+
+  if (!poemStorageUsingSupabase) {
+    const poems = await readJson(poemsPath, []);
+    return poems.filter((x) => x.collection_token === token).sort((a, b) => (a.created_at < b.created_at ? -1 : 1));
+  }
+
+  const { data, error } = await supabase
+    .from("poems")
+    .select("id,collection_id,title,text,status,text_hash,created_at,updated_at")
+    .eq("collection_token", token)
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  return data || [];
+}
+
+async function upsertPoem({ collection, poem }) {
+  const now = new Date().toISOString();
+  const textHash = hashPoemText(poem.text);
+
+  if (!poemStorageUsingSupabase) {
+    const poems = await readJson(poemsPath, []);
+    const existing = poems.find((x) => x.collection_token === collection.token && (x.id === poem.id || x.text_hash === textHash));
+    if (existing) {
+      existing.title = poem.title;
+      existing.text = poem.text;
+      existing.status = poem.status;
+      existing.text_hash = textHash;
+      existing.updated_at = now;
+      await writeJson(poemsPath, poems);
+      return { row: existing, inserted: false, deduped: existing.id !== poem.id && !!poem.id === false };
+    }
+
+    const row = {
+      id: poem.id || crypto.randomUUID(),
+      collection_token: collection.token,
+      title: poem.title,
+      text: poem.text,
+      status: poem.status,
+      text_hash: textHash,
+      created_at: now,
+      updated_at: now
+    };
+    poems.push(row);
+    await writeJson(poemsPath, poems);
+    return { row, inserted: true, deduped: false };
+  }
+
+  if (poem.id) {
+    const { data, error } = await supabase
+      .from("poems")
+      .update({ title: poem.title, text: poem.text, status: poem.status, text_hash: textHash, updated_at: now })
+      .eq("id", poem.id)
+      .eq("collection_id", collection.id)
+      .select("id,collection_id,title,text,status,text_hash,created_at,updated_at")
+      .maybeSingle();
+    if (error) throw error;
+    if (data) return { row: data, inserted: false, deduped: false };
+  }
+
+  const { data: existing, error: existingError } = await supabase
+    .from("poems")
+    .select("id,collection_id,title,text,status,text_hash,created_at,updated_at")
+    .eq("collection_id", collection.id)
+    .eq("text_hash", textHash)
+    .maybeSingle();
+  if (existingError) throw existingError;
+  if (existing) return { row: existing, inserted: false, deduped: true };
+
+  const { data, error } = await supabase
+    .from("poems")
+    .insert({
+      collection_id: collection.id,
+      collection_token: collection.token,
+      title: poem.title,
+      text: poem.text,
+      status: poem.status,
+      text_hash: textHash
+    })
+    .select("id,collection_id,title,text,status,text_hash,created_at,updated_at")
+    .single();
+  if (error) throw error;
+  return { row: data, inserted: true, deduped: false };
+}
+
+async function deletePoem({ token, poemId }) {
+  if (!poemStorageUsingSupabase) {
+    const poems = await readJson(poemsPath, []);
+    const next = poems.filter((x) => !(x.collection_token === token && x.id === poemId));
+    await writeJson(poemsPath, next);
+    return poems.length !== next.length;
+  }
+
+  const collection = await getCollection(token);
+  if (!collection) return false;
+  const { data, error } = await supabase
+    .from("poems")
+    .delete()
+    .eq("collection_id", collection.id)
+    .eq("id", poemId)
+    .select("id");
+  if (error) throw error;
+  return (data || []).length > 0;
+}
+
+async function getPoemStats() {
+  if (!poemStorageUsingSupabase) {
+    const collections = await readJson(poemCollectionsPath, []);
+    const poems = await readJson(poemsPath, []);
+    const draftCount = poems.filter((x) => x.status === "draft").length;
+    return {
+      collections: collections.length,
+      poems: poems.length,
+      drafts: draftCount,
+      finalized: poems.length - draftCount
+    };
+  }
+
+  const [{ count: collectionCount, error: cErr }, { count: poemCount, error: pErr }, { count: draftCount, error: dErr }] = await Promise.all([
+    supabase.from("poem_collections").select("id", { count: "exact", head: true }),
+    supabase.from("poems").select("id", { count: "exact", head: true }),
+    supabase.from("poems").select("id", { count: "exact", head: true }).eq("status", "draft")
+  ]);
+  if (cErr || pErr || dErr) throw cErr || pErr || dErr;
+
+  const poemsTotal = poemCount || 0;
+  const drafts = draftCount || 0;
+  return { collections: collectionCount || 0, poems: poemsTotal, drafts, finalized: poemsTotal - drafts };
+}
+
+async function getRecentPoems(limit = 200) {
+  if (!poemStorageUsingSupabase) {
+    const poems = await readJson(poemsPath, []);
+    return poems.slice(-limit).reverse();
+  }
+
+  const { data, error } = await supabase
+    .from("poems")
+    .select("id,collection_token,title,text,status,created_at,updated_at")
+    .order("created_at", { ascending: false })
     .limit(limit);
   if (error) throw error;
   return data || [];
@@ -282,6 +525,87 @@ app.post("/api/events", async (req, res) => {
     return res.json({ ok: true, storage: usingSupabase ? "supabase" : "jsonl" });
   } catch (error) {
     return res.status(500).json({ ok: false, error: "event_capture_failed", details: error.message });
+  }
+});
+
+app.get("/api/poems", rateLimit({ keyPrefix: "poems", windowMs: 60_000, maxHits: 40 }), async (req, res) => {
+  try {
+    const token = String(req.query?.token || "").trim();
+    if (!token) return res.status(400).json({ ok: false, error: "missing_token" });
+
+    const collection = await getCollection(token);
+    if (!collection) return res.status(404).json({ ok: false, error: "collection_not_found" });
+
+    const poems = await getPoemsByCollectionToken(token);
+    return res.json({ ok: true, collection: { token: collection.token, email: collection.email || null }, poems });
+  } catch (error) {
+    return res.status(500).json({ ok: false, error: "poems_fetch_failed", details: error.message });
+  }
+});
+
+app.post("/api/poems/batch", rateLimit({ keyPrefix: "poems", windowMs: 60_000, maxHits: 20 }), async (req, res) => {
+  try {
+    const providedToken = String(req.body?.collectionToken || "").trim();
+    const token = providedToken || makeCollectionToken();
+    const email = String(req.body?.email || "").trim().toLowerCase() || null;
+    const incomingPoems = Array.isArray(req.body?.poems) ? req.body.poems : [];
+
+    if (!incomingPoems.length) return res.status(400).json({ ok: false, error: "empty_batch" });
+    if (incomingPoems.length > 100) return res.status(400).json({ ok: false, error: "too_many_poems" });
+
+    const collection = await createOrUpdateCollection({ token, email });
+    const existing = await getPoemsByCollectionToken(token);
+    if (existing.length > 100) return res.status(400).json({ ok: false, error: "collection_limit_reached" });
+
+    const normalized = incomingPoems.map((x, i) => ({ ...normalizePoemInput(x, i), id: x?.id ? String(x.id) : null }));
+    for (const poem of normalized) {
+      if (!poem.text) return res.status(400).json({ ok: false, error: "empty_poem_text" });
+      if (poem.text.length > 10_000) return res.status(400).json({ ok: false, error: "poem_too_long" });
+    }
+
+    const existingIds = new Set(existing.map((x) => x.id));
+    const newCount = normalized.filter((x) => !x.id || !existingIds.has(x.id)).length;
+    if (existing.length + newCount > 100) return res.status(400).json({ ok: false, error: "collection_limit_exceeded" });
+
+    let inserted = 0;
+    let updated = 0;
+    let deduped = 0;
+    const saved = [];
+
+    for (const poem of normalized) {
+      const result = await upsertPoem({ collection, poem });
+      saved.push(result.row);
+      if (result.deduped) deduped += 1;
+      else if (result.inserted) inserted += 1;
+      else updated += 1;
+    }
+
+    const allPoems = await getPoemsByCollectionToken(token);
+    return res.json({
+      ok: true,
+      message: "Saved",
+      returnLink: `/my-poems/${token}`,
+      collection: { token, email: collection.email || null },
+      counts: { inserted, updated, deduped, total: allPoems.length },
+      poems: allPoems
+    });
+  } catch (error) {
+    return res.status(500).json({ ok: false, error: "poems_save_failed", details: error.message });
+  }
+});
+
+app.delete("/api/poems/:poemId", rateLimit({ keyPrefix: "poems", windowMs: 60_000, maxHits: 20 }), async (req, res) => {
+  try {
+    const token = String(req.query?.token || req.body?.token || "").trim();
+    const poemId = String(req.params?.poemId || "").trim();
+    if (!token || !poemId) return res.status(400).json({ ok: false, error: "missing_token_or_poem_id" });
+
+    const deleted = await deletePoem({ token, poemId });
+    if (!deleted) return res.status(404).json({ ok: false, error: "poem_not_found" });
+
+    return res.json({ ok: true, message: "Deleted" });
+  } catch (error) {
+    return res.status(500).json({ ok: false, error: "poem_delete_failed", details: error.message });
   }
 });
 
@@ -403,7 +727,7 @@ app.get("/admin/leads.csv", rateLimit({ keyPrefix: "admin", windowMs: 60_000, ma
 });
 
 app.get("/admin", rateLimit({ keyPrefix: "admin", windowMs: 60_000, maxHits: 20 }), requireAdminSession, async (_req, res) => {
-  const [leads, events] = await Promise.all([getLeads(), getEvents()]);
+  const [leads, events, poemStats, poems] = await Promise.all([getLeads(), getEvents(), getPoemStats(), getRecentPoems()]);
 
   const html = `<!doctype html>
 <html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -426,6 +750,13 @@ ${leads.map((x) => `<pre>${JSON.stringify(x, null, 2)}</pre>`).join("") || "<sma
 <div class="card"><h2>Events (${events.length})</h2>
 ${events.map((x) => `<pre>${JSON.stringify(x, null, 2)}</pre>`).join("") || "<small>No events yet.</small>"}
 </div>
+<div class="card"><h2>Poem Stats</h2>
+<pre>${JSON.stringify(poemStats, null, 2)}</pre>
+<small>Private poem storage is owner-only by return link token.</small>
+</div>
+<div class="card"><h2>Recent Poems (${poems.length})</h2>
+${poems.map((x) => `<pre>${JSON.stringify({ ...x, text: String(x.text || "").slice(0, 4000) }, null, 2)}</pre>`).join("") || "<small>No poems yet.</small>"}
+</div>
 </main></body></html>`;
 
   res.type("html").send(html);
@@ -436,6 +767,7 @@ app.get("/types", (_req, res) => res.sendFile(path.join(publicDir, "types.html")
 app.get("/type/:slug", (_req, res) => res.sendFile(path.join(publicDir, "type.html")));
 app.get("/categories", (_req, res) => res.sendFile(path.join(publicDir, "categories.html")));
 app.get("/results-demo", (_req, res) => res.sendFile(path.join(publicDir, "results.html")));
+app.get("/my-poems/:token", (_req, res) => res.sendFile(path.join(publicDir, "my-poems.html")));
 
 app.listen(port, () => {
   console.log(`Poet Personality web running at http://localhost:${port}`);
