@@ -467,55 +467,61 @@ function analyzePoemCorpus(poems = []) {
   const lines = corpus.split("\n").map((x) => x.trim()).filter(Boolean);
 
   const lexicons = {
-    romantic: ["love", "heart", "kiss", "beloved", "desire", "touch", "longing", "tender", "devotion"],
-    mystic: ["soul", "spirit", "divine", "prayer", "sacred", "eternal", "god", "angel", "cosmos", "mystery"],
-    architect: ["form", "frame", "structure", "measure", "line", "shape", "craft", "build", "design", "pattern"],
-    melancholic: ["grief", "loss", "ash", "night", "empty", "mourning", "wound", "silence", "alone", "shadow"],
-    visionary: ["dream", "future", "fire", "star", "horizon", "becoming", "vision", "myth", "oracle", "radiant"],
-    witness: ["street", "window", "city", "kitchen", "morning", "hands", "room", "table", "bus", "neighborhood"],
-    philosopher: ["truth", "time", "meaning", "why", "therefore", "if", "mind", "being", "question", "thought"]
+    "the-alchemist": ["transform", "change", "become", "heal", "wound", "rebirth", "alchemy", "ash", "blood"],
+    "the-oracle": ["prophecy", "vision", "omen", "myth", "symbol", "fate", "star", "cosmos", "oracle"],
+    "the-architect": ["form", "structure", "measure", "line", "frame", "craft", "design", "pattern"],
+    "the-seeker": ["why", "search", "meaning", "question", "truth", "time", "if", "becoming", "path"],
+    "the-lover": ["love", "heart", "kiss", "beloved", "desire", "touch", "longing", "tender"],
+    "the-dreamer": ["dream", "moon", "mist", "sleep", "memory", "haze", "luminous", "soft"],
+    "the-muse": ["beauty", "art", "song", "lyric", "inspire", "grace", "color", "melody"],
+    "the-devotee": ["prayer", "sacred", "faith", "ritual", "reverence", "devotion", "altar"],
+    "the-confessor": ["i", "me", "my", "shame", "confess", "secret", "naked", "honest"],
+    "the-witness": ["street", "window", "city", "kitchen", "room", "table", "hands", "morning"],
+    "the-rebel": ["rage", "refuse", "break", "riot", "resist", "burn", "fight", "against"],
+    "the-mourner": ["grief", "loss", "absence", "mourning", "funeral", "shadow", "empty", "gone"],
+    "the-storyteller": ["then", "before", "after", "once", "character", "scene", "road", "journey"],
+    "the-minimalist": ["spare", "quiet", "white", "small", "still", "clean", "plain", "single"],
+    "the-performer": ["voice", "crowd", "stage", "rhythm", "breath", "beat", "shout", "mic"],
+    "the-weaver": ["thread", "weave", "layer", "braid", "echo", "interlace", "pattern", "tapestry"]
   };
 
   const scoreLexicon = (list) => words.reduce((n, w) => n + (list.includes(w) ? 1 : 0), 0);
   const scores = Object.fromEntries(Object.entries(lexicons).map(([k, v]) => [k, scoreLexicon(v)]));
 
-  const punctuationDensity = corpus.length ? ((corpus.match(/[,:;!?—-]/g) || []).length / corpus.length) : 0;
   const questionRate = lines.length ? lines.filter((l) => l.includes("?")).length / lines.length : 0;
   const avgLineLength = lines.length ? lines.reduce((a, l) => a + l.split(/\s+/).filter(Boolean).length, 0) / lines.length : 0;
 
-  if (avgLineLength <= 5) scores.architect += 2;
-  if (questionRate > 0.12) scores.philosopher += 2;
-  if (punctuationDensity > 0.04) scores.visionary += 1;
+  if (avgLineLength <= 5) scores["the-minimalist"] += 2;
+  if (questionRate > 0.14) scores["the-seeker"] += 2;
+  if (avgLineLength > 12) scores["the-storyteller"] += 1;
 
   const ranked = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-  const top = ranked[0]?.[0] || "visionary";
+  const topSlug = ranked[0]?.[0] || "the-seeker";
+  const topType = typeBySlug.get(topSlug) || { name: "The Seeker", overview: "A reflective poet drawn to meaning and open questions." };
+  const top3Themes = ranked.slice(0, 3).map(([slug]) => (typeBySlug.get(slug)?.name || slug));
 
-  const mapping = {
-    romantic: { title: "The Romantic", summary: "an intimacy-first poet whose language returns to devotion, longing, and emotional closeness" },
-    mystic: { title: "The Mystic", summary: "a transcendence-seeking poet who writes toward spirit, wonder, and metaphysical depth" },
-    architect: { title: "The Architect", summary: "a craft-centered poet whose control of line and form shapes meaning" },
-    melancholic: { title: "The Mourner", summary: "an elegiac poet who turns absence and grief into resonant language" },
-    visionary: { title: "The Visionary", summary: "an image-driven poet whose work reaches for transformation and revelation" },
-    witness: { title: "The Witness", summary: "an observant poet of lived detail, social texture, and concrete scenes" },
-    philosopher: { title: "The Seeker", summary: "a reflective poet who uses questions and thought to search for meaning" }
-  };
+  const tone = topSlug === "the-lover" ? "tender and ardent"
+    : topSlug === "the-mourner" ? "elegiac and vulnerable"
+    : topSlug === "the-architect" ? "controlled and deliberate"
+    : topSlug === "the-dreamer" ? "atmospheric and luminous"
+    : topSlug === "the-rebel" ? "urgent and defiant"
+    : topSlug === "the-witness" ? "grounded and observant"
+    : "reflective and searching";
 
-  const top3Themes = ranked.slice(0, 3).map(([k]) => mapping[k]?.title || k);
-  const tone = top === "romantic" ? "tender and ardent" : top === "mystic" ? "reverent and searching" : top === "architect" ? "controlled and deliberate" : top === "melancholic" ? "elegiac and vulnerable" : top === "witness" ? "grounded and observant" : top === "philosopher" ? "inquisitive and contemplative" : "luminous and intense";
-
-  const explanation = `Across ${poems.length} poem${poems.length === 1 ? "" : "s"}, your writing most strongly aligns with ${mapping[top].title}. The work reads as ${mapping[top].summary}.\n\nYou repeatedly return to ${top3Themes.join(", ")} energies, suggesting a stable poetic identity rather than a one-off mood. Emotionally, the voice feels ${tone}, with a recurring movement from sensation toward interpretation.\n\nIn imagery, the poems lean on motifs that reinforce this archetype, and in structure your line behavior (avg ${avgLineLength.toFixed(1)} words per line) suggests a coherent stylistic instinct. The tonal through-line and thematic recurrence indicate a writer with a recognizable worldview and signature method of meaning-making.`;
+  const explanation = `Across ${poems.length} poem${poems.length === 1 ? "" : "s"}, your writing most strongly aligns with ${topType.name}. ${topType.overview || ""}\n\nYou repeatedly return to ${top3Themes.join(", ")} energies, suggesting a stable poetic identity rather than a one-off mood. Emotionally, the voice feels ${tone}, with a recurring movement from sensation toward interpretation.\n\nIn structure, your line behavior (avg ${avgLineLength.toFixed(1)} words per line) and question cadence (${(questionRate * 100).toFixed(1)}% of lines) reinforce this archetype. The tonal through-line and thematic recurrence suggest a recognizable worldview and signature poetic instinct.`;
 
   return {
-    personalityKey: top,
-    personalityTitle: mapping[top].title,
-    summary: mapping[top].summary,
+    personalityKey: topSlug,
+    personalitySlug: topSlug,
+    personalityTitle: topType.name,
+    summary: topType.shortBlurb || topType.subtitle || topType.overview || "A distinct poetic identity is emerging in your work.",
     commentary: explanation,
     observations: {
       recurringThemes: top3Themes,
       emotionalPattern: tone,
-      imageryAndTone: `Lexical signals and symbolic repetition point toward a ${mapping[top].title} profile rather than a generic mixed type.`,
-      structureAndVoice: `Average line length ${avgLineLength.toFixed(1)}, question-line rate ${(questionRate * 100).toFixed(1)}%, punctuation density ${(punctuationDensity * 100).toFixed(2)}%.`,
-      worldview: `The poems collectively prioritize ${mapping[top].summary}.`
+      imageryAndTone: `Your imagery and symbolic motifs align with ${topType.name}, with consistent tonal intent across poems.`,
+      structureAndVoice: `Average line length ${avgLineLength.toFixed(1)}; question-line rate ${(questionRate * 100).toFixed(1)}%.`,
+      worldview: `Your poems collectively prioritize the sensibility of ${topType.name}.`
     }
   };
 }
