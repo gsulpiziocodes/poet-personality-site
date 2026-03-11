@@ -187,27 +187,8 @@ function setupPoemUploader(targetId='funnel'){
   const renderAnalysis=(payload)=>{
     const a=payload?.analysis;
     if(!a){analysisResult.innerHTML='No analysis yet.';return;}
-    const traits=(a.observations?.recurringThemes||[]).slice(0,3);
     analysisResult.classList.remove('muted');
-    analysisResult.classList.add('analysis-reveal');
-    analysisResult.innerHTML=`
-      <div class='analysis-hero'>
-        <p class='kicker'>Primary Type</p>
-        <h2>${a.personalityTitle}</h2>
-        <p class='lead'>${a.summary}</p>
-        <div class='analysis-chips'>${traits.map((t)=>`<span class='analysis-chip'>${t}</span>`).join('')}</div>
-      </div>
-      <div class='analysis-body'>
-        <p>${a.commentary}</p>
-        <div class='analysis-grid'>
-          <div><h4>Themes</h4><p>${(a.observations?.recurringThemes||[]).join(' · ')}</p></div>
-          <div><h4>Emotion</h4><p>${a.observations?.emotionalPattern||''}</p></div>
-          <div><h4>Imagery + Tone</h4><p>${a.observations?.imageryAndTone||''}</p></div>
-          <div><h4>Structure + Voice</h4><p>${a.observations?.structureAndVoice||''}</p></div>
-          <div><h4>Worldview</h4><p>${a.observations?.worldview||''}</p></div>
-        </div>
-      </div>`;
-    requestAnimationFrame(()=>analysisResult.classList.add('in'));
+    analysisResult.innerHTML=`<p class='kicker'>Matched Personality</p><h2>${a.personalityTitle}</h2><p class='lead'>${a.summary}</p><p>${a.commentary}</p><div class='analysis-grid'><div><h4>Themes</h4><p>${(a.observations?.recurringThemes||[]).join(' · ')}</p></div><div><h4>Emotion</h4><p>${a.observations?.emotionalPattern||''}</p></div><div><h4>Imagery + Tone</h4><p>${a.observations?.imageryAndTone||''}</p></div><div><h4>Structure + Voice</h4><p>${a.observations?.structureAndVoice||''}</p></div><div><h4>Worldview</h4><p>${a.observations?.worldview||''}</p></div></div>`;
   };
 
   addBtn.addEventListener('click',()=>addPoem({title:'',text:''}));
@@ -215,7 +196,6 @@ function setupPoemUploader(targetId='funnel'){
     const payload=poems.map((p)=>({title:(p.title||'').trim(),text:(p.text||'').trim()})).filter((p)=>p.text);
     if(!payload.length){analysisResult.classList.add('muted');analysisResult.textContent='Add poem text first, then analyze.';return;}
     analyzeBtn.disabled=true;
-    analysisResult.classList.remove('in','analysis-reveal');
     analysisResult.classList.add('muted');
     analysisResult.textContent='Reading your poems...';
     try{
