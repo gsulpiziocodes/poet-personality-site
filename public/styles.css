@@ -48,7 +48,13 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .poems-empty{display:grid;place-items:center;min-height:520px;text-align:center}
 .thread-empty{padding:12px}
 .subtle-status{padding-left:6px;min-height:20px;font-size:.82rem;opacity:.7}
-@media(max-width:900px){.poems-shell{grid-template-columns:1fr}.poems-sidebar{min-height:unset;border-right:0;border-bottom:1px solid #efe5d6}#editorText{min-height:320px}}
+.analysis-zone{margin-top:14px;padding:16px 6px 4px}
+.analysis-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.analysis-result{margin-top:10px;line-height:1.6}
+.analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.analysis-grid h4{margin:0 0 4px;font-size:.9rem;color:#6d5d4a}
+.analysis-grid p{margin:0}
+@media(max-width:900px){.poems-shell{grid-template-columns:1fr}.poems-sidebar{min-height:unset;border-right:0;border-bottom:1px solid #efe5d6}#editorText{min-height:320px}.analysis-grid{grid-template-columns:1fr}}
 .funnel-steps{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}.funnel-step{padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff}
 .sticky-cta{position:fixed;left:12px;right:12px;bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,253,249,.96);box-shadow:0 10px 22px rgba(40,23,9,.16);backdrop-filter:blur(4px)}
 .sticky-cta span{font-size:.95rem;color:#3b3025}

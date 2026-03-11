@@ -77,12 +77,21 @@ function setupPoemUploader(targetId='funnel'){
     </aside>
     <section class='poems-main' id='poemEditorPane'></section>
   </section>
-  <p id='poemSaveStatus' class='footer-note subtle-status'></p>`, 'poems-wrapper');
+  <p id='poemSaveStatus' class='footer-note subtle-status'></p>
+  <section class='analysis-zone'>
+    <div class='analysis-top'>
+      <h3>Reveal your poet personality</h3>
+      <button class='btn primary' id='analyzePoemsBtn' type='button'>Analyze</button>
+    </div>
+    <div id='analysisResult' class='analysis-result muted'>Write a few poems, then run analysis for an identity-level reading.</div>
+  </section>`, 'poems-wrapper');
   target.append(box);
 
   const list=box.querySelector('#threadList');
   const editor=box.querySelector('#poemEditorPane');
   const addBtn=box.querySelector('#newPoemBtn');
+  const analyzeBtn=box.querySelector('#analyzePoemsBtn');
+  const analysisResult=box.querySelector('#analysisResult');
   const status=box.querySelector('#poemSaveStatus');
 
   let poems=[];
@@ -175,7 +184,30 @@ function setupPoemUploader(targetId='funnel'){
     queueSave();
   };
 
+  const renderAnalysis=(payload)=>{
+    const a=payload?.analysis;
+    if(!a){analysisResult.innerHTML='No analysis yet.';return;}
+    analysisResult.classList.remove('muted');
+    analysisResult.innerHTML=`<p class='kicker'>Matched Personality</p><h2>${a.personalityTitle}</h2><p class='lead'>${a.summary}</p><p>${a.commentary}</p><div class='analysis-grid'><div><h4>Themes</h4><p>${(a.observations?.recurringThemes||[]).join(' · ')}</p></div><div><h4>Emotion</h4><p>${a.observations?.emotionalPattern||''}</p></div><div><h4>Imagery + Tone</h4><p>${a.observations?.imageryAndTone||''}</p></div><div><h4>Structure + Voice</h4><p>${a.observations?.structureAndVoice||''}</p></div><div><h4>Worldview</h4><p>${a.observations?.worldview||''}</p></div></div>`;
+  };
+
   addBtn.addEventListener('click',()=>addPoem({title:'',text:''}));
+  analyzeBtn.addEventListener('click',async ()=>{
+    const payload=poems.map((p)=>({title:(p.title||'').trim(),text:(p.text||'').trim()})).filter((p)=>p.text);
+    if(!payload.length){analysisResult.classList.add('muted');analysisResult.textContent='Add poem text first, then analyze.';return;}
+    analyzeBtn.disabled=true;
+    analysisResult.classList.add('muted');
+    analysisResult.textContent='Reading your poems...';
+    try{
+      const res=await fetch('/api/poems/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({collectionToken:getCollectionToken(),poems:payload})});
+      const data=await res.json();
+      if(!res.ok||!data.ok) throw new Error('analysis_failed');
+      renderAnalysis(data);
+    }catch{
+      analysisResult.classList.add('muted');
+      analysisResult.textContent='Could not analyze right now. Please try again.';
+    }finally{analyzeBtn.disabled=false;}
+  });
 
   if(token){
     fetch(`/api/poems?token=${encodeURIComponent(token)}`).then(r=>r.json()).then((data)=>{

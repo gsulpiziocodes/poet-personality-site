@@ -461,6 +461,65 @@ function csvEscape(value) {
   return s;
 }
 
+function analyzePoemCorpus(poems = []) {
+  const corpus = poems.map((p) => String(p?.text || "").trim()).filter(Boolean).join("\n");
+  const words = corpus.toLowerCase().match(/[a-z']+/g) || [];
+  const lines = corpus.split("\n").map((x) => x.trim()).filter(Boolean);
+
+  const lexicons = {
+    romantic: ["love", "heart", "kiss", "beloved", "desire", "touch", "longing", "tender", "devotion"],
+    mystic: ["soul", "spirit", "divine", "prayer", "sacred", "eternal", "god", "angel", "cosmos", "mystery"],
+    architect: ["form", "frame", "structure", "measure", "line", "shape", "craft", "build", "design", "pattern"],
+    melancholic: ["grief", "loss", "ash", "night", "empty", "mourning", "wound", "silence", "alone", "shadow"],
+    visionary: ["dream", "future", "fire", "star", "horizon", "becoming", "vision", "myth", "oracle", "radiant"],
+    witness: ["street", "window", "city", "kitchen", "morning", "hands", "room", "table", "bus", "neighborhood"],
+    philosopher: ["truth", "time", "meaning", "why", "therefore", "if", "mind", "being", "question", "thought"]
+  };
+
+  const scoreLexicon = (list) => words.reduce((n, w) => n + (list.includes(w) ? 1 : 0), 0);
+  const scores = Object.fromEntries(Object.entries(lexicons).map(([k, v]) => [k, scoreLexicon(v)]));
+
+  const punctuationDensity = corpus.length ? ((corpus.match(/[,:;!?—-]/g) || []).length / corpus.length) : 0;
+  const questionRate = lines.length ? lines.filter((l) => l.includes("?")).length / lines.length : 0;
+  const avgLineLength = lines.length ? lines.reduce((a, l) => a + l.split(/\s+/).filter(Boolean).length, 0) / lines.length : 0;
+
+  if (avgLineLength <= 5) scores.architect += 2;
+  if (questionRate > 0.12) scores.philosopher += 2;
+  if (punctuationDensity > 0.04) scores.visionary += 1;
+
+  const ranked = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const top = ranked[0]?.[0] || "visionary";
+
+  const mapping = {
+    romantic: { title: "The Romantic", summary: "an intimacy-first poet whose language returns to devotion, longing, and emotional closeness" },
+    mystic: { title: "The Mystic", summary: "a transcendence-seeking poet who writes toward spirit, wonder, and metaphysical depth" },
+    architect: { title: "The Architect", summary: "a craft-centered poet whose control of line and form shapes meaning" },
+    melancholic: { title: "The Mourner", summary: "an elegiac poet who turns absence and grief into resonant language" },
+    visionary: { title: "The Visionary", summary: "an image-driven poet whose work reaches for transformation and revelation" },
+    witness: { title: "The Witness", summary: "an observant poet of lived detail, social texture, and concrete scenes" },
+    philosopher: { title: "The Seeker", summary: "a reflective poet who uses questions and thought to search for meaning" }
+  };
+
+  const top3Themes = ranked.slice(0, 3).map(([k]) => mapping[k]?.title || k);
+  const tone = top === "romantic" ? "tender and ardent" : top === "mystic" ? "reverent and searching" : top === "architect" ? "controlled and deliberate" : top === "melancholic" ? "elegiac and vulnerable" : top === "witness" ? "grounded and observant" : top === "philosopher" ? "inquisitive and contemplative" : "luminous and intense";
+
+  const explanation = `Across ${poems.length} poem${poems.length === 1 ? "" : "s"}, your writing most strongly aligns with ${mapping[top].title}. The work reads as ${mapping[top].summary}.\n\nYou repeatedly return to ${top3Themes.join(", ")} energies, suggesting a stable poetic identity rather than a one-off mood. Emotionally, the voice feels ${tone}, with a recurring movement from sensation toward interpretation.\n\nIn imagery, the poems lean on motifs that reinforce this archetype, and in structure your line behavior (avg ${avgLineLength.toFixed(1)} words per line) suggests a coherent stylistic instinct. The tonal through-line and thematic recurrence indicate a writer with a recognizable worldview and signature method of meaning-making.`;
+
+  return {
+    personalityKey: top,
+    personalityTitle: mapping[top].title,
+    summary: mapping[top].summary,
+    commentary: explanation,
+    observations: {
+      recurringThemes: top3Themes,
+      emotionalPattern: tone,
+      imageryAndTone: `Lexical signals and symbolic repetition point toward a ${mapping[top].title} profile rather than a generic mixed type.`,
+      structureAndVoice: `Average line length ${avgLineLength.toFixed(1)}, question-line rate ${(questionRate * 100).toFixed(1)}%, punctuation density ${(punctuationDensity * 100).toFixed(2)}%.`,
+      worldview: `The poems collectively prioritize ${mapping[top].summary}.`
+    }
+  };
+}
+
 app.use(express.json({ limit: "256kb" }));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(publicDir));
@@ -606,6 +665,26 @@ app.delete("/api/poems/:poemId", rateLimit({ keyPrefix: "poems", windowMs: 60_00
     return res.json({ ok: true, message: "Deleted" });
   } catch (error) {
     return res.status(500).json({ ok: false, error: "poem_delete_failed", details: error.message });
+  }
+});
+
+app.post("/api/poems/analyze", rateLimit({ keyPrefix: "poems", windowMs: 60_000, maxHits: 20 }), async (req, res) => {
+  try {
+    let poems = Array.isArray(req.body?.poems) ? req.body.poems : [];
+    const token = String(req.body?.collectionToken || "").trim();
+
+    if (!poems.length && token) poems = await getPoemsByCollectionToken(token);
+
+    const valid = poems
+      .map((p) => ({ title: String(p?.title || ""), text: String(p?.text || "").trim() }))
+      .filter((p) => p.text);
+
+    if (!valid.length) return res.status(400).json({ ok: false, error: "no_poems_to_analyze" });
+
+    const analysis = analyzePoemCorpus(valid);
+    return res.json({ ok: true, analysis, poemCount: valid.length });
+  } catch (error) {
+    return res.status(500).json({ ok: false, error: "analysis_failed", details: error.message });
   }
 });
 
