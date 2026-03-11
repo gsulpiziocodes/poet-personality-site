@@ -26,10 +26,28 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .quote{font-style:italic;color:#4f4134}.footer-note{font-size:.9rem;color:var(--muted);margin-top:6px}.inline-links a{color:var(--accent)}
 .capture-form{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.capture-form input{flex:1;min-width:220px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff}
 .row-inline{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0}
-.poem-item{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;margin:10px 0}
-.poem-item input,.poem-item textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;margin:6px 0}
-.poem-item textarea{min-height:180px;resize:vertical}
 .poem-pre{white-space:pre-wrap;word-break:break-word;background:#faf6ef;border:1px solid #eadfce;padding:10px;border-radius:8px;max-height:280px;overflow:auto}
+.poems-shell{display:grid;grid-template-columns:320px 1fr;gap:0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}
+.poems-sidebar{border-right:1px solid var(--line);background:linear-gradient(180deg,#fff,#fcf8f2);display:flex;flex-direction:column;min-height:620px}
+.poems-sidebar-top{display:flex;justify-content:space-between;align-items:center;padding:14px 14px 10px;border-bottom:1px solid var(--line)}
+.poems-sidebar-top h3{margin:0;font-size:1.2rem}
+.compose-btn{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:16px}
+.thread-list{padding:8px;display:flex;flex-direction:column;gap:4px;overflow:auto;flex:1}
+.thread-row{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;text-align:left;width:100%;padding:10px;border:1px solid transparent;border-radius:10px;background:transparent;cursor:pointer}
+.thread-row:hover{background:#f8f1e6}
+.thread-row.active{background:#ece3d5;border-color:#dbc8ac}
+.thread-title{font-weight:600}
+.thread-preview{font-size:.88rem;color:var(--muted);margin-top:2px}
+.thread-meta{font-size:.76rem;color:#7c6f61;white-space:nowrap}
+.sidebar-footer{padding:10px;border-top:1px solid var(--line);display:grid;gap:8px}
+.sidebar-footer input,.editor-head input,#editorText{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff}
+.poems-main{padding:18px;background:linear-gradient(180deg,#fff,#fefcf8)}
+.editor-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.editor-head input{font-size:1.1rem;font-weight:600}
+#editorText{min-height:500px;resize:vertical;margin-top:10px;line-height:1.5}
+.poems-empty{display:grid;place-items:center;min-height:520px;text-align:center}
+.thread-empty{padding:12px}
+@media(max-width:900px){.poems-shell{grid-template-columns:1fr}.poems-sidebar{min-height:unset;border-right:0;border-bottom:1px solid var(--line)}#editorText{min-height:320px}}
 .funnel-steps{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}.funnel-step{padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff}
 .sticky-cta{position:fixed;left:12px;right:12px;bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,253,249,.96);box-shadow:0 10px 22px rgba(40,23,9,.16);backdrop-filter:blur(4px)}
 .sticky-cta span{font-size:.95rem;color:#3b3025}
