@@ -71,8 +71,8 @@ function renderPoemEditor(poem={},index=0){
   </div>`;
 }
 
-function setupPoemUploader(){
-  const target=document.getElementById('funnel');
+function setupPoemUploader(targetId='funnel'){
+  const target=document.getElementById(targetId);
   if(!target) return;
   const token=getCollectionToken();
   const box=card(`<h2>Build your private poem library</h2>
@@ -195,7 +195,7 @@ function setupMyPoemsPage(){
   if(path==='/'){
     const h=data.homepage.hero;
     document.getElementById('hero')?.append(
-      card(`<section class='hero'><p class='kicker'>${h.kicker}</p><h1>${h.title}</h1><p class='lead'>${h.subtitle}</p><p>${h.body}</p><div class='cta-row'><a class='btn primary' href='/results-demo'>${h.primaryCta}</a><a class='btn secondary' href='/types'>${h.secondaryCta}</a></div></section>`,'')
+      card(`<section class='hero'><p class='kicker'>${h.kicker}</p><h1>${h.title}</h1><p class='lead'>${h.subtitle}</p><p>${h.body}</p><div class='cta-row'><a class='btn primary' href='/analyze'>${h.primaryCta}</a><a class='btn secondary' href='/types'>${h.secondaryCta}</a></div></section>`,'')
     );
 
     const proof=document.getElementById('proof');
@@ -212,9 +212,15 @@ function setupMyPoemsPage(){
     how?.append(tiers);
 
     const funnel=document.getElementById('funnel');
-    funnel?.append(card(`<h2>Start in 3 steps</h2><div class='funnel-steps'><div class='funnel-step'><p class='kicker'>Step 1</p><h3>Submit your poem</h3><p>Start your profile with one piece.</p></div><div class='funnel-step'><p class='kicker'>Step 2</p><h3>Get your type</h3><p>See your primary type and adjacent traits.</p></div><div class='funnel-step'><p class='kicker'>Step 3</p><h3>Refine over time</h3><p>Add more poems to increase confidence and nuance.</p></div></div><div class='cta-row'><a class='btn primary' href='/results-demo'>See a results preview</a><a class='btn secondary' href='/types'>Browse type profiles</a></div>`));
+    funnel?.append(card(`<h2>Start in 4 steps</h2><div class='funnel-steps'><div class='funnel-step'><p class='kicker'>Step 1</p><h3>Open Analyze</h3><p>Go to the dedicated Analyze page.</p></div><div class='funnel-step'><p class='kicker'>Step 2</p><h3>Add poems one-by-one</h3><p>Paste each poem and click Add another poem.</p></div><div class='funnel-step'><p class='kicker'>Step 3</p><h3>Choose draft or final</h3><p>Set each poem status and edit as needed.</p></div><div class='funnel-step'><p class='kicker'>Step 4</p><h3>Save batch</h3><p>Save and keep your private return link.</p></div></div><div class='cta-row'><a class='btn primary' href='/analyze'>Analyze now</a><a class='btn secondary' href='/types'>Browse type profiles</a></div>`));
+  }
 
-    setupPoemUploader();
+  if(path==='/analyze'){
+    const root=document.getElementById('analyzeRoot');
+    root?.append(card(`<section class='hero'><p class='kicker'>Analyze</p><h1>Discover Your Poet Personality</h1><p class='lead'>Build your private poem collection and save everything in one batch.</p></section>`,''));
+    root?.append(card(`<h2>Start in 4 steps</h2><div class='funnel-steps'><div class='funnel-step'><p class='kicker'>Step 1</p><h3>Add your first poem</h3><p>Paste one poem into the form.</p></div><div class='funnel-step'><p class='kicker'>Step 2</p><h3>Add another poem</h3><p>Keep adding poems one-by-one.</p></div><div class='funnel-step'><p class='kicker'>Step 3</p><h3>Set draft or final</h3><p>Mark each poem status and edit anything anytime.</p></div><div class='funnel-step'><p class='kicker'>Step 4</p><h3>Save batch</h3><p>Save your poems and keep your private return link.</p></div></div>`));
+    root?.append(card(`<div id='analyzeUploader'></div>`));
+    setupPoemUploader('analyzeUploader');
   }
 
   if(path==='/types'){

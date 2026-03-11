@@ -767,6 +767,7 @@ app.get("/types", (_req, res) => res.sendFile(path.join(publicDir, "types.html")
 app.get("/type/:slug", (_req, res) => res.sendFile(path.join(publicDir, "type.html")));
 app.get("/categories", (_req, res) => res.sendFile(path.join(publicDir, "categories.html")));
 app.get("/results-demo", (_req, res) => res.sendFile(path.join(publicDir, "results.html")));
+app.get("/analyze", (_req, res) => res.sendFile(path.join(publicDir, "analyze.html")));
 app.get("/my-poems/:token", (_req, res) => res.sendFile(path.join(publicDir, "my-poems.html")));
 
 app.listen(port, () => {
