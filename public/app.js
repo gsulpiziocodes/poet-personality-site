@@ -208,7 +208,6 @@ function setupPoemUploader(targetId='funnel'){
           <p class='kicker'>Matched Archetype</p>
           <h2>${a.personalityTitle}</h2>
           <p class='lead'>${a.summary}</p>
-          <div class='analysis-hero-actions'><a class='btn secondary' href='${archetypeHref}'>Learn more</a></div>
         </div>
       </div>
       <div class='analysis-stage stage-2'>
@@ -228,6 +227,9 @@ function setupPoemUploader(targetId='funnel'){
           <div><h4>Voice and tone</h4><p>${a.observations?.structureAndVoice||''}</p></div>
           <div><h4>Worldview / poetic instincts</h4><p>${a.observations?.worldview||''}</p></div>
         </div>
+      </div>
+      <div class='analysis-stage stage-5'>
+        <div class='analysis-end-action'><a class='btn secondary' href='${archetypeHref}'>Learn more</a></div>
       </div>`;
 
     const stages=[...analysisResult.querySelectorAll('.analysis-stage')];

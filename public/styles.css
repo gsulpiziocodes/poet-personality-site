@@ -59,7 +59,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .analysis-hero{padding:18px;border-radius:16px;border:1px solid #e7d6bd;background:linear-gradient(180deg,#fbf5ea,#f4e7d2)}
 .analysis-hero h2{font-size:2.2rem;margin-bottom:6px}
 .analysis-hero .lead{margin:0;color:#3d3024}
-.analysis-hero-actions{display:flex;justify-content:flex-end;margin-top:10px}
+.analysis-end-action{display:flex;justify-content:flex-end;margin-top:14px}
 .analysis-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .analysis-chip{display:inline-block;padding:5px 10px;border-radius:999px;background:#f2e6d4;border:1px solid #dfc8a7;font-size:.82rem}
 .analysis-prose{margin-top:8px}
