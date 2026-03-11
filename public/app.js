@@ -218,7 +218,7 @@ function setupMyPoemsPage(){
   if(path==='/analyze'){
     const root=document.getElementById('analyzeRoot');
     root?.append(card(`<section class='hero'><p class='kicker'>Analyze</p><h1>Discover Your Poet Personality</h1><p class='lead'>Build your private poem collection and save everything in one batch.</p></section>`,''));
-    root?.append(card(`<h2>Start in 4 steps</h2><div class='funnel-steps'><div class='funnel-step'><p class='kicker'>Step 1</p><h3>Add your first poem</h3><p>Paste one poem into the form.</p></div><div class='funnel-step'><p class='kicker'>Step 2</p><h3>Add another poem</h3><p>Keep adding poems one-by-one.</p></div><div class='funnel-step'><p class='kicker'>Step 3</p><h3>Set draft or final</h3><p>Mark each poem status and edit anything anytime.</p></div><div class='funnel-step'><p class='kicker'>Step 4</p><h3>Save batch</h3><p>Save your poems and keep your private return link.</p></div></div>`));
+    root?.append(card(`<h2>Start in 3 steps</h2><div class='funnel-steps'><div class='funnel-step'><p class='kicker'>Step 1</p><h3>Add your poems</h3><p>Paste your poems into the form one-by-one.</p></div><div class='funnel-step'><p class='kicker'>Step 2</p><h3>Set draft or final</h3><p>Mark each poem’s status and edit anytime.</p></div><div class='funnel-step'><p class='kicker'>Step 3</p><h3>Save your batch</h3><p>Save your poems and keep your private return link.</p></div></div>`));
     root?.append(card(`<div id='analyzeUploader'></div>`));
     setupPoemUploader('analyzeUploader');
   }
