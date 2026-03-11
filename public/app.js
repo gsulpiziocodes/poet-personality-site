@@ -59,8 +59,8 @@ function setCollectionToken(token){
 
 function formatMeta(poem){
   const words=String(poem.text||'').trim().split(/\s+/).filter(Boolean).length;
-  const status=poem.status==='draft'?'Draft':'Final';
-  return `${status} · ${words}w`;
+  const updated=poem.updatedAt?new Date(poem.updatedAt).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):'';
+  return updated?`${words}w · ${updated}`:`${words}w`;
 }
 
 function setupPoemUploader(targetId='funnel'){
@@ -74,27 +74,58 @@ function setupPoemUploader(targetId='funnel'){
         <button class='compose-btn' id='newPoemBtn' type='button' title='New poem'>✎</button>
       </div>
       <div id='threadList' class='thread-list'></div>
-      <div class='sidebar-footer'>
-        <input id='poemEmailInput' type='email' placeholder='Optional email' />
-        <button class='btn primary' id='savePoemsBtn' type='button'>Save batch</button>
-      </div>
     </aside>
     <section class='poems-main' id='poemEditorPane'></section>
   </section>
-  <p id='poemSaveStatus' class='footer-note'></p>
-  <p id='poemReturnLink' class='footer-note'></p>`);
+  <p id='poemSaveStatus' class='footer-note subtle-status'></p>`, 'poems-wrapper');
   target.append(box);
 
   const list=box.querySelector('#threadList');
   const editor=box.querySelector('#poemEditorPane');
   const addBtn=box.querySelector('#newPoemBtn');
-  const saveBtn=box.querySelector('#savePoemsBtn');
   const status=box.querySelector('#poemSaveStatus');
-  const returnLink=box.querySelector('#poemReturnLink');
-  const emailInput=box.querySelector('#poemEmailInput');
 
   let poems=[];
   let selected=-1;
+  let saveTimer=null;
+  let isSaving=false;
+
+  const syncStatus=(text)=>{status.textContent=text||'';};
+
+  const queueSave=()=>{
+    if(selected<0||!poems[selected]) return;
+    poems[selected].updatedAt=new Date().toISOString();
+    renderList();
+    syncStatus('Saving…');
+    clearTimeout(saveTimer);
+    saveTimer=setTimeout(saveNow, 450);
+  };
+
+  const saveNow=async()=>{
+    if(isSaving||selected<0||!poems[selected]) return;
+    isSaving=true;
+    const poem=poems[selected];
+    const text=(poem.text||'').trim();
+    if(!text){isSaving=false;syncStatus('');return;}
+
+    try{
+      const res=await fetch('/api/poems/batch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({collectionToken:getCollectionToken(),poems:[{id:poem.id||undefined,title:(poem.title||'').trim()||undefined,text}]})});
+      const data=await res.json();
+      if(!res.ok||!data.ok) throw new Error(data.error||'save_failed');
+      setCollectionToken(data.collection.token);
+      const saved=(data.poems||[]).find((p)=>p.id===poem.id)||data.poems?.[data.poems.length-1];
+      if(saved){
+        poems[selected]={id:saved.id,title:saved.title||'',text:saved.text||'',updatedAt:saved.updated_at};
+      }
+      syncStatus('Saved');
+      track('poems_saved',{count:data.counts?.total||0});
+      renderList();
+    }catch{
+      syncStatus('Could not save');
+    }finally{
+      isSaving=false;
+    }
+  };
 
   const renderEditor=()=>{
     if(selected<0||!poems[selected]){
@@ -104,22 +135,18 @@ function setupPoemUploader(targetId='funnel'){
     const poem=poems[selected];
     editor.innerHTML=`<div class='editor-head'>
       <input id='editorTitle' maxlength='160' value="${String(poem.title||'').replace(/"/g,'&quot;')}" placeholder='Poem title' />
-      <div class='row-inline'>
-        <label><input type='radio' name='editorStatus' value='final' ${poem.status!=='draft'?'checked':''}/> Final</label>
-        <label><input type='radio' name='editorStatus' value='draft' ${poem.status==='draft'?'checked':''}/> Draft</label>
-        <button type='button' class='btn secondary' id='deletePoemBtn'>Delete</button>
-      </div>
+      <button type='button' class='btn secondary' id='deletePoemBtn'>Delete</button>
     </div>
     <textarea id='editorText' maxlength='10000' placeholder='Write or paste your poem...'>${poem.text||''}</textarea>`;
 
-    editor.querySelector('#editorTitle').addEventListener('input',(e)=>{poems[selected].title=e.target.value;renderList();});
-    editor.querySelector('#editorText').addEventListener('input',(e)=>{poems[selected].text=e.target.value;renderList();});
-    editor.querySelectorAll('input[name=editorStatus]').forEach((r)=>r.addEventListener('change',(e)=>{poems[selected].status=e.target.value;renderList();}));
+    editor.querySelector('#editorTitle').addEventListener('input',(e)=>{poems[selected].title=e.target.value;queueSave();});
+    editor.querySelector('#editorText').addEventListener('input',(e)=>{poems[selected].text=e.target.value;queueSave();});
     editor.querySelector('#deletePoemBtn').addEventListener('click',()=>{
       poems.splice(selected,1);
       selected=Math.min(selected,poems.length-1);
       renderList();
       renderEditor();
+      syncStatus('');
     });
   };
 
@@ -141,49 +168,27 @@ function setupPoemUploader(targetId='funnel'){
 
   const addPoem=(poem={})=>{
     if(poems.length>=100) return;
-    poems.push({id:poem.id,title:poem.title||'',text:poem.text||'',status:poem.status==='draft'?'draft':'final'});
+    poems.push({id:poem.id,title:poem.title||'',text:poem.text||'',updatedAt:poem.updated_at||poem.updatedAt||null});
     selected=poems.length-1;
     renderList();
     renderEditor();
+    queueSave();
   };
 
-  addBtn.addEventListener('click',()=>addPoem({title:'',text:'',status:'draft'}));
-
-  saveBtn.addEventListener('click',async ()=>{
-    if(!poems.length){status.textContent='Add at least one poem first.';return;}
-    const payload=poems.map((p)=>({id:p.id||undefined,title:(p.title||'').trim()||undefined,text:(p.text||'').trim(),status:p.status==='draft'?'draft':'final'}));
-    if(payload.some((p)=>!p.text)){status.textContent='Each poem needs text before saving.';return;}
-
-    try{
-      const res=await fetch('/api/poems/batch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({collectionToken:getCollectionToken(),email:emailInput.value.trim(),poems:payload})});
-      const data=await res.json();
-      if(!res.ok||!data.ok) throw new Error(data.error||'save_failed');
-      setCollectionToken(data.collection.token);
-      poems=(data.poems||[]).map((p)=>({id:p.id,title:p.title||'',text:p.text||'',status:p.status==='draft'?'draft':'final'}));
-      selected=Math.max(0,Math.min(selected,poems.length-1));
-      status.textContent='Saved';
-      returnLink.innerHTML=`Private return link: <a href='${data.returnLink}'>${location.origin}${data.returnLink}</a>`;
-      renderList();
-      renderEditor();
-      track('poems_saved',{count:data.counts?.total||0});
-    }catch{
-      status.textContent='Could not save right now. Try again.';
-    }
-  });
+  addBtn.addEventListener('click',()=>addPoem({title:'',text:''}));
 
   if(token){
     fetch(`/api/poems?token=${encodeURIComponent(token)}`).then(r=>r.json()).then((data)=>{
       if(data?.ok&&Array.isArray(data.poems)&&data.poems.length){
-        poems=data.poems.map((p)=>({id:p.id,title:p.title||'',text:p.text||'',status:p.status==='draft'?'draft':'final'}));
+        poems=data.poems.map((p)=>({id:p.id,title:p.title||'',text:p.text||'',updatedAt:p.updated_at||null}));
         selected=0;
-        returnLink.innerHTML=`Private return link: <a href='/my-poems/${token}'>${location.origin}/my-poems/${token}</a>`;
-        if(data.collection?.email) emailInput.value=data.collection.email;
-      } else addPoem({title:'',text:'',status:'draft'});
+      } else addPoem({title:'',text:''});
       renderList();
       renderEditor();
-    }).catch(()=>{addPoem({title:'',text:'',status:'draft'});});
+      syncStatus('');
+    }).catch(()=>{addPoem({title:'',text:''});});
   } else {
-    addPoem({title:'',text:'',status:'draft'});
+    addPoem({title:'',text:''});
   }
 }
 
@@ -203,7 +208,7 @@ function setupMyPoemsPage(){
       setCollectionToken(token);
       list.innerHTML='';
       (data.poems||[]).forEach((poem,idx)=>{
-        const row=card(`<h3>${poem.title||`Poem ${idx+1}`}</h3><p class='chip'>${poem.status==='draft'?'Draft':'Final'}</p><pre class='poem-pre'></pre><div class='row-inline'><button class='btn secondary poem-delete' type='button'>Delete</button></div>`);
+        const row=card(`<h3>${poem.title||`Poem ${idx+1}`}</h3><pre class='poem-pre'></pre><div class='row-inline'><button class='btn secondary poem-delete' type='button'>Delete</button></div>`);
         row.querySelector('.poem-pre').textContent=poem.text||'';
         row.querySelector('.poem-delete').addEventListener('click',async ()=>{
           const del=await fetch(`/api/poems/${encodeURIComponent(poem.id)}?token=${encodeURIComponent(token)}`,{method:'DELETE'});
@@ -244,14 +249,14 @@ function setupMyPoemsPage(){
     how?.append(tiers);
 
     const funnel=document.getElementById('funnel');
-    funnel?.append(card(`<h2>Start in 4 steps</h2><div class='funnel-steps'><div class='funnel-step'><p class='kicker'>Step 1</p><h3>Open Analyze</h3><p>Go to the dedicated Analyze page.</p></div><div class='funnel-step'><p class='kicker'>Step 2</p><h3>Add poems one-by-one</h3><p>Paste each poem and click Add another poem.</p></div><div class='funnel-step'><p class='kicker'>Step 3</p><h3>Choose draft or final</h3><p>Set each poem status and edit as needed.</p></div><div class='funnel-step'><p class='kicker'>Step 4</p><h3>Save batch</h3><p>Save and keep your private return link.</p></div></div><div class='cta-row'><a class='btn primary' href='/analyze'>Analyze now</a><a class='btn secondary' href='/types'>Browse type profiles</a></div>`));
+    funnel?.append(card(`<h2>Start in 3 steps</h2><div class='funnel-steps'><div class='funnel-step'><p class='kicker'>Step 1</p><h3>Open Analyze</h3><p>Go to the dedicated Analyze page.</p></div><div class='funnel-step'><p class='kicker'>Step 2</p><h3>Add poems one-by-one</h3><p>Paste each poem and click compose to add another.</p></div><div class='funnel-step'><p class='kicker'>Step 3</p><h3>Edit freely</h3><p>Your poems auto-save while you write.</p></div></div><div class='cta-row'><a class='btn primary' href='/analyze'>Analyze now</a><a class='btn secondary' href='/types'>Browse type profiles</a></div>`));
   }
 
   if(path==='/analyze'){
     const root=document.getElementById('analyzeRoot');
     root?.append(card(`<section class='hero'><p class='kicker'>Analyze</p><h1>Discover Your Poet Personality</h1><p class='lead'>Build your private poem collection and save everything in one batch.</p></section>`,''));
-    root?.append(card(`<h2>Start in 3 steps</h2><div class='funnel-steps'><div class='funnel-step'><p class='kicker'>Step 1</p><h3>Add your poems</h3><p>Paste your poems into the form one-by-one.</p></div><div class='funnel-step'><p class='kicker'>Step 2</p><h3>Set draft or final</h3><p>Mark each poem’s status and edit anytime.</p></div><div class='funnel-step'><p class='kicker'>Step 3</p><h3>Save your batch</h3><p>Save your poems and keep your private return link.</p></div></div>`));
-    root?.append(card(`<div id='analyzeUploader'></div>`));
+    root?.append(card(`<h2>Start in 3 steps</h2><div class='funnel-steps'><div class='funnel-step'><p class='kicker'>Step 1</p><h3>Add your poems</h3><p>Paste your poems into the workspace one-by-one.</p></div><div class='funnel-step'><p class='kicker'>Step 2</p><h3>Organize and refine</h3><p>Open any poem from the sidebar and edit anytime.</p></div><div class='funnel-step'><p class='kicker'>Step 3</p><h3>Keep writing</h3><p>Everything auto-saves while you work.</p></div></div>`));
+root?.insertAdjacentHTML('beforeend',`<section id='analyzeUploader' class='reveal'></section>`);
     setupPoemUploader('analyzeUploader');
   }
 
