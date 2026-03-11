@@ -199,6 +199,8 @@ function setupPoemUploader(targetId='funnel'){
     const a=payload?.analysis;
     if(!a){analysisResult.innerHTML='No analysis yet.';return;}
     const chips=pickTraitChips(a);
+    const slugMap={romantic:'lover',mystic:'oracle',architect:'architect',melancholic:'mourner',visionary:'dreamer',witness:'witness',philosopher:'seeker'};
+    const archetypeHref=a.personalityKey&&slugMap[a.personalityKey]?`/type/${slugMap[a.personalityKey]}`:'/types';
     analysisResult.classList.remove('muted');
     analysisResult.innerHTML=`
       <div class='analysis-stage stage-1'>
@@ -206,6 +208,7 @@ function setupPoemUploader(targetId='funnel'){
           <p class='kicker'>Matched Archetype</p>
           <h2>${a.personalityTitle}</h2>
           <p class='lead'>${a.summary}</p>
+          <div class='analysis-hero-actions'><a class='btn secondary' href='${archetypeHref}'>Learn more</a></div>
         </div>
       </div>
       <div class='analysis-stage stage-2'>
