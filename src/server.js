@@ -1041,6 +1041,7 @@ app.get("/results-demo", (_req, res) => res.sendFile(path.join(publicDir, "resul
 app.get("/analyze", (_req, res) => res.sendFile(path.join(publicDir, "analyze.html")));
 app.get("/account", (_req, res) => res.sendFile(path.join(publicDir, "account.html")));
 app.get("/dashboard", (_req, res) => res.sendFile(path.join(publicDir, "dashboard.html")));
+app.get("/settings", (_req, res) => res.sendFile(path.join(publicDir, "settings.html")));
 app.get("/my-poems/:token", (_req, res) => res.sendFile(path.join(publicDir, "my-poems.html")));
 
 app.listen(port, () => {

@@ -406,9 +406,130 @@ async function setupDashboardPage(){
       <p class='lead'>You’re signed in. Ready to keep building your Poet Personality?</p>
       <div class='cta-row'>
         <a class='btn primary' href='/analyze'>Continue Writing</a>
-        <a class='btn secondary' href='/account'>Account Settings</a>
+        <a class='btn secondary' href='/settings'>Account Settings</a>
       </div>
     </section>`,''));
+  }catch{
+    location.href='/account';
+  }
+}
+
+async function setupSettingsPage(){
+  const root=document.getElementById('settingsRoot');
+  if(!root) return;
+
+  try{
+    const res=await fetch('/api/auth/me');
+    const data=await res.json();
+    if(!data?.user){location.href='/account';return;}
+
+    const user=data.user;
+    const displayName=(user.name||'').trim()||'Writer';
+    const safeName=displayName.replace(/</g,'&lt;');
+    const safeEmail=String(user.email||'').replace(/</g,'&lt;');
+    const username=safeEmail.split('@')[0]||'poet';
+
+    const userCorner=document.getElementById('userCorner');
+    if(userCorner) userCorner.textContent=displayName;
+
+    root.append(card(`<section class='settings-shell'>
+      <aside class='settings-sidebar'>
+        <a href='#profile' class='active'>Profile</a>
+        <a href='#account'>Account</a>
+        <a href='#billing'>Billing</a>
+        <a href='#preferences'>Preferences</a>
+        <a href='#security'>Security</a>
+      </aside>
+      <section class='settings-main'>
+        <article id='profile' class='settings-card'>
+          <div class='settings-head'><h2>Profile</h2><p>How your identity appears in the app.</p></div>
+          <div class='profile-row'>
+            <div class='avatar'>${safeName.slice(0,1).toUpperCase()}</div>
+            <div>
+              <h3>${safeName}</h3>
+              <p class='muted'>${safeEmail}</p>
+            </div>
+          </div>
+          <div class='settings-grid'>
+            <label><span>Display name</span><input id='setDisplayName' value='${safeName.replace(/'/g,'&#39;')}' /></label>
+            <label><span>Email address</span><input id='setEmailProfile' value='${safeEmail.replace(/'/g,'&#39;')}' /></label>
+            <label><span>Username</span><input value='${username.replace(/'/g,'&#39;')}' /></label>
+          </div>
+          <div class='settings-actions'><button class='btn primary' id='saveProfileBtn'>Edit profile</button></div>
+        </article>
+
+        <article id='account' class='settings-card'>
+          <div class='settings-head'><h2>Account Information</h2><p>Core account details and recovery identity.</p></div>
+          <div class='settings-grid'>
+            <label><span>Name</span><input id='setName' value='${safeName.replace(/'/g,'&#39;')}' /></label>
+            <label><span>Email</span><input id='setEmail' value='${safeEmail.replace(/'/g,'&#39;')}' /></label>
+            <label><span>Password</span><input type='password' value='••••••••••' /></label>
+          </div>
+          <div class='settings-actions'><button class='btn secondary' id='changePasswordBtn'>Change password</button><button class='btn secondary' id='updateEmailBtn'>Update email</button></div>
+        </article>
+
+        <article id='billing' class='settings-card'>
+          <div class='settings-head'><h2>Subscription / Plan</h2><p>Billing and plan controls.</p></div>
+          <div class='settings-grid compact'>
+            <div><span class='label'>Current plan</span><strong>Free</strong></div>
+            <div><span class='label'>Billing status</span><strong>Active</strong></div>
+            <div><span class='label'>Renewal date</span><strong>—</strong></div>
+          </div>
+          <div class='settings-actions'><button class='btn primary'>Upgrade / Manage Plan</button></div>
+        </article>
+
+        <article id='preferences' class='settings-card'>
+          <div class='settings-head'><h2>Preferences</h2><p>Control how and when we contact you.</p></div>
+          <div class='toggle-list'>
+            <label class='toggle-row'><span><strong>Notification preferences</strong><small>Product updates and key alerts</small></span><input type='checkbox' id='prefNotify' checked /></label>
+            <label class='toggle-row'><span><strong>Email updates</strong><small>Important account-related emails</small></span><input type='checkbox' id='prefEmail' checked /></label>
+            <label class='toggle-row'><span><strong>Marketing emails</strong><small>Tips, launches, and offers</small></span><input type='checkbox' id='prefMarketing' /></label>
+            <label class='toggle-row'><span><strong>Appearance</strong><small>Prefer dark theme</small></span><input type='checkbox' id='prefTheme' /></label>
+          </div>
+        </article>
+
+        <article id='security' class='settings-card danger-wrap'>
+          <div class='settings-head'><h2>Privacy / Security</h2><p>Keep your account safe and under your control.</p></div>
+          <div class='settings-actions'><button class='btn secondary'>Enable Two-Factor Authentication</button><button class='btn secondary'>View Login Activity</button><button class='btn secondary' id='logoutAllBtn'>Sign out of all devices</button></div>
+          <div class='danger-zone'>
+            <h3>Danger zone</h3>
+            <p class='muted'>This action is permanent and cannot be undone.</p>
+            <button class='btn danger' id='deleteAccountBtn'>Delete account</button>
+          </div>
+        </article>
+
+        <div class='settings-save-row'>
+          <button class='btn primary' id='saveSettingsBtn'>Save Changes</button>
+          <p id='settingsStatus' class='footer-note'></p>
+        </div>
+      </section>
+    </section>`));
+
+    const status=root.querySelector('#settingsStatus');
+    const setStatus=(m)=>{status.textContent=m||'';};
+
+    const prefKeys=['prefNotify','prefEmail','prefMarketing','prefTheme'];
+    const saved=JSON.parse(localStorage.getItem('pp_settings_prefs')||'{}');
+    prefKeys.forEach((k)=>{const el=root.querySelector(`#${k}`);if(el&&typeof saved[k]==='boolean')el.checked=saved[k];});
+
+    root.querySelector('#saveProfileBtn')?.addEventListener('click',()=>setStatus('Profile edits staged. Click Save Changes to confirm.'));
+    root.querySelector('#changePasswordBtn')?.addEventListener('click',()=>setStatus('Password update flow coming next.'));
+    root.querySelector('#updateEmailBtn')?.addEventListener('click',()=>setStatus('Email update flow coming next.'));
+
+    root.querySelector('#logoutAllBtn')?.addEventListener('click',async ()=>{
+      await fetch('/api/auth/logout',{method:'POST'});
+      location.href='/account';
+    });
+
+    root.querySelector('#deleteAccountBtn')?.addEventListener('click',()=>setStatus('Delete account is intentionally protected. Add backend confirm flow before enabling.'));
+
+    root.querySelector('#saveSettingsBtn')?.addEventListener('click',()=>{
+      const prefs={};
+      prefKeys.forEach((k)=>{const el=root.querySelector(`#${k}`);if(el)prefs[k]=!!el.checked;});
+      localStorage.setItem('pp_settings_prefs',JSON.stringify(prefs));
+      setStatus('Changes saved.');
+    });
+
   }catch{
     location.href='/account';
   }
@@ -517,6 +638,7 @@ root?.insertAdjacentHTML('beforeend',`<section id='analyzeUploader' class='revea
 
   if(path==='/account') setupAccountPage();
   if(path==='/dashboard') setupDashboardPage();
+  if(path==='/settings') setupSettingsPage();
   if(path.startsWith('/my-poems/')) setupMyPoemsPage();
 
   setupReveal();
