@@ -272,87 +272,60 @@ function setupAccountPage(){
   const root=document.getElementById('accountRoot');
   if(!root) return;
 
-  root.append(card(`<h1>Account</h1><p class='muted'>Create an account or log in. Your session can be used to link poem collections.</p>
-  <div class='two-col'>
-    <section>
-      <h3>Create account</h3>
-      <form id='registerForm' class='stacked-form'>
-        <label>Email</label><input id='registerEmail' type='email' required />
-        <label>Password</label><input id='registerPassword' type='password' minlength='8' required />
-        <button class='btn primary' type='submit'>Create account</button>
-      </form>
-    </section>
-    <section>
-      <h3>Log in</h3>
-      <form id='loginForm' class='stacked-form'>
-        <label>Email</label><input id='loginEmail' type='email' required />
-        <label>Password</label><input id='loginPassword' type='password' minlength='8' required />
-        <button class='btn secondary' type='submit'>Log in</button>
-      </form>
-    </section>
-  </div>
-  <div class='row-inline' style='margin-top:10px;gap:8px'><button id='linkCollectionBtn' class='btn secondary' type='button'>Link current poem collection</button><button id='logoutBtn' class='btn secondary' type='button'>Log out</button></div>
-  <p id='accountStatus' class='footer-note'></p>
-  <pre id='accountMe' class='poem-pre'></pre>`));
+  root.append(card(`<section class='auth-shell'>
+    <h1>Welcome</h1>
+    <p class='muted'>Create an account or sign in to continue.</p>
+    <form id='authForm' class='auth-form'>
+      <label class='auth-input'>
+        <span class='auth-icon'>👤</span>
+        <input id='authName' type='text' placeholder='Name' maxlength='120' required />
+      </label>
+      <label class='auth-input'>
+        <span class='auth-icon'>✉️</span>
+        <input id='authEmail' type='email' placeholder='E-mail' required />
+      </label>
+      <label class='auth-input'>
+        <span class='auth-icon'>🔒</span>
+        <input id='authPassword' type='password' placeholder='Password' minlength='8' required />
+      </label>
+      <div class='auth-actions'>
+        <button class='btn primary auth-pill' id='signUpBtn' type='button'>Sign Up</button>
+        <button class='btn secondary auth-pill muted-btn' id='signInBtn' type='button'>Sign In</button>
+      </div>
+    </form>
+    <p id='accountStatus' class='footer-note'></p>
+  </section>`));
 
   const status=root.querySelector('#accountStatus');
-  const meEl=root.querySelector('#accountMe');
   const setStatus=(x)=>status.textContent=x||'';
 
-  const refreshMe=async()=>{
-    const res=await fetch('/api/auth/me');
-    const data=await res.json();
-    meEl.textContent=JSON.stringify(data.user||null,null,2);
-  };
-
-  root.querySelector('#registerForm').addEventListener('submit',async (e)=>{
-    e.preventDefault();
-    setStatus('Creating account…');
-    const email=root.querySelector('#registerEmail').value.trim();
-    const password=root.querySelector('#registerPassword').value;
-    try{
-      const res=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
-      const data=await res.json();
-      if(!res.ok||!data.ok) throw new Error(data.error||'register_failed');
-      setStatus('Account created and logged in.');
-      await refreshMe();
-    }catch(err){setStatus(`Could not create account (${err.message}).`);}
+  const readFields=()=>({
+    name:root.querySelector('#authName').value.trim(),
+    email:root.querySelector('#authEmail').value.trim(),
+    password:root.querySelector('#authPassword').value
   });
 
-  root.querySelector('#loginForm').addEventListener('submit',async (e)=>{
-    e.preventDefault();
+  root.querySelector('#signUpBtn').addEventListener('click',async ()=>{
+    const {name,email,password}=readFields();
+    setStatus('Creating account…');
+    try{
+      const res=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password})});
+      const data=await res.json();
+      if(!res.ok||!data.ok) throw new Error(data.error||'register_failed');
+      setStatus('You’re signed up.');
+    }catch(err){setStatus(`Could not sign up (${err.message}).`);}
+  });
+
+  root.querySelector('#signInBtn').addEventListener('click',async ()=>{
+    const {email,password}=readFields();
     setStatus('Signing in…');
-    const email=root.querySelector('#loginEmail').value.trim();
-    const password=root.querySelector('#loginPassword').value;
     try{
       const res=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
       const data=await res.json();
       if(!res.ok||!data.ok) throw new Error(data.error||'login_failed');
-      setStatus('Logged in.');
-      await refreshMe();
-    }catch(err){setStatus(`Could not log in (${err.message}).`);}
+      setStatus('You’re signed in.');
+    }catch(err){setStatus(`Could not sign in (${err.message}).`);}
   });
-
-  root.querySelector('#logoutBtn').addEventListener('click',async ()=>{
-    await fetch('/api/auth/logout',{method:'POST'});
-    setStatus('Logged out.');
-    await refreshMe();
-  });
-
-  root.querySelector('#linkCollectionBtn').addEventListener('click',async ()=>{
-    const collectionToken=getCollectionToken();
-    if(!collectionToken){setStatus('No local poem collection token found yet. Save a poem first.');return;}
-    setStatus('Linking collection…');
-    try{
-      const res=await fetch('/api/auth/link-collection',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({collectionToken})});
-      const data=await res.json();
-      if(!res.ok||!data.ok) throw new Error(data.error||'link_failed');
-      setStatus('Collection linked to your account.');
-      await refreshMe();
-    }catch(err){setStatus(`Could not link collection (${err.message}).`);}
-  });
-
-  refreshMe().catch(()=>{meEl.textContent='Could not load account status.';});
 }
 
 function setupMyPoemsPage(){

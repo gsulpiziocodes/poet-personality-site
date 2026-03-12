@@ -27,6 +27,14 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .capture-form{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.capture-form input{flex:1;min-width:220px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff}
 .stacked-form{display:flex;flex-direction:column;gap:6px}
 .stacked-form input{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff}
+.auth-shell{max-width:560px;margin:24px auto;padding:18px 18px 12px}
+.auth-form{display:flex;flex-direction:column;gap:14px;margin-top:14px}
+.auth-input{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px 14px}
+.auth-icon{opacity:.72;font-size:14px;min-width:16px;text-align:center}
+.auth-input input{border:0;outline:none;width:100%;font-size:.98rem;background:transparent}
+.auth-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.auth-pill{border-radius:999px;padding:11px 16px}
+.muted-btn{background:#f2ede5;color:#6a5b4c;border-color:#e6dac8}
 .row-inline{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0}
 .poem-pre{white-space:pre-wrap;word-break:break-word;background:#faf6ef;border:1px solid #eadfce;padding:10px;border-radius:8px;max-height:280px;overflow:auto}
 .poems-wrapper{padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;margin-top:10px}

@@ -211,6 +211,7 @@ function toPublicUser(user) {
   if (!user) return null;
   return {
     id: user.id,
+    name: user.name || "",
     email: user.email,
     created_at: user.created_at,
     last_login_at: user.last_login_at || null,
@@ -218,7 +219,7 @@ function toPublicUser(user) {
   };
 }
 
-async function createUser({ email, password }) {
+async function createUser({ name, email, password }) {
   const users = await getUsers();
   if (users.some((u) => normalizeEmail(u.email) === normalizeEmail(email))) {
     throw new Error("email_exists");
@@ -228,6 +229,7 @@ async function createUser({ email, password }) {
   const { salt, hash } = hashPassword(password);
   const user = {
     id: crypto.randomUUID(),
+    name: String(name || "").trim().slice(0, 120),
     email: normalizeEmail(email),
     password_salt: salt,
     password_hash: hash,
@@ -819,12 +821,14 @@ app.post("/api/poems/analyze", rateLimit({ keyPrefix: "poems", windowMs: 60_000,
 
 app.post("/api/auth/register", rateLimit({ keyPrefix: "auth", windowMs: 60_000, maxHits: 20 }), async (req, res) => {
   try {
+    const name = String(req.body?.name || "").trim();
     const email = normalizeEmail(req.body?.email);
     const password = String(req.body?.password || "");
+    if (!name) return res.status(400).json({ ok: false, error: "invalid_name" });
     if (!email || !email.includes("@")) return res.status(400).json({ ok: false, error: "invalid_email" });
     if (password.length < 8) return res.status(400).json({ ok: false, error: "password_too_short" });
 
-    const user = await createUser({ email, password });
+    const user = await createUser({ name, email, password });
     const token = encodeSession({ uid: user.id, exp: Date.now() + 1000 * 60 * 60 * 24 * 30 });
     const secureFlag = process.env.NODE_ENV === "production" ? "; Secure" : "";
     res.setHeader("Set-Cookie", `user_session=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000${secureFlag}`);
