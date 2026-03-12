@@ -371,7 +371,7 @@ function setupAccountPage(){
       const res=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password})});
       const data=await res.json();
       if(!res.ok||!data.ok) throw new Error(data.error||'register_failed');
-      setStatus('You’re signed up.');
+      location.href='/dashboard';
     }catch(err){setStatus(`Could not sign up (${err.message}).`);}
   });
 
@@ -382,9 +382,36 @@ function setupAccountPage(){
       const res=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
       const data=await res.json();
       if(!res.ok||!data.ok) throw new Error(data.error||'login_failed');
-      setStatus('You’re signed in.');
+      location.href='/dashboard';
     }catch(err){setStatus(`Could not sign in (${err.message}).`);}
   });
+}
+
+async function setupDashboardPage(){
+  const root=document.getElementById('dashboardRoot');
+  if(!root) return;
+
+  try{
+    const res=await fetch('/api/auth/me');
+    const data=await res.json();
+    if(!data?.user){location.href='/account';return;}
+
+    const name=(data.user.name||data.user.email||'Writer').trim();
+    const userCorner=document.getElementById('userCorner');
+    if(userCorner) userCorner.textContent=name;
+
+    root.append(card(`<section class='hero'>
+      <p class='kicker'>Dashboard</p>
+      <h1>Welcome, ${name.replace(/</g,'&lt;')}</h1>
+      <p class='lead'>You’re signed in. Ready to keep building your Poet Personality?</p>
+      <div class='cta-row'>
+        <a class='btn primary' href='/analyze'>Continue Writing</a>
+        <a class='btn secondary' href='/account'>Account Settings</a>
+      </div>
+    </section>`,''));
+  }catch{
+    location.href='/account';
+  }
 }
 
 function setupMyPoemsPage(){
@@ -489,6 +516,7 @@ root?.insertAdjacentHTML('beforeend',`<section id='analyzeUploader' class='revea
   }
 
   if(path==='/account') setupAccountPage();
+  if(path==='/dashboard') setupDashboardPage();
   if(path.startsWith('/my-poems/')) setupMyPoemsPage();
 
   setupReveal();
