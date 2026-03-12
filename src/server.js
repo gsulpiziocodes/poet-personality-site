@@ -51,6 +51,7 @@ const userSessionSecret = process.env.USER_SESSION_SECRET || adminSessionSecret;
 
 const rateState = new Map();
 const adminRecoveryTokens = new Map();
+const userResetTokens = new Map();
 
 function getClientIp(req) {
   const forwarded = String(req.headers["x-forwarded-for"] || "")
@@ -266,6 +267,19 @@ async function attachCollectionToUser({ userId, token }) {
   existing.add(token);
   user.collection_tokens = Array.from(existing);
   await writeJson(usersPath, users);
+}
+
+async function updateUserPassword({ userId, password }) {
+  const users = await getUsers();
+  const user = users.find((u) => u.id === userId);
+  if (!user) return false;
+
+  const { salt, hash } = hashPassword(password);
+  user.password_salt = salt;
+  user.password_hash = hash;
+  user.updated_at = new Date().toISOString();
+  await writeJson(usersPath, users);
+  return true;
 }
 
 function makeCollectionToken() {
@@ -880,6 +894,72 @@ app.post("/api/auth/link-collection", requireUserSession, async (req, res) => {
   }
 });
 
+app.post("/api/auth/forgot-password", rateLimit({ keyPrefix: "auth", windowMs: 60_000, maxHits: 20 }), async (req, res) => {
+  try {
+    const email = normalizeEmail(req.body?.email);
+    if (!email || !email.includes("@")) return res.status(400).json({ ok: false, error: "invalid_email" });
+
+    const user = await findUserByEmail(email);
+    if (user) {
+      const token = crypto.randomBytes(24).toString("hex");
+      const exp = Date.now() + 30 * 60 * 1000;
+      userResetTokens.set(token, { userId: user.id, exp });
+
+      if (resend && leadsFromEmail) {
+        const origin = `${req.protocol}://${req.get("host")}`;
+        const link = `${origin}/reset-password?token=${encodeURIComponent(token)}`;
+        try {
+          await resend.emails.send({
+            from: leadsFromEmail,
+            to: email,
+            subject: "Reset your Poet Personality password",
+            html: `<p>You requested a password reset.</p><p><a href="${link}">Reset your password</a></p><p>This link expires in 30 minutes.</p>`
+          });
+        } catch {
+          // Do not leak transport errors in response
+        }
+      }
+    }
+
+    return res.json({ ok: true });
+  } catch (error) {
+    return res.status(500).json({ ok: false, error: "forgot_password_failed", details: error.message });
+  }
+});
+
+app.get("/api/auth/reset-password/validate", rateLimit({ keyPrefix: "auth", windowMs: 60_000, maxHits: 40 }), (req, res) => {
+  const token = String(req.query?.token || "").trim();
+  const current = userResetTokens.get(token);
+  if (!token || !current || Date.now() > current.exp) {
+    if (token) userResetTokens.delete(token);
+    return res.status(400).json({ ok: false, error: "invalid_or_expired_token" });
+  }
+  return res.json({ ok: true });
+});
+
+app.post("/api/auth/reset-password", rateLimit({ keyPrefix: "auth", windowMs: 60_000, maxHits: 20 }), async (req, res) => {
+  try {
+    const token = String(req.body?.token || "").trim();
+    const password = String(req.body?.password || "");
+    const current = userResetTokens.get(token);
+
+    if (!token || !current || Date.now() > current.exp) {
+      if (token) userResetTokens.delete(token);
+      return res.status(400).json({ ok: false, error: "invalid_or_expired_token" });
+    }
+
+    if (password.length < 8) return res.status(400).json({ ok: false, error: "password_too_short" });
+
+    const updated = await updateUserPassword({ userId: current.userId, password });
+    userResetTokens.delete(token);
+    if (!updated) return res.status(404).json({ ok: false, error: "user_not_found" });
+
+    return res.json({ ok: true });
+  } catch (error) {
+    return res.status(500).json({ ok: false, error: "reset_password_failed", details: error.message });
+  }
+});
+
 app.get("/admin/login", rateLimit({ keyPrefix: "admin", windowMs: 60_000, maxHits: 20 }), (req, res) => {
   const error = req.query?.error === "1";
   res.type("html").send(`<!doctype html>
@@ -1040,6 +1120,8 @@ app.get("/categories", (_req, res) => res.sendFile(path.join(publicDir, "categor
 app.get("/results-demo", (_req, res) => res.sendFile(path.join(publicDir, "results.html")));
 app.get("/analyze", (_req, res) => res.sendFile(path.join(publicDir, "analyze.html")));
 app.get("/account", (_req, res) => res.sendFile(path.join(publicDir, "account.html")));
+app.get("/forgot-password", (_req, res) => res.sendFile(path.join(publicDir, "forgot-password.html")));
+app.get("/reset-password", (_req, res) => res.sendFile(path.join(publicDir, "reset-password.html")));
 app.get("/dashboard", (_req, res) => res.sendFile(path.join(publicDir, "dashboard.html")));
 app.get("/settings", (_req, res) => res.sendFile(path.join(publicDir, "settings.html")));
 app.get("/my-poems/:token", (_req, res) => res.sendFile(path.join(publicDir, "my-poems.html")));

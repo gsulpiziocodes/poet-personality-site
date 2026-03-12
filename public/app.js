@@ -304,6 +304,7 @@ function setupAccountPage(){
         <button class='btn primary auth-pill' id='signUpBtn' type='button'>Sign Up</button>
         <button class='btn secondary auth-pill muted-btn' id='signInBtn' type='button'>Sign In</button>
       </div>
+      <a class='auth-sub-link' href='/forgot-password'>Forgot password?</a>
     </form>
     <p id='accountStatus' class='footer-note'></p>
   </section>`));
@@ -535,6 +536,191 @@ async function setupSettingsPage(){
   }
 }
 
+function passwordChecks(password=''){
+  const len=password.length;
+  const specialCount=(password.match(/[^A-Za-z0-9]/g)||[]).length;
+  return {
+    len,
+    specialCount,
+    hasLength:len>=8,
+    hasSpecial:specialCount>=1,
+    hasNumber:/\d/.test(password),
+    hasUpper:/[A-Z]/.test(password)
+  };
+}
+
+function setupForgotPasswordPage(){
+  const root=document.getElementById('forgotRoot');
+  if(!root) return;
+
+  root.innerHTML=`<section class='auth-shell auth-card'>
+    <p class='kicker'>Account Recovery</p>
+    <h1>Forgot Password?</h1>
+    <p class='muted'>Enter your email and we’ll send a secure password reset link.</p>
+    <form id='forgotForm' class='auth-form'>
+      <label class='auth-input'>
+        <span class='auth-icon'>✉️</span>
+        <input id='forgotEmail' type='email' placeholder='E-mail' required />
+      </label>
+      <p id='forgotError' class='inline-error hidden'>Please enter a valid email address.</p>
+      <button class='btn primary auth-pill' id='forgotSendBtn' type='submit' disabled>Send Reset Link</button>
+      <a class='auth-sub-link' href='/account'>Back to Sign In</a>
+    </form>
+    <section id='forgotSent' class='hidden'>
+      <div class='status-good'>Password reset email sent.</div>
+      <p class='muted'>If an account exists for <strong id='forgotSentEmail'></strong>, we’ve sent reset instructions. Check inbox and spam.</p>
+      <div class='auth-actions single'>
+        <button class='btn secondary auth-pill' id='resendBtn' type='button'>Resend email</button>
+      </div>
+      <a class='auth-sub-link' href='/account'>Back to Sign In</a>
+    </section>
+  </section>`;
+
+  const emailInput=root.querySelector('#forgotEmail');
+  const sendBtn=root.querySelector('#forgotSendBtn');
+  const form=root.querySelector('#forgotForm');
+  const sent=root.querySelector('#forgotSent');
+  const err=root.querySelector('#forgotError');
+  const sentEmail=root.querySelector('#forgotSentEmail');
+
+  const isValidEmail=(email)=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email||'').trim());
+  const update=()=>{sendBtn.disabled=!isValidEmail(emailInput.value);err.classList.add('hidden');};
+  emailInput.addEventListener('input',update);
+  update();
+
+  const submit=async()=>{
+    const email=emailInput.value.trim();
+    if(!isValidEmail(email)){err.classList.remove('hidden');return;}
+    sendBtn.disabled=true;
+    const original=sendBtn.textContent;
+    sendBtn.textContent='Sending…';
+    try{
+      await fetch('/api/auth/forgot-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+      sentEmail.textContent=email;
+      form.classList.add('hidden');
+      sent.classList.remove('hidden');
+    }finally{
+      sendBtn.textContent=original;
+      update();
+    }
+  };
+
+  form.addEventListener('submit',async (e)=>{e.preventDefault();await submit();});
+  root.querySelector('#resendBtn')?.addEventListener('click',submit);
+}
+
+function setupResetPasswordPage(){
+  const root=document.getElementById('resetRoot');
+  if(!root) return;
+  const token=new URLSearchParams(location.search).get('token')||'';
+
+  root.innerHTML=`<section class='auth-shell auth-card'>
+    <h1>Reset Your Password</h1>
+    <p class='muted'>Choose a new secure password for your account.</p>
+    <div id='resetInvalid' class='status-bad hidden'>This reset link is invalid or expired. Request a new one.</div>
+    <form id='resetForm' class='auth-form hidden'>
+      <label class='auth-input'>
+        <span class='auth-icon'>🔒</span>
+        <input id='newPassword' type='password' placeholder='New password' required />
+      </label>
+      <div class='password-feedback' id='resetFeedback'>
+        <div class='password-strength-row'>
+          <span class='password-strength-label'>Password strength</span>
+          <span id='resetStrength' class='password-strength-value weak'>Weak</span>
+        </div>
+        <ul class='password-rules'>
+          <li id='rLen' class='unmet'><span>8+ characters</span><small id='rLenMeta'>0 characters</small></li>
+          <li id='rSpec' class='unmet'><span>1 special character</span><small id='rSpecMeta'>0 special characters</small></li>
+          <li id='rNum' class='unmet'><span>1 number</span></li>
+          <li id='rUp' class='unmet'><span>1 uppercase letter</span></li>
+        </ul>
+      </div>
+      <label class='auth-input'>
+        <span class='auth-icon'>🔒</span>
+        <input id='confirmPassword' type='password' placeholder='Confirm new password' required />
+      </label>
+      <p id='matchError' class='inline-error hidden'>Passwords do not match.</p>
+      <button class='btn primary auth-pill' id='resetBtn' type='submit' disabled>Reset Password</button>
+    </form>
+    <section id='resetSuccess' class='hidden'>
+      <div class='status-good'>Password successfully updated.</div>
+      <p class='muted'>Your password has been reset. You can now log in with your new password.</p>
+      <a class='btn primary auth-pill' href='/account'>Sign In</a>
+    </section>
+  </section>`;
+
+  const invalid=root.querySelector('#resetInvalid');
+  const form=root.querySelector('#resetForm');
+  const success=root.querySelector('#resetSuccess');
+  const newPassword=root.querySelector('#newPassword');
+  const confirmPassword=root.querySelector('#confirmPassword');
+  const resetBtn=root.querySelector('#resetBtn');
+  const matchError=root.querySelector('#matchError');
+  const strength=root.querySelector('#resetStrength');
+  const rLen=root.querySelector('#rLen');
+  const rSpec=root.querySelector('#rSpec');
+  const rNum=root.querySelector('#rNum');
+  const rUp=root.querySelector('#rUp');
+  const rLenMeta=root.querySelector('#rLenMeta');
+  const rSpecMeta=root.querySelector('#rSpecMeta');
+
+  const setRule=(el,ok)=>{el.classList.toggle('met',ok);el.classList.toggle('unmet',!ok);};
+
+  const refresh=()=>{
+    const checks=passwordChecks(newPassword.value||'');
+    rLenMeta.textContent=`${checks.len} character${checks.len===1?'':'s'}`;
+    rSpecMeta.textContent=`${checks.specialCount} special character${checks.specialCount===1?'':'s'}`;
+    setRule(rLen,checks.hasLength);
+    setRule(rSpec,checks.hasSpecial);
+    setRule(rNum,checks.hasNumber);
+    setRule(rUp,checks.hasUpper);
+
+    const met=[checks.hasLength,checks.hasSpecial,checks.hasNumber,checks.hasUpper].filter(Boolean).length;
+    let label='Weak'; let tone='weak';
+    if(checks.len>=14&&met===4){label='Excellent';tone='excellent';}
+    else if(checks.len>=10&&met>=3){label='Strong';tone='strong';}
+    else if(checks.len>=8&&met>=2){label='Good';tone='good';}
+    strength.textContent=label;
+    strength.className=`password-strength-value ${tone}`;
+
+    const matches=(newPassword.value||'')===(confirmPassword.value||'')&&confirmPassword.value.length>0;
+    const valid=checks.hasLength&&checks.hasSpecial&&checks.hasNumber&&checks.hasUpper&&matches;
+    matchError.classList.toggle('hidden',confirmPassword.value.length===0||matches);
+    resetBtn.disabled=!valid;
+  };
+
+  newPassword.addEventListener('input',refresh);
+  confirmPassword.addEventListener('input',refresh);
+
+  const init=async()=>{
+    if(!token){invalid.classList.remove('hidden');return;}
+    const res=await fetch(`/api/auth/reset-password/validate?token=${encodeURIComponent(token)}`);
+    if(!res.ok){invalid.classList.remove('hidden');return;}
+    form.classList.remove('hidden');
+    refresh();
+  };
+
+  form.addEventListener('submit',async (e)=>{
+    e.preventDefault();
+    refresh();
+    if(resetBtn.disabled) return;
+    const original=resetBtn.textContent;
+    resetBtn.disabled=true;
+    resetBtn.textContent='Resetting…';
+    const res=await fetch('/api/auth/reset-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,password:newPassword.value})});
+    if(!res.ok){
+      invalid.classList.remove('hidden');
+      form.classList.add('hidden');
+      return;
+    }
+    form.classList.add('hidden');
+    success.classList.remove('hidden');
+    resetBtn.textContent=original;
+  });
+
+  init().catch(()=>invalid.classList.remove('hidden'));
+}
+
 function setupMyPoemsPage(){
   const root=document.getElementById('myPoems');
   if(!root) return;
@@ -637,6 +823,8 @@ root?.insertAdjacentHTML('beforeend',`<section id='analyzeUploader' class='revea
   }
 
   if(path==='/account') setupAccountPage();
+  if(path==='/forgot-password') setupForgotPasswordPage();
+  if(path==='/reset-password') setupResetPasswordPage();
   if(path==='/dashboard') setupDashboardPage();
   if(path==='/settings') setupSettingsPage();
   if(path.startsWith('/my-poems/')) setupMyPoemsPage();
