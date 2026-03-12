@@ -288,6 +288,18 @@ function setupAccountPage(){
         <span class='auth-icon'>🔒</span>
         <input id='authPassword' type='password' placeholder='Password' minlength='8' required />
       </label>
+      <div class='password-feedback' id='passwordFeedback'>
+        <div class='password-strength-row'>
+          <span class='password-strength-label'>Password strength</span>
+          <span id='passwordStrength' class='password-strength-value weak'>Weak</span>
+        </div>
+        <ul class='password-rules'>
+          <li id='ruleLength' class='unmet'><span>8+ characters</span><small id='ruleLengthMeta'>0 characters</small></li>
+          <li id='ruleSpecial' class='unmet'><span>1 special character</span><small id='ruleSpecialMeta'>0 special characters</small></li>
+          <li id='ruleNumber' class='unmet'><span>1 number</span></li>
+          <li id='ruleUpper' class='unmet'><span>1 uppercase letter</span></li>
+        </ul>
+      </div>
       <div class='auth-actions'>
         <button class='btn primary auth-pill' id='signUpBtn' type='button'>Sign Up</button>
         <button class='btn secondary auth-pill muted-btn' id='signInBtn' type='button'>Sign In</button>
@@ -297,7 +309,52 @@ function setupAccountPage(){
   </section>`));
 
   const status=root.querySelector('#accountStatus');
+  const passwordInput=root.querySelector('#authPassword');
+  const strengthEl=root.querySelector('#passwordStrength');
+  const ruleLength=root.querySelector('#ruleLength');
+  const ruleSpecial=root.querySelector('#ruleSpecial');
+  const ruleNumber=root.querySelector('#ruleNumber');
+  const ruleUpper=root.querySelector('#ruleUpper');
+  const ruleLengthMeta=root.querySelector('#ruleLengthMeta');
+  const ruleSpecialMeta=root.querySelector('#ruleSpecialMeta');
   const setStatus=(x)=>status.textContent=x||'';
+
+  const setRuleState=(el,met)=>{
+    el.classList.toggle('met',!!met);
+    el.classList.toggle('unmet',!met);
+  };
+
+  const updatePasswordFeedback=()=>{
+    const password=passwordInput.value||'';
+    const len=password.length;
+    const specialCount=(password.match(/[^A-Za-z0-9]/g)||[]).length;
+    const hasLength=len>=8;
+    const hasSpecial=specialCount>=1;
+    const hasNumber=/\d/.test(password);
+    const hasUpper=/[A-Z]/.test(password);
+
+    ruleLengthMeta.textContent=`${len} character${len===1?'':'s'}`;
+    ruleSpecialMeta.textContent=`${specialCount} special character${specialCount===1?'':'s'}`;
+
+    setRuleState(ruleLength,hasLength);
+    setRuleState(ruleSpecial,hasSpecial);
+    setRuleState(ruleNumber,hasNumber);
+    setRuleState(ruleUpper,hasUpper);
+
+    const metCount=[hasLength,hasSpecial,hasNumber,hasUpper].filter(Boolean).length;
+    let label='Weak';
+    let tone='weak';
+
+    if(len>=14 && metCount===4){label='Excellent';tone='excellent';}
+    else if(len>=10 && metCount>=3){label='Strong';tone='strong';}
+    else if(len>=8 && metCount>=2){label='Good';tone='good';}
+
+    strengthEl.textContent=label;
+    strengthEl.className=`password-strength-value ${tone}`;
+  };
+
+  updatePasswordFeedback();
+  passwordInput.addEventListener('input',updatePasswordFeedback);
 
   const readFields=()=>({
     name:root.querySelector('#authName').value.trim(),

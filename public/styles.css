@@ -35,6 +35,20 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .auth-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
 .auth-pill{border-radius:999px;padding:11px 16px}
 .muted-btn{background:#f2ede5;color:#6a5b4c;border-color:#e6dac8}
+.password-feedback{margin-top:-4px;border:1px solid #ece2d4;background:#fffcf8;border-radius:14px;padding:10px 12px}
+.password-strength-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.password-strength-label{font-size:.82rem;color:#756858}
+.password-strength-value{font-size:.84rem;font-weight:700;padding:3px 9px;border-radius:999px}
+.password-strength-value.weak{color:#7a3d12;background:#f7e3d7}
+.password-strength-value.good{color:#7a5b10;background:#f5edd0}
+.password-strength-value.strong{color:#22553a;background:#def3e7}
+.password-strength-value.excellent{color:#1f4c7a;background:#ddeefd}
+.password-rules{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.password-rules li{display:flex;justify-content:space-between;align-items:center;font-size:.86rem;color:#7a6c5d}
+.password-rules li::before{content:'○';margin-right:8px;color:#b4a392}
+.password-rules li.met{color:#2f5e43}
+.password-rules li.met::before{content:'✓';color:#2f8b5d}
+.password-rules small{font-size:.76rem;color:#8b7c6d}
 .row-inline{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0}
 .poem-pre{white-space:pre-wrap;word-break:break-word;background:#faf6ef;border:1px solid #eadfce;padding:10px;border-radius:8px;max-height:280px;overflow:auto}
 .poems-wrapper{padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;margin-top:10px}
