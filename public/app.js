@@ -19,9 +19,10 @@ async function setupGlobalAccountButton(){
   const wrap=el('div','account-corner');
   const link=el('a','account-corner-btn');
   if(user){
+    const userLabel=(user.name||String(user.email||'').split('@')[0]||'Account').trim();
     link.href='/settings';
-    link.textContent='Account';
-    link.title=(user.name||user.email||'Account').trim();
+    link.textContent=userLabel;
+    link.title='Account settings';
   }else{
     link.href='/account';
     link.textContent='Sign In';
@@ -296,9 +297,15 @@ function setupPoemUploader(targetId='funnel'){
   }
 }
 
-function setupAccountPage(){
+async function setupAccountPage(){
   const root=document.getElementById('accountRoot');
   if(!root) return;
+
+  try{
+    const res=await fetch('/api/auth/me');
+    const data=await res.json();
+    if(data?.user){location.href='/settings';return;}
+  }catch{}
 
   root.append(card(`<section class='auth-shell'>
     <h1>Welcome</h1>
@@ -861,7 +868,7 @@ root?.insertAdjacentHTML('beforeend',`<section id='analyzeUploader' class='revea
     });
   }
 
-  if(path==='/account') setupAccountPage();
+  if(path==='/account') await setupAccountPage();
   if(path==='/forgot-password') setupForgotPasswordPage();
   if(path==='/reset-password') setupResetPasswordPage();
   if(path==='/dashboard') setupDashboardPage();
