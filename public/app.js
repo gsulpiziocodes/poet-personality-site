@@ -2,6 +2,47 @@ async function loadContent(){const r=await fetch('/api/content');return r.json()
 const el=(tag,cls)=>{const x=document.createElement(tag);if(cls)x.className=cls;return x;};
 function card(inner,cls='card'){const d=el('div',cls);d.innerHTML=inner;return d;}
 
+function getPreferredTheme(){
+  const saved=localStorage.getItem('pp_theme');
+  if(saved==='light'||saved==='dark') return saved;
+  return window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+}
+
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme',theme);
+  localStorage.setItem('pp_theme',theme);
+}
+
+function setupThemeToggle(){
+  const top=document.querySelector('.site-top');
+  const current=document.documentElement.getAttribute('data-theme')||'light';
+  const next=current==='dark'?'light':'dark';
+  const label=current==='dark'?'☀ Light':'🌙 Dark';
+
+  const btn=el('button','theme-toggle');
+  btn.type='button';
+  btn.textContent=label;
+  btn.setAttribute('aria-label',`Switch to ${next} mode`);
+  btn.addEventListener('click',()=>{applyTheme(next);setupThemeToggle();});
+
+  if(top){
+    const existing=top.querySelector('.theme-toggle');
+    if(existing) existing.remove();
+    top.append(btn);
+    return;
+  }
+
+  const floating=document.querySelector('.theme-floating');
+  if(floating) floating.remove();
+  const wrap=el('div','theme-floating');
+  wrap.style.position='fixed';
+  wrap.style.top='14px';
+  wrap.style.right='14px';
+  wrap.style.zIndex='999';
+  wrap.append(btn);
+  document.body.append(wrap);
+}
+
 async function setupGlobalAccountButton(){
   const top=document.querySelector('.site-top');
   if(!top) return;
@@ -800,6 +841,7 @@ function setupMyPoemsPage(){
 }
 
 (async()=>{
+  applyTheme(getPreferredTheme());
   const data=await loadContent();
   const path=location.pathname;
   track('page_view',{path});
@@ -878,4 +920,6 @@ root?.insertAdjacentHTML('beforeend',`<section id='analyzeUploader' class='revea
   setupReveal();
   setupClickTracking();
   setupEmailCapture();
+  setupThemeToggle();
+  await setupGlobalAccountButton();
 })();
