@@ -50,6 +50,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .password-rules li.met{color:#2f5e43}
 .password-rules li.met::before{content:'✓';color:#2f8b5d}
 .password-rules small{font-size:.76rem;color:#8b7c6d}
+.password-rules li.met small{color:#2f8b5d;font-weight:600}
 .row-inline{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0}
 .poem-pre{white-space:pre-wrap;word-break:break-word;background:#faf6ef;border:1px solid #eadfce;padding:10px;border-radius:8px;max-height:280px;overflow:auto}
 .poems-wrapper{padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;margin-top:10px}
