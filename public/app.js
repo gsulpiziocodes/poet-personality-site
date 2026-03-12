@@ -879,7 +879,7 @@ root?.insertAdjacentHTML('beforeend',`<section id='analyzeUploader' class='revea
 
   if(path==='/types'){
     const grid=document.getElementById('typesGrid');
-    data.types.forEach(t=>grid?.append(card(`<div class='type-card'><span class='chip'>${t.group}</span><h3>${t.name}</h3><p>${t.shortBlurb}</p><a href='/type/${t.slug}'>View full profile →</a></div>`)));
+    data.types.forEach(t=>grid?.append(card(`<div class='type-card'><span class='chip'>${t.group}</span><h3>${t.name}</h3><p>${t.shortBlurb}</p><a class='type-card-cta' href='/type/${t.slug}'><span>View full profile</span><span aria-hidden='true'>→</span></a></div>`)));
   }
 
   if(path.startsWith('/type/')){
