@@ -2,6 +2,34 @@ async function loadContent(){const r=await fetch('/api/content');return r.json()
 const el=(tag,cls)=>{const x=document.createElement(tag);if(cls)x.className=cls;return x;};
 function card(inner,cls='card'){const d=el('div',cls);d.innerHTML=inner;return d;}
 
+async function setupGlobalAccountButton(){
+  const top=document.querySelector('.site-top');
+  if(!top) return;
+
+  let user=null;
+  try{
+    const res=await fetch('/api/auth/me');
+    const data=await res.json();
+    user=data?.user||null;
+  }catch{}
+
+  const existing=top.querySelector('.account-corner');
+  if(existing) existing.remove();
+
+  const wrap=el('div','account-corner');
+  const link=el('a','account-corner-btn');
+  if(user){
+    link.href='/settings';
+    link.textContent='Account';
+    link.title=(user.name||user.email||'Account').trim();
+  }else{
+    link.href='/account';
+    link.textContent='Sign In';
+  }
+  wrap.append(link);
+  top.append(wrap);
+}
+
 async function track(name,meta={}){
   try{
     await fetch('/api/events',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,page:location.pathname,meta})});
@@ -398,8 +426,6 @@ async function setupDashboardPage(){
     if(!data?.user){location.href='/account';return;}
 
     const name=(data.user.name||data.user.email||'Writer').trim();
-    const userCorner=document.getElementById('userCorner');
-    if(userCorner) userCorner.textContent=name;
 
     root.append(card(`<section class='hero'>
       <p class='kicker'>Dashboard</p>
@@ -430,8 +456,6 @@ async function setupSettingsPage(){
     const safeEmail=String(user.email||'').replace(/</g,'&lt;');
     const username=safeEmail.split('@')[0]||'poet';
 
-    const userCorner=document.getElementById('userCorner');
-    if(userCorner) userCorner.textContent=displayName;
 
     root.append(card(`<section class='settings-shell'>
       <aside class='settings-sidebar'>
