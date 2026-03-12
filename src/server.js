@@ -592,6 +592,31 @@ async function sendAdminRecoveryEmail({ link, ip, ua }) {
   return { sent: true };
 }
 
+async function sendSignupConfirmationEmail({ email, name, origin }) {
+  if (!resend || !leadsFromEmail) return { sent: false, reason: "email_not_configured" };
+
+  const safeName = String(name || "there").trim() || "there";
+  const appOrigin = String(origin || "").trim();
+  const analyzeUrl = appOrigin ? `${appOrigin}/analyze` : "#";
+
+  await resend.emails.send({
+    from: leadsFromEmail,
+    to: email,
+    subject: "Welcome to Poet Personality ✨",
+    html: `
+      <div style="font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.5;color:#201a15;max-width:560px;margin:0 auto;padding:20px;">
+        <h2 style="margin:0 0 10px;">Hey ${safeName}, your account is ready.</h2>
+        <p style="margin:0 0 12px;">Thanks for creating your Poet Personality account. You can now save your writing, revisit your analysis, and keep building your profile over time.</p>
+        <p style="margin:0 0 16px;"><a href="${analyzeUrl}" style="display:inline-block;background:#7a4416;color:#fff;text-decoration:none;padding:10px 14px;border-radius:10px;font-weight:600;">Start analyzing poems</a></p>
+        <p style="margin:0 0 8px;color:#6f6254;font-size:14px;">If you didn’t create this account, you can ignore this email.</p>
+        <p style="margin:0;color:#6f6254;font-size:14px;">— Poet Personality</p>
+      </div>
+    `
+  });
+
+  return { sent: true };
+}
+
 function csvEscape(value) {
   const s = String(value ?? "");
   if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
@@ -846,6 +871,20 @@ app.post("/api/auth/register", rateLimit({ keyPrefix: "auth", windowMs: 60_000, 
     const token = encodeSession({ uid: user.id, exp: Date.now() + 1000 * 60 * 60 * 24 * 30 });
     const secureFlag = process.env.NODE_ENV === "production" ? "; Secure" : "";
     res.setHeader("Set-Cookie", `user_session=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000${secureFlag}`);
+
+    const origin = `${req.protocol}://${req.get("host")}`;
+    try {
+      await sendSignupConfirmationEmail({ email: user.email, name: user.name, origin });
+    } catch (error) {
+      await saveEvent({
+        ts: new Date().toISOString(),
+        name: "signup_confirmation_email_failed",
+        page: "/account",
+        meta: { email: user.email, error: error.message },
+        ua: req.headers["user-agent"] || ""
+      });
+    }
+
     return res.json({ ok: true, user: toPublicUser(user) });
   } catch (error) {
     const status = error.message === "email_exists" ? 409 : 500;
