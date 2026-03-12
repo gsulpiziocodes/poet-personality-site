@@ -43,6 +43,8 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .auth-input{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px 14px}
 .auth-icon{opacity:.72;font-size:14px;min-width:16px;text-align:center}
 .auth-input input{border:0;outline:none;width:100%;font-size:.98rem;background:transparent}
+.input-toggle{border:0;background:transparent;color:#7a5b3e;font-weight:600;font-size:.85rem;cursor:pointer;padding:0 2px}
+.input-toggle:hover{text-decoration:underline}
 .auth-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
 .auth-pill{border-radius:999px;padding:11px 16px}
 .muted-btn{background:#f2ede5;color:#6a5b4c;border-color:#e6dac8}

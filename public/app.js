@@ -622,6 +622,7 @@ function setupResetPasswordPage(){
       <label class='auth-input'>
         <span class='auth-icon'>🔒</span>
         <input id='newPassword' type='password' placeholder='New password' required />
+        <button class='input-toggle' id='toggleNewPassword' type='button'>Show</button>
       </label>
       <div class='password-feedback' id='resetFeedback'>
         <div class='password-strength-row'>
@@ -638,6 +639,7 @@ function setupResetPasswordPage(){
       <label class='auth-input'>
         <span class='auth-icon'>🔒</span>
         <input id='confirmPassword' type='password' placeholder='Confirm new password' required />
+        <button class='input-toggle' id='toggleConfirmPassword' type='button'>Show</button>
       </label>
       <p id='matchError' class='inline-error hidden'>Passwords do not match.</p>
       <button class='btn primary auth-pill' id='resetBtn' type='submit' disabled>Reset Password</button>
@@ -657,6 +659,8 @@ function setupResetPasswordPage(){
   const resetBtn=root.querySelector('#resetBtn');
   const matchError=root.querySelector('#matchError');
   const strength=root.querySelector('#resetStrength');
+  const toggleNew=root.querySelector('#toggleNewPassword');
+  const toggleConfirm=root.querySelector('#toggleConfirmPassword');
   const rLen=root.querySelector('#rLen');
   const rSpec=root.querySelector('#rSpec');
   const rNum=root.querySelector('#rNum');
@@ -688,6 +692,17 @@ function setupResetPasswordPage(){
     matchError.classList.toggle('hidden',confirmPassword.value.length===0||matches);
     resetBtn.disabled=!valid;
   };
+
+  const bindToggle=(btn,input)=>{
+    btn?.addEventListener('click',()=>{
+      const reveal=input.type==='password';
+      input.type=reveal?'text':'password';
+      btn.textContent=reveal?'Hide':'Show';
+    });
+  };
+
+  bindToggle(toggleNew,newPassword);
+  bindToggle(toggleConfirm,confirmPassword);
 
   newPassword.addEventListener('input',refresh);
   confirmPassword.addEventListener('input',refresh);
