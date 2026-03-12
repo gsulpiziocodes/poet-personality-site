@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&display=swap');
 :root{--bg:#f4efe6;--paper:#fffdf9;--ink:#201a15;--muted:#6f6254;--line:#dfd1bc;--accent:#7a4416;--accent-soft:#a0622d;--shadow:0 10px 24px rgba(40,23,9,.08)}
 *{box-sizing:border-box}html,body{margin:0;padding:0}
+.hidden{display:none!important}
 body{font-family:Inter,system-ui,-apple-system,sans-serif;color:var(--ink);background:radial-gradient(circle at 10% 0%,#fff8ef,transparent 35%),var(--bg)}
 .wrap{max-width:1080px;margin:24px auto 100px;padding:0 16px}
 .site-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}

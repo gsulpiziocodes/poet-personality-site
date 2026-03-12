@@ -288,7 +288,7 @@ function setupAccountPage(){
         <span class='auth-icon'>🔒</span>
         <input id='authPassword' type='password' placeholder='Password' minlength='8' required />
       </label>
-      <div class='password-feedback' id='passwordFeedback'>
+      <div class='password-feedback hidden' id='passwordFeedback'>
         <div class='password-strength-row'>
           <span class='password-strength-label'>Password strength</span>
           <span id='passwordStrength' class='password-strength-value weak'>Weak</span>
@@ -310,6 +310,7 @@ function setupAccountPage(){
 
   const status=root.querySelector('#accountStatus');
   const passwordInput=root.querySelector('#authPassword');
+  const passwordFeedback=root.querySelector('#passwordFeedback');
   const strengthEl=root.querySelector('#passwordStrength');
   const ruleLength=root.querySelector('#ruleLength');
   const ruleSpecial=root.querySelector('#ruleSpecial');
@@ -326,6 +327,7 @@ function setupAccountPage(){
 
   const updatePasswordFeedback=()=>{
     const password=passwordInput.value||'';
+    passwordFeedback.classList.toggle('hidden',password.length===0);
     const len=password.length;
     const specialCount=(password.match(/[^A-Za-z0-9]/g)||[]).length;
     const hasLength=len>=8;
