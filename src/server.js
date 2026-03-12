@@ -46,6 +46,8 @@ const leadsPath = path.join(dataDir, "leads.jsonl");
 const eventsPath = path.join(dataDir, "events.jsonl");
 const poemCollectionsPath = path.join(dataDir, "poem-collections.json");
 const poemsPath = path.join(dataDir, "poems.jsonl");
+const usersPath = path.join(dataDir, "users.json");
+const userSessionSecret = process.env.USER_SESSION_SECRET || adminSessionSecret;
 
 const rateState = new Map();
 const adminRecoveryTokens = new Map();
@@ -95,6 +97,35 @@ function makeAdminSessionToken() {
   return crypto.createHash("sha256").update(`${adminUsername}:${adminPassword}:${adminSessionSecret}`).digest("hex");
 }
 
+function normalizeEmail(raw) {
+  return String(raw || "").trim().toLowerCase();
+}
+
+function hashPassword(password, salt = crypto.randomBytes(16).toString("hex")) {
+  const hash = crypto.pbkdf2Sync(password, salt, 150000, 64, "sha512").toString("hex");
+  return { salt, hash };
+}
+
+function encodeSession(payload) {
+  const body = Buffer.from(JSON.stringify(payload)).toString("base64url");
+  const sig = crypto.createHmac("sha256", userSessionSecret).update(body).digest("base64url");
+  return `${body}.${sig}`;
+}
+
+function decodeSession(token) {
+  if (!token || !token.includes(".")) return null;
+  const [body, sig] = token.split(".");
+  const expected = crypto.createHmac("sha256", userSessionSecret).update(body).digest("base64url");
+  if (sig !== expected) return null;
+  try {
+    const payload = JSON.parse(Buffer.from(body, "base64url").toString("utf8"));
+    if (!payload?.uid || !payload?.exp || Date.now() > payload.exp) return null;
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
 function requireAdminSession(req, res, next) {
   if (!adminPassword) return res.status(503).send("ADMIN_PASSWORD is not configured.");
 
@@ -102,6 +133,23 @@ function requireAdminSession(req, res, next) {
   if (cookies.admin_session === makeAdminSessionToken()) return next();
 
   return res.redirect("/admin/login");
+}
+
+async function loadUserFromSession(req, _res, next) {
+  const cookies = parseCookies(req);
+  const payload = decodeSession(cookies.user_session);
+  if (!payload) {
+    req.user = null;
+    return next();
+  }
+
+  req.user = await findUserById(payload.uid);
+  return next();
+}
+
+function requireUserSession(req, res, next) {
+  if (!req.user) return res.status(401).json({ ok: false, error: "unauthorized" });
+  return next();
 }
 
 async function appendJsonl(filePath, payload) {
@@ -143,6 +191,79 @@ async function readJson(filePath, fallback = []) {
 async function writeJson(filePath, payload) {
   await fs.mkdir(dataDir, { recursive: true });
   await fs.writeFile(filePath, JSON.stringify(payload, null, 2), "utf8");
+}
+
+async function getUsers() {
+  return readJson(usersPath, []);
+}
+
+async function findUserByEmail(email) {
+  const users = await getUsers();
+  return users.find((u) => normalizeEmail(u.email) === normalizeEmail(email)) || null;
+}
+
+async function findUserById(id) {
+  const users = await getUsers();
+  return users.find((u) => u.id === id) || null;
+}
+
+function toPublicUser(user) {
+  if (!user) return null;
+  return {
+    id: user.id,
+    email: user.email,
+    created_at: user.created_at,
+    last_login_at: user.last_login_at || null,
+    collection_tokens: Array.isArray(user.collection_tokens) ? user.collection_tokens : []
+  };
+}
+
+async function createUser({ email, password }) {
+  const users = await getUsers();
+  if (users.some((u) => normalizeEmail(u.email) === normalizeEmail(email))) {
+    throw new Error("email_exists");
+  }
+
+  const now = new Date().toISOString();
+  const { salt, hash } = hashPassword(password);
+  const user = {
+    id: crypto.randomUUID(),
+    email: normalizeEmail(email),
+    password_salt: salt,
+    password_hash: hash,
+    created_at: now,
+    last_login_at: now,
+    collection_tokens: []
+  };
+
+  users.push(user);
+  await writeJson(usersPath, users);
+  return user;
+}
+
+async function verifyUserPassword({ email, password }) {
+  const users = await getUsers();
+  const user = users.find((u) => normalizeEmail(u.email) === normalizeEmail(email));
+  if (!user) return null;
+
+  const { hash } = hashPassword(password, user.password_salt);
+  if (hash !== user.password_hash) return null;
+
+  user.last_login_at = new Date().toISOString();
+  await writeJson(usersPath, users);
+  return user;
+}
+
+async function attachCollectionToUser({ userId, token }) {
+  if (!userId || !token) return;
+  const users = await getUsers();
+  const user = users.find((u) => u.id === userId);
+  if (!user) return;
+
+  const existing = new Set(Array.isArray(user.collection_tokens) ? user.collection_tokens : []);
+  existing.add(token);
+  user.collection_tokens = Array.from(existing);
+  await writeJson(usersPath, users);
 }
 
 function makeCollectionToken() {
@@ -528,6 +649,7 @@ function analyzePoemCorpus(poems = []) {
 
 app.use(express.json({ limit: "256kb" }));
 app.use(express.urlencoded({ extended: false }));
+app.use(loadUserFromSession);
 app.use(express.static(publicDir));
 
 app.get("/api/content", async (_req, res) => {
@@ -619,6 +741,7 @@ app.post("/api/poems/batch", rateLimit({ keyPrefix: "poems", windowMs: 60_000, m
     if (incomingPoems.length > 100) return res.status(400).json({ ok: false, error: "too_many_poems" });
 
     const collection = await createOrUpdateCollection({ token, email });
+    if (req.user?.id) await attachCollectionToUser({ userId: req.user.id, token });
     const existing = await getPoemsByCollectionToken(token);
     if (existing.length > 100) return res.status(400).json({ ok: false, error: "collection_limit_reached" });
 
@@ -691,6 +814,65 @@ app.post("/api/poems/analyze", rateLimit({ keyPrefix: "poems", windowMs: 60_000,
     return res.json({ ok: true, analysis, poemCount: valid.length });
   } catch (error) {
     return res.status(500).json({ ok: false, error: "analysis_failed", details: error.message });
+  }
+});
+
+app.post("/api/auth/register", rateLimit({ keyPrefix: "auth", windowMs: 60_000, maxHits: 20 }), async (req, res) => {
+  try {
+    const email = normalizeEmail(req.body?.email);
+    const password = String(req.body?.password || "");
+    if (!email || !email.includes("@")) return res.status(400).json({ ok: false, error: "invalid_email" });
+    if (password.length < 8) return res.status(400).json({ ok: false, error: "password_too_short" });
+
+    const user = await createUser({ email, password });
+    const token = encodeSession({ uid: user.id, exp: Date.now() + 1000 * 60 * 60 * 24 * 30 });
+    const secureFlag = process.env.NODE_ENV === "production" ? "; Secure" : "";
+    res.setHeader("Set-Cookie", `user_session=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000${secureFlag}`);
+    return res.json({ ok: true, user: toPublicUser(user) });
+  } catch (error) {
+    const status = error.message === "email_exists" ? 409 : 500;
+    return res.status(status).json({ ok: false, error: error.message || "register_failed" });
+  }
+});
+
+app.post("/api/auth/login", rateLimit({ keyPrefix: "auth", windowMs: 60_000, maxHits: 20 }), async (req, res) => {
+  try {
+    const email = normalizeEmail(req.body?.email);
+    const password = String(req.body?.password || "");
+    const user = await verifyUserPassword({ email, password });
+    if (!user) return res.status(401).json({ ok: false, error: "invalid_credentials" });
+
+    const token = encodeSession({ uid: user.id, exp: Date.now() + 1000 * 60 * 60 * 24 * 30 });
+    const secureFlag = process.env.NODE_ENV === "production" ? "; Secure" : "";
+    res.setHeader("Set-Cookie", `user_session=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000${secureFlag}`);
+    return res.json({ ok: true, user: toPublicUser(user) });
+  } catch (error) {
+    return res.status(500).json({ ok: false, error: "login_failed", details: error.message });
+  }
+});
+
+app.post("/api/auth/logout", (req, res) => {
+  res.setHeader("Set-Cookie", "user_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0");
+  return res.json({ ok: true });
+});
+
+app.get("/api/auth/me", async (req, res) => {
+  return res.json({ ok: true, user: toPublicUser(req.user) });
+});
+
+app.post("/api/auth/link-collection", requireUserSession, async (req, res) => {
+  try {
+    const token = String(req.body?.collectionToken || "").trim();
+    if (!token) return res.status(400).json({ ok: false, error: "missing_collection_token" });
+
+    const collection = await getCollection(token);
+    if (!collection) return res.status(404).json({ ok: false, error: "collection_not_found" });
+
+    await attachCollectionToUser({ userId: req.user.id, token });
+    const user = await findUserById(req.user.id);
+    return res.json({ ok: true, user: toPublicUser(user) });
+  } catch (error) {
+    return res.status(500).json({ ok: false, error: "link_failed", details: error.message });
   }
 });
 
@@ -853,6 +1035,7 @@ app.get("/type/:slug", (_req, res) => res.sendFile(path.join(publicDir, "type.ht
 app.get("/categories", (_req, res) => res.sendFile(path.join(publicDir, "categories.html")));
 app.get("/results-demo", (_req, res) => res.sendFile(path.join(publicDir, "results.html")));
 app.get("/analyze", (_req, res) => res.sendFile(path.join(publicDir, "analyze.html")));
+app.get("/account", (_req, res) => res.sendFile(path.join(publicDir, "account.html")));
 app.get("/my-poems/:token", (_req, res) => res.sendFile(path.join(publicDir, "my-poems.html")));
 
 app.listen(port, () => {

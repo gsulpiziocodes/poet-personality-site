@@ -268,6 +268,93 @@ function setupPoemUploader(targetId='funnel'){
   }
 }
 
+function setupAccountPage(){
+  const root=document.getElementById('accountRoot');
+  if(!root) return;
+
+  root.append(card(`<h1>Account</h1><p class='muted'>Create an account or log in. Your session can be used to link poem collections.</p>
+  <div class='two-col'>
+    <section>
+      <h3>Create account</h3>
+      <form id='registerForm' class='stacked-form'>
+        <label>Email</label><input id='registerEmail' type='email' required />
+        <label>Password</label><input id='registerPassword' type='password' minlength='8' required />
+        <button class='btn primary' type='submit'>Create account</button>
+      </form>
+    </section>
+    <section>
+      <h3>Log in</h3>
+      <form id='loginForm' class='stacked-form'>
+        <label>Email</label><input id='loginEmail' type='email' required />
+        <label>Password</label><input id='loginPassword' type='password' minlength='8' required />
+        <button class='btn secondary' type='submit'>Log in</button>
+      </form>
+    </section>
+  </div>
+  <div class='row-inline' style='margin-top:10px;gap:8px'><button id='linkCollectionBtn' class='btn secondary' type='button'>Link current poem collection</button><button id='logoutBtn' class='btn secondary' type='button'>Log out</button></div>
+  <p id='accountStatus' class='footer-note'></p>
+  <pre id='accountMe' class='poem-pre'></pre>`));
+
+  const status=root.querySelector('#accountStatus');
+  const meEl=root.querySelector('#accountMe');
+  const setStatus=(x)=>status.textContent=x||'';
+
+  const refreshMe=async()=>{
+    const res=await fetch('/api/auth/me');
+    const data=await res.json();
+    meEl.textContent=JSON.stringify(data.user||null,null,2);
+  };
+
+  root.querySelector('#registerForm').addEventListener('submit',async (e)=>{
+    e.preventDefault();
+    setStatus('Creating account…');
+    const email=root.querySelector('#registerEmail').value.trim();
+    const password=root.querySelector('#registerPassword').value;
+    try{
+      const res=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
+      const data=await res.json();
+      if(!res.ok||!data.ok) throw new Error(data.error||'register_failed');
+      setStatus('Account created and logged in.');
+      await refreshMe();
+    }catch(err){setStatus(`Could not create account (${err.message}).`);}
+  });
+
+  root.querySelector('#loginForm').addEventListener('submit',async (e)=>{
+    e.preventDefault();
+    setStatus('Signing in…');
+    const email=root.querySelector('#loginEmail').value.trim();
+    const password=root.querySelector('#loginPassword').value;
+    try{
+      const res=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
+      const data=await res.json();
+      if(!res.ok||!data.ok) throw new Error(data.error||'login_failed');
+      setStatus('Logged in.');
+      await refreshMe();
+    }catch(err){setStatus(`Could not log in (${err.message}).`);}
+  });
+
+  root.querySelector('#logoutBtn').addEventListener('click',async ()=>{
+    await fetch('/api/auth/logout',{method:'POST'});
+    setStatus('Logged out.');
+    await refreshMe();
+  });
+
+  root.querySelector('#linkCollectionBtn').addEventListener('click',async ()=>{
+    const collectionToken=getCollectionToken();
+    if(!collectionToken){setStatus('No local poem collection token found yet. Save a poem first.');return;}
+    setStatus('Linking collection…');
+    try{
+      const res=await fetch('/api/auth/link-collection',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({collectionToken})});
+      const data=await res.json();
+      if(!res.ok||!data.ok) throw new Error(data.error||'link_failed');
+      setStatus('Collection linked to your account.');
+      await refreshMe();
+    }catch(err){setStatus(`Could not link collection (${err.message}).`);}
+  });
+
+  refreshMe().catch(()=>{meEl.textContent='Could not load account status.';});
+}
+
 function setupMyPoemsPage(){
   const root=document.getElementById('myPoems');
   if(!root) return;
@@ -369,6 +456,7 @@ root?.insertAdjacentHTML('beforeend',`<section id='analyzeUploader' class='revea
     });
   }
 
+  if(path==='/account') setupAccountPage();
   if(path.startsWith('/my-poems/')) setupMyPoemsPage();
 
   setupReveal();

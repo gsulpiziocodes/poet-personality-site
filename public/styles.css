@@ -25,6 +25,8 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .statline{display:flex;gap:10px;flex-wrap:wrap}.stat{padding:6px 10px;border-radius:999px;background:#f5ecdf;border:1px solid var(--line);font-size:.9rem}
 .quote{font-style:italic;color:#4f4134}.footer-note{font-size:.9rem;color:var(--muted);margin-top:6px}.inline-links a{color:var(--accent)}
 .capture-form{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.capture-form input{flex:1;min-width:220px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff}
+.stacked-form{display:flex;flex-direction:column;gap:6px}
+.stacked-form input{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff}
 .row-inline{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0}
 .poem-pre{white-space:pre-wrap;word-break:break-word;background:#faf6ef;border:1px solid #eadfce;padding:10px;border-radius:8px;max-height:280px;overflow:auto}
 .poems-wrapper{padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;margin-top:10px}
