@@ -163,9 +163,9 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .type-hero-art img{display:block;width:100%;height:100%;object-fit:contain;object-position:center bottom;background:transparent}
 .type-hero-art[data-type='the-alchemist'] img,
 .type-hero-art[data-type='the-oracle'] img,
-.type-hero-art[data-type='the-rebel'] img,
-.type-hero-art[data-type='the-witness'] img,
-.type-hero-art[data-type='the-dreamer'] img{transform:scale(1.1);transform-origin:center bottom}
+.type-hero-art[data-type='the-rebel'] img{transform:scale(1.1);transform-origin:center bottom}
+.type-hero-art[data-type='the-dreamer'] img{transform:scale(1.08);transform-origin:center bottom}
+.type-hero-art[data-type='the-witness'] img{transform:scale(1.18);transform-origin:center bottom}
 .overview-radar-row{display:flex;justify-content:center;margin:16px 0 18px}
 .overview-radar-row .type-radar-card{width:min(100%,620px);margin:0}
 .type-section-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;margin-bottom:8px;padding-bottom:6px}
