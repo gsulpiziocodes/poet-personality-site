@@ -402,6 +402,7 @@ function renderTypeProfileTabs(root,t,siblings){
           <p class='kicker'>${escapeHtml(t.group)}</p>
           <h1>${escapeHtml(t.name)}</h1>
           <p class='lead'>${escapeHtml(t.subtitle)}</p>
+          ${t.slug==='the-architect'?`<figure class='type-hero-art'><img src='/images/the-architect.png' alt='The Architect visual' loading='lazy'/></figure>`:''}
         </div>
         <article id='typeTabContent' class='type-panel-content'></article>
       </section>
@@ -446,7 +447,6 @@ function renderTypeProfileTabs(root,t,siblings){
     }).join(''):'';
 
     const radarHtml=(tab.id==='overview')?buildRadarChart(t):'';
-    const typeArtHtml=(tab.id==='overview'&&t.slug==='the-architect')?`<figure class='type-hero-art'><img src='/images/the-architect.png' alt='The Architect visual' loading='lazy'/></figure>`:'';
     const related=siblings.length?`<p class='footer-note'>Related in ${escapeHtml(t.group)}: ${siblings.map((x)=>`<a href='/type/${x.slug}'>${escapeHtml(x.name)}</a>`).join(' · ')}</p>`:'';
     const poets=`<p class='footer-note'>${escapeHtml(t.famousPoetsWithSimilarEnergy.copy)}<br/><span class='muted'>${escapeHtml(t.famousPoetsWithSimilarEnergy.disclaimer)}</span></p>`;
 
@@ -457,7 +457,7 @@ function renderTypeProfileTabs(root,t,siblings){
           <p class='kicker'>${escapeHtml(tab.kicker||'')}</p>
           <h2>${escapeHtml(tab.heading)}</h2>
           ${tab.id==='overview'
-            ? `<p class='lead'>${escapeHtml(tab.intro||'')}</p>${typeArtHtml}${bodyHtml}${listHtml}${splitHtml}${sectionNav}<div class='overview-radar-row'>${radarHtml}</div>${sectionHtml}`
+            ? `<p class='lead'>${escapeHtml(tab.intro||'')}</p>${bodyHtml}${listHtml}${splitHtml}${sectionNav}<div class='overview-radar-row'>${radarHtml}</div>${sectionHtml}`
             : `<p class='lead'>${escapeHtml(tab.intro||'')}</p>${bodyHtml}${listHtml}${splitHtml}${radarHtml}${sectionNav}${sectionHtml}`}
           ${tab.callout?`<p class='quote type-pull-quote'><strong>${escapeHtml(tab.callout)}</strong></p>`:''}
           ${tab.id==='overview'?poets:''}
