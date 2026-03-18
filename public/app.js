@@ -398,10 +398,12 @@ function renderTypeProfileTabs(root,t,siblings){
         </div>
       </aside>
       <section class='type-tabs-panel' aria-live='polite'>
-        <div class='type-panel-hero'>
-          <p class='kicker'>${escapeHtml(t.group)}</p>
-          <h1>${escapeHtml(t.name)}</h1>
-          <p class='lead'>${escapeHtml(t.subtitle)}</p>
+        <div class='type-panel-hero ${t.slug==='the-architect'?'type-panel-hero-split':''}'>
+          <div class='type-panel-hero-copy'>
+            <p class='kicker'>${escapeHtml(t.group)}</p>
+            <h1>${escapeHtml(t.name)}</h1>
+            <p class='lead'>${escapeHtml(t.subtitle)}</p>
+          </div>
           ${t.slug==='the-architect'?`<figure class='type-hero-art'><img src='/images/the-architect.png' alt='The Architect visual' loading='lazy'/></figure>`:''}
         </div>
         <article id='typeTabContent' class='type-panel-content'></article>
