@@ -82,7 +82,7 @@ function buildRadarChart(type){
         <g class='radar-rings'>${rings}</g>
         <g class='radar-axes'>${axisLines}</g>
         <polygon class='radar-area' points='${area}'/>
-        <polyline class='radar-outline' points='${area}'/>
+        <polygon class='radar-outline' points='${area}'/>
         ${labels}
       </svg>
     </section>`;
