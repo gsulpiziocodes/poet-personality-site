@@ -452,10 +452,10 @@ function renderTypeProfileTabs(root,t,siblings){
           <p class='kicker'>${escapeHtml(tab.kicker||'')}</p>
           <h2>${escapeHtml(tab.heading)}</h2>
           <p class='lead'>${escapeHtml(tab.intro||'')}</p>
+          ${radarHtml}
           ${bodyHtml}
           ${listHtml}
           ${splitHtml}
-          ${radarHtml}
           ${sectionNav}
           ${sectionHtml}
           ${tab.callout?`<p class='quote type-pull-quote'><strong>${escapeHtml(tab.callout)}</strong></p>`:''}
