@@ -8,9 +8,25 @@ function renderTypeProfileTabs(root,t,siblings){
   const traits=(t.strengths||[]).slice(0,3);
   const shadows=(t.challenges||[]).slice(0,3);
   const signals=(t.analyzerDetects||[]).slice(0,3);
+  const custom=t.profileTabs||{};
+
+  const mergeTab=(base,customTab)=>{
+    if(!customTab) return base;
+    const out={...base,...customTab};
+    if(Array.isArray(customTab.list)) out.list=customTab.list.map((x)=>`<li>${escapeHtml(x)}</li>`);
+    if(customTab.split){
+      out.split={
+        leftTitle:customTab.split.leftTitle||base.split?.leftTitle||'Strengths',
+        leftItems:Array.isArray(customTab.split.leftItems)&&customTab.split.leftItems.length?customTab.split.leftItems:(base.split?.leftItems||[]),
+        rightTitle:customTab.split.rightTitle||base.split?.rightTitle||'Shadows',
+        rightItems:Array.isArray(customTab.split.rightItems)&&customTab.split.rightItems.length?customTab.split.rightItems:(base.split?.rightItems||[])
+      };
+    }
+    return out;
+  };
 
   const tabs=[
-    {
+    mergeTab({
       id:'overview',
       label:'Overview',
       heading:`${t.name}: Overview`,
@@ -21,8 +37,8 @@ function renderTypeProfileTabs(root,t,siblings){
         `This profile sits inside the ${t.group} family, where poetic energy tends to prioritize ${signals.join(', ')}.`
       ],
       callout:`${t.idealTagline}`
-    },
-    {
+    },custom.overview),
+    mergeTab({
       id:'core-traits',
       label:'Core traits',
       heading:`Core traits of ${t.name}`,
@@ -30,8 +46,8 @@ function renderTypeProfileTabs(root,t,siblings){
       intro:'The recurring energies this type returns to across poems.',
       list:traits.map((x)=>`<li>${escapeHtml(x)}</li>`),
       body:[`At its center, this type carries a distinct pattern of voice, emotional stance, and aesthetic instinct.`]
-    },
-    {
+    },custom.coreTraits),
+    mergeTab({
       id:'strengths-shadows',
       label:'Strengths & shadows',
       heading:'Strengths & shadows',
@@ -39,8 +55,8 @@ function renderTypeProfileTabs(root,t,siblings){
       intro:'Every poetic gift has an edge. This section maps both.',
       split:{leftTitle:'Strengths',leftItems:traits,rightTitle:'Shadows',rightItems:shadows},
       body:['When consciously balanced, this type can produce deeply memorable work with both force and nuance.']
-    },
-    {
+    },custom.strengthsShadows),
+    mergeTab({
       id:'writing-style',
       label:'Writing style',
       heading:'Writing style',
@@ -48,8 +64,8 @@ function renderTypeProfileTabs(root,t,siblings){
       intro:'How this voice typically appears on the page.',
       list:signals.map((x)=>`<li>${escapeHtml(x)}</li>`),
       body:[`Readers often experience ${t.name} writing as intentional, textured, and emotionally coherent.`]
-    },
-    {
+    },custom.writingStyle),
+    mergeTab({
       id:'love-relationships',
       label:'In love & relationships',
       heading:'In love & relationships',
@@ -60,7 +76,7 @@ function renderTypeProfileTabs(root,t,siblings){
         `In close bonds, the shadow side can look like ${shadows.join(', ')}, especially under stress or uncertainty.`,
         'When grounded, this type tends to communicate with sincerity, depth, and a strong desire to be truly understood.'
       ]
-    }
+    },custom.loveRelationships)
   ];
 
   const shell=card(`

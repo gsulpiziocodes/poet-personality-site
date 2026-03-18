@@ -2,7 +2,13 @@
   "brand": {
     "name": "PoetDNA",
     "feature": "Poet Personality Analyzer",
-    "voice": ["elegant", "modern", "insightful", "emotionally intelligent", "poetic but clear"]
+    "voice": [
+      "elegant",
+      "modern",
+      "insightful",
+      "emotionally intelligent",
+      "poetic but clear"
+    ]
   },
   "homepage": {
     "hero": {
@@ -42,35 +48,67 @@
     ]
   },
   "profileStrength": [
-    { "label": "Emerging Profile", "range": "1-2 poems" },
-    { "label": "Developing Profile", "range": "3-5 poems" },
-    { "label": "Established Profile", "range": "6-10 poems" },
-    { "label": "Refined Profile", "range": "10+ poems" }
+    {
+      "label": "Emerging Profile",
+      "range": "1-2 poems"
+    },
+    {
+      "label": "Developing Profile",
+      "range": "3-5 poems"
+    },
+    {
+      "label": "Established Profile",
+      "range": "6-10 poems"
+    },
+    {
+      "label": "Refined Profile",
+      "range": "10+ poems"
+    }
   ],
   "groups": [
     {
       "slug": "visionaries",
       "name": "Visionaries",
       "description": "Driven by intuition, meaning, depth, and discovery. They interpret the unseen and pursue truths that cannot be reached directly.",
-      "types": ["the-alchemist", "the-oracle", "the-architect", "the-seeker"]
+      "types": [
+        "the-alchemist",
+        "the-oracle",
+        "the-architect",
+        "the-seeker"
+      ]
     },
     {
       "slug": "romantics",
       "name": "Romantics",
       "description": "Guided by beauty, intimacy, devotion, and emotional atmosphere. Their work centers on feeling deeply and expressing that depth with resonance.",
-      "types": ["the-lover", "the-dreamer", "the-muse", "the-devotee"]
+      "types": [
+        "the-lover",
+        "the-dreamer",
+        "the-muse",
+        "the-devotee"
+      ]
     },
     {
       "slug": "truth-tellers",
       "name": "Truth-Tellers",
       "description": "Defined by honesty, realism, and emotional courage. They face what hurts, what matters, and what deserves to be said.",
-      "types": ["the-confessor", "the-witness", "the-rebel", "the-mourner"]
+      "types": [
+        "the-confessor",
+        "the-witness",
+        "the-rebel",
+        "the-mourner"
+      ]
     },
     {
       "slug": "makers",
       "name": "Makers",
       "description": "Shaped by craft, form, delivery, and design. They build poems with structural intention and compositional control.",
-      "types": ["the-storyteller", "the-minimalist", "the-performer", "the-weaver"]
+      "types": [
+        "the-storyteller",
+        "the-minimalist",
+        "the-performer",
+        "the-weaver"
+      ]
     }
   ],
   "types": [
@@ -81,13 +119,71 @@
       "shortBlurb": "Turns pain, memory, and longing into transformation.",
       "subtitle": "The poet who makes beauty from what burns.",
       "overview": "The Alchemist turns feeling into transformation. Their poems often process pain, desire, memory, and change into language that feels intimate and redemptive.",
-      "strengths": ["emotionally powerful", "deeply reflective", "transforms difficulty into insight", "often leaves readers changed"],
-      "challenges": ["can become abstract", "may over-intensify tone", "symbolism can obscure clarity"],
-      "analyzerDetects": ["themes of rebirth, ruin, becoming", "metaphoric transformation patterns", "emotion-forward language with reflective closure"],
+      "strengths": [
+        "emotionally powerful",
+        "deeply reflective",
+        "transforms difficulty into insight",
+        "often leaves readers changed"
+      ],
+      "challenges": [
+        "can become abstract",
+        "may over-intensify tone",
+        "symbolism can obscure clarity"
+      ],
+      "analyzerDetects": [
+        "themes of rebirth, ruin, becoming",
+        "metaphoric transformation patterns",
+        "emotion-forward language with reflective closure"
+      ],
       "idealTagline": "You turn feeling into transformation.",
       "famousPoetsWithSimilarEnergy": {
         "disclaimer": "Illustrative creative affinities, not official classifications.",
         "copy": "Readers who connect with The Alchemist might resonate with Rumi, Sylvia Plath, and Seamus Heaney."
+      },
+      "profileTabs": {
+        "overview": {
+          "intro": "You metabolize intensity into meaning.",
+          "body": [
+            "The Alchemist writes from rupture, then finds language that turns wound into wisdom.",
+            "Your best work doesn’t deny darkness—it reworks it into something strangely luminous."
+          ]
+        },
+        "coreTraits": {
+          "intro": "Your core pattern is transmutation.",
+          "list": [
+            "Emotionally catalytic voice",
+            "Symbolic language that evolves across a poem",
+            "Endings that feel earned, not decorative"
+          ],
+          "body": [
+            "You rarely leave a feeling untouched; you transform it."
+          ]
+        },
+        "strengthsShadows": {
+          "intro": "Your gift is depth under heat.",
+          "body": [
+            "At your strongest, readers feel accompanied through difficult emotional terrain.",
+            "Your shadow is over-saturation—too much intensity can blur the poem’s center."
+          ]
+        },
+        "writingStyle": {
+          "intro": "Your lines move from ache to insight.",
+          "list": [
+            "Metaphors of fire, ash, tide, skin, metal",
+            "Reflective pivots in final tercets/couplets",
+            "Emotion-forward diction with symbolic closure"
+          ],
+          "body": [
+            "Your structure often mirrors change itself: fracture, recognition, renewal."
+          ]
+        },
+        "loveRelationships": {
+          "intro": "You love through emotional alchemy.",
+          "body": [
+            "In intimacy, you seek bonds that can survive truth, loss, and reinvention.",
+            "When insecure, you may test devotion through intensity; when grounded, you offer profound emotional healing."
+          ]
+        }
       }
     },
     {
@@ -97,13 +193,71 @@
       "shortBlurb": "Writes in symbols, signs, and hidden truths.",
       "subtitle": "The poet who senses what lies beneath the surface.",
       "overview": "The Oracle writes as if truth arrives in flashes. Their work is intuitive, symbolic, and suggestive rather than explicit.",
-      "strengths": ["strong intuition", "symbolic imagination", "memorable atmosphere", "timeless tonal quality"],
-      "challenges": ["can become elusive", "clarity may drop", "mystique can overpower meaning"],
-      "analyzerDetects": ["high symbolic density", "dreamlike motifs and omens", "implied meanings over direct statements"],
+      "strengths": [
+        "strong intuition",
+        "symbolic imagination",
+        "memorable atmosphere",
+        "timeless tonal quality"
+      ],
+      "challenges": [
+        "can become elusive",
+        "clarity may drop",
+        "mystique can overpower meaning"
+      ],
+      "analyzerDetects": [
+        "high symbolic density",
+        "dreamlike motifs and omens",
+        "implied meanings over direct statements"
+      ],
       "idealTagline": "You write what cannot be said directly.",
       "famousPoetsWithSimilarEnergy": {
         "disclaimer": "Illustrative creative affinities, not official classifications.",
         "copy": "This type often feels close in spirit to Emily Dickinson, Rumi, and T. S. Eliot."
+      },
+      "profileTabs": {
+        "overview": {
+          "intro": "You speak through symbol before statement.",
+          "body": [
+            "The Oracle doesn’t explain everything; it reveals in flashes.",
+            "Your poems feel like messages half-heard in a dream and remembered as truth."
+          ]
+        },
+        "coreTraits": {
+          "intro": "Your core pattern is intuitive transmission.",
+          "list": [
+            "Mythic or omen-like imagery",
+            "Elliptical but emotionally coherent movement",
+            "Trust in implication over declaration"
+          ],
+          "body": [
+            "You write the unsayable by circling it with charged images."
+          ]
+        },
+        "strengthsShadows": {
+          "intro": "Your gift is atmospheric intelligence.",
+          "body": [
+            "At your strongest, readers feel mysteriously understood.",
+            "Your shadow is obscurity—too much veil can weaken emotional access."
+          ]
+        },
+        "writingStyle": {
+          "intro": "Your craft is suggestive rather than explicit.",
+          "list": [
+            "High symbolic density",
+            "Dream logic transitions",
+            "Strategic ambiguity"
+          ],
+          "body": [
+            "You build resonance through omission, echo, and motif recurrence."
+          ]
+        },
+        "loveRelationships": {
+          "intro": "You relate through depth, pattern, and subtext.",
+          "body": [
+            "In love, you often sense shifts before they are spoken.",
+            "When regulated, you offer rare emotional attunement; when overwhelmed, you can retreat into silence or riddles."
+          ]
+        }
       }
     },
     {
@@ -113,13 +267,71 @@
       "shortBlurb": "Crafts poems with precision, structure, and control.",
       "subtitle": "The poet who builds with intention.",
       "overview": "The Architect values form. Their poems are deliberate, composed, and technically disciplined even when emotionally charged.",
-      "strengths": ["technical control", "disciplined structure", "precise diction", "polished execution"],
-      "challenges": ["can feel guarded", "may over-polish", "spontaneity can be limited"],
-      "analyzerDetects": ["intentional line breaks", "consistent rhythmic control", "logical structural progression"],
+      "strengths": [
+        "technical control",
+        "disciplined structure",
+        "precise diction",
+        "polished execution"
+      ],
+      "challenges": [
+        "can feel guarded",
+        "may over-polish",
+        "spontaneity can be limited"
+      ],
+      "analyzerDetects": [
+        "intentional line breaks",
+        "consistent rhythmic control",
+        "logical structural progression"
+      ],
       "idealTagline": "You shape emotion with discipline.",
       "famousPoetsWithSimilarEnergy": {
         "disclaimer": "Illustrative creative affinities, not official classifications.",
         "copy": "People drawn to this type might also admire Elizabeth Bishop, Robert Frost, and T. S. Eliot."
+      },
+      "profileTabs": {
+        "overview": {
+          "intro": "You build emotion with precision.",
+          "body": [
+            "The Architect values design: line, turn, proportion, restraint.",
+            "Even your most vulnerable poems feel intentionally engineered."
+          ]
+        },
+        "coreTraits": {
+          "intro": "Your core pattern is compositional control.",
+          "list": [
+            "Measured pacing and structural logic",
+            "Exact diction and tonal discipline",
+            "Craft-led revision instincts"
+          ],
+          "body": [
+            "You believe form is not decoration—it is meaning."
+          ]
+        },
+        "strengthsShadows": {
+          "intro": "Your gift is disciplined clarity.",
+          "body": [
+            "At your best, your work is elegant, durable, and rereadable.",
+            "Your shadow is over-management—too much polish can mute spontaneity."
+          ]
+        },
+        "writingStyle": {
+          "intro": "You draft like a designer and revise like an editor.",
+          "list": [
+            "Purposeful line breaks",
+            "Balanced stanza architecture",
+            "Controlled sonic texture"
+          ],
+          "body": [
+            "Your poems often reveal an internal blueprint readers can feel, even if they cannot name it."
+          ]
+        },
+        "loveRelationships": {
+          "intro": "You love by building dependable structures.",
+          "body": [
+            "In relationships, you show care through steadiness, consistency, and thoughtful action.",
+            "Under stress, you may default to control; in trust, you become deeply reliable and emotionally articulate."
+          ]
+        }
       }
     },
     {
@@ -129,13 +341,71 @@
       "shortBlurb": "Writes to search, question, and understand.",
       "subtitle": "The poet always moving toward something deeper.",
       "overview": "The Seeker writes to discover. Their poems are driven by questions, longing, and the feeling that meaning is near but not fully grasped.",
-      "strengths": ["curious honesty", "introspective depth", "relatable longing", "strong sense of journey"],
-      "challenges": ["can feel unresolved", "may revisit same questions", "emotional center can stay diffuse"],
-      "analyzerDetects": ["searching language and questions", "themes of distance and becoming", "movement-oriented emotional arc"],
+      "strengths": [
+        "curious honesty",
+        "introspective depth",
+        "relatable longing",
+        "strong sense of journey"
+      ],
+      "challenges": [
+        "can feel unresolved",
+        "may revisit same questions",
+        "emotional center can stay diffuse"
+      ],
+      "analyzerDetects": [
+        "searching language and questions",
+        "themes of distance and becoming",
+        "movement-oriented emotional arc"
+      ],
       "idealTagline": "You write to find what matters.",
       "famousPoetsWithSimilarEnergy": {
         "disclaimer": "Illustrative creative affinities, not official classifications.",
         "copy": "This type may resonate with Walt Whitman, John Keats, and Seamus Heaney."
+      },
+      "profileTabs": {
+        "overview": {
+          "intro": "You write to discover what is true.",
+          "body": [
+            "The Seeker is animated by questions, thresholds, and becoming.",
+            "Your poems feel like journeys where insight arrives mid-walk, not at the starting line."
+          ]
+        },
+        "coreTraits": {
+          "intro": "Your core pattern is inquiry in motion.",
+          "list": [
+            "Question-led openings and pivots",
+            "Longing as an organizing force",
+            "Meaning discovered through progression"
+          ],
+          "body": [
+            "You are less interested in final answers than honest pursuit."
+          ]
+        },
+        "strengthsShadows": {
+          "intro": "Your gift is existential honesty.",
+          "body": [
+            "At your strongest, readers trust your searching mind.",
+            "Your shadow is perpetual incompletion—circling can replace arriving."
+          ]
+        },
+        "writingStyle": {
+          "intro": "Your style moves like thought unfolding.",
+          "list": [
+            "Rhetorical questions",
+            "Journey/threshold imagery",
+            "Open-ended cadence"
+          ],
+          "body": [
+            "Your strongest poems pair curiosity with concrete emotional stakes."
+          ]
+        },
+        "loveRelationships": {
+          "intro": "You love as a shared exploration.",
+          "body": [
+            "In connection, you value growth, reflection, and meaningful conversation.",
+            "When uncertain, you may keep seeking instead of settling; when centered, you bring depth, wonder, and evolution to partnership."
+          ]
+        }
       }
     },
     {
@@ -145,13 +415,71 @@
       "shortBlurb": "Led by intimacy, desire, and emotional connection.",
       "subtitle": "The poet who writes from the heart outward.",
       "overview": "The Lover centers intimacy. Their poems are tender, desirous, and emotionally immediate, often shaped by devotion, longing, and memory.",
-      "strengths": ["deep emotional resonance", "strong intimacy", "memorable warmth", "immediate reader connection"],
-      "challenges": ["can drift into melodrama", "may idealize relationships", "intensity may outrun craft"],
-      "analyzerDetects": ["themes of closeness and absence", "sensory affection language", "repeated relational focus"],
+      "strengths": [
+        "deep emotional resonance",
+        "strong intimacy",
+        "memorable warmth",
+        "immediate reader connection"
+      ],
+      "challenges": [
+        "can drift into melodrama",
+        "may idealize relationships",
+        "intensity may outrun craft"
+      ],
+      "analyzerDetects": [
+        "themes of closeness and absence",
+        "sensory affection language",
+        "repeated relational focus"
+      ],
       "idealTagline": "You write to touch and be touched.",
       "famousPoetsWithSimilarEnergy": {
         "disclaimer": "Illustrative creative affinities, not official classifications.",
         "copy": "Readers who identify with this type might feel drawn to Pablo Neruda, Sappho, and John Keats."
+      },
+      "profileTabs": {
+        "overview": {
+          "intro": "You write from contact, ache, and closeness.",
+          "body": [
+            "The Lover privileges intimacy: the body remembered, the voice missed, the hand almost reached.",
+            "Your poems translate attachment into immediate emotional presence."
+          ]
+        },
+        "coreTraits": {
+          "intro": "Your core pattern is relational intensity.",
+          "list": [
+            "Sensory tenderness",
+            "Direct emotional address",
+            "Themes of longing, devotion, and absence"
+          ],
+          "body": [
+            "You make readers feel the distance between people—and the desire to cross it."
+          ]
+        },
+        "strengthsShadows": {
+          "intro": "Your gift is emotional immediacy.",
+          "body": [
+            "At your best, your warmth is unforgettable and deeply human.",
+            "Your shadow is romantic over-identification—feeling can outrun proportion."
+          ]
+        },
+        "writingStyle": {
+          "intro": "Your style is tactile and heart-forward.",
+          "list": [
+            "Second-person intimacy",
+            "Touch/scent/body imagery",
+            "Lyrical declarations"
+          ],
+          "body": [
+            "You create closeness quickly, often from the first line."
+          ]
+        },
+        "loveRelationships": {
+          "intro": "You love with openness and devotion.",
+          "body": [
+            "You seek reciprocity, emotional presence, and sincere affection.",
+            "When hurt, you may idealize or cling; when secure, you become generous, grounding, and profoundly affectionate."
+          ]
+        }
       }
     },
     {
@@ -161,13 +489,71 @@
       "shortBlurb": "Lives in atmosphere, wonder, and emotional possibility.",
       "subtitle": "The poet who drifts between reality and imagination.",
       "overview": "The Dreamer writes in atmosphere. Their poems often feel luminous, wistful, and emotionally suspended between memory and imagination.",
-      "strengths": ["evocative mood-building", "rich imagination", "distinct aesthetic tone", "transportive emotional space"],
-      "challenges": ["can become vague", "may avoid confrontation", "substance can thin"],
-      "analyzerDetects": ["impressionistic transitions", "beauty-forward imagery", "soft tonal continuity"],
+      "strengths": [
+        "evocative mood-building",
+        "rich imagination",
+        "distinct aesthetic tone",
+        "transportive emotional space"
+      ],
+      "challenges": [
+        "can become vague",
+        "may avoid confrontation",
+        "substance can thin"
+      ],
+      "analyzerDetects": [
+        "impressionistic transitions",
+        "beauty-forward imagery",
+        "soft tonal continuity"
+      ],
       "idealTagline": "You write what longing looks like in the air.",
       "famousPoetsWithSimilarEnergy": {
         "disclaimer": "Illustrative creative affinities, not official classifications.",
         "copy": "This type often shares a similar energy with John Keats, Bashō, and Emily Dickinson."
+      },
+      "profileTabs": {
+        "overview": {
+          "intro": "You write in atmosphere before argument.",
+          "body": [
+            "The Dreamer lives in the soft threshold between memory and imagination.",
+            "Your poems feel suspended—like light in dust, like a room after rain."
+          ]
+        },
+        "coreTraits": {
+          "intro": "Your core pattern is mood architecture.",
+          "list": [
+            "Luminous tonal continuity",
+            "Impressionistic scene shifts",
+            "Wonder as emotional method"
+          ],
+          "body": [
+            "You compose emotional weather as much as narrative content."
+          ]
+        },
+        "strengthsShadows": {
+          "intro": "Your gift is transport.",
+          "body": [
+            "At your strongest, readers are carried into a living interior landscape.",
+            "Your shadow is diffusion—too much haze can thin emotional stakes."
+          ]
+        },
+        "writingStyle": {
+          "intro": "Your lines favor drift, shimmer, and recall.",
+          "list": [
+            "Soft transitions",
+            "Beauty-forward imagery",
+            "Subtle repetition"
+          ],
+          "body": [
+            "Your best work balances lyric mist with one clear human anchor."
+          ]
+        },
+        "loveRelationships": {
+          "intro": "You love through imagination and feeling-tone.",
+          "body": [
+            "You are drawn to emotional possibility, tenderness, and shared reverie.",
+            "When ungrounded, projection can replace presence; when grounded, you offer romance with real emotional care."
+          ]
+        }
       }
     },
     {
@@ -177,13 +563,71 @@
       "shortBlurb": "Drawn to beauty, elegance, and emotional allure.",
       "subtitle": "The poet who makes language feel magnetic.",
       "overview": "The Muse prioritizes beauty and tonal elegance. Their writing is often lyrical, polished, and emotionally attractive from the first line.",
-      "strengths": ["aesthetic fluency", "quotable phrasing", "image sensitivity", "strong tonal cohesion"],
-      "challenges": ["can favor beauty over depth", "stylization may dominate", "risk of performative refinement"],
-      "analyzerDetects": ["lyrical precision", "beauty-centered motifs", "consistent elegance in phrasing"],
+      "strengths": [
+        "aesthetic fluency",
+        "quotable phrasing",
+        "image sensitivity",
+        "strong tonal cohesion"
+      ],
+      "challenges": [
+        "can favor beauty over depth",
+        "stylization may dominate",
+        "risk of performative refinement"
+      ],
+      "analyzerDetects": [
+        "lyrical precision",
+        "beauty-centered motifs",
+        "consistent elegance in phrasing"
+      ],
       "idealTagline": "You make beauty feel alive.",
       "famousPoetsWithSimilarEnergy": {
         "disclaimer": "Illustrative creative affinities, not official classifications.",
         "copy": "People close to this type may admire Sappho, Pablo Neruda, and Mary Oliver."
+      },
+      "profileTabs": {
+        "overview": {
+          "intro": "You pursue beauty with intention.",
+          "body": [
+            "The Muse makes language seductive without sacrificing coherence.",
+            "Your poems often arrive polished, magnetic, and quotable."
+          ]
+        },
+        "coreTraits": {
+          "intro": "Your core pattern is aesthetic fluency.",
+          "list": [
+            "Elegant phrasing",
+            "Strong tonal curation",
+            "Image-driven emotional pull"
+          ],
+          "body": [
+            "You understand that style can be substance when handled with precision."
+          ]
+        },
+        "strengthsShadows": {
+          "intro": "Your gift is verbal allure.",
+          "body": [
+            "At your best, your lines linger in memory and conversation.",
+            "Your shadow is surface over core—ornament can overtake emotional risk."
+          ]
+        },
+        "writingStyle": {
+          "intro": "Your style is lyrical and composed.",
+          "list": [
+            "Musical sentence rhythm",
+            "Refined metaphor choices",
+            "High line-level finish"
+          ],
+          "body": [
+            "You write with a keen ear for line beauty and tonal consistency."
+          ]
+        },
+        "loveRelationships": {
+          "intro": "You love through admiration and attentiveness.",
+          "body": [
+            "In intimacy, you notice details and cultivate moments that feel artful and meaningful.",
+            "When insecure, performance can replace vulnerability; when open, you become deeply affectionate and emotionally elegant."
+          ]
+        }
       }
     },
     {
@@ -193,13 +637,71 @@
       "shortBlurb": "Writes with sincerity, reverence, and care.",
       "subtitle": "The poet who honors what matters.",
       "overview": "The Devotee writes with reverence. Their poems return to what deserves care: memory, love, faith, grief, ritual, and place.",
-      "strengths": ["sincere emotional grounding", "steady tenderness", "reader trust", "quietly moving depth"],
-      "challenges": ["can become overly earnest", "irony may be underused", "emotional range may narrow"],
-      "analyzerDetects": ["ceremonial repetition", "sacred or reverent diction", "subjects treated with sustained care"],
+      "strengths": [
+        "sincere emotional grounding",
+        "steady tenderness",
+        "reader trust",
+        "quietly moving depth"
+      ],
+      "challenges": [
+        "can become overly earnest",
+        "irony may be underused",
+        "emotional range may narrow"
+      ],
+      "analyzerDetects": [
+        "ceremonial repetition",
+        "sacred or reverent diction",
+        "subjects treated with sustained care"
+      ],
       "idealTagline": "You write with devotion, not distance.",
       "famousPoetsWithSimilarEnergy": {
         "disclaimer": "Illustrative creative affinities, not official classifications.",
         "copy": "This type might resonate with Mary Oliver, Rumi, and Walt Whitman."
+      },
+      "profileTabs": {
+        "overview": {
+          "intro": "You write with reverence for what matters.",
+          "body": [
+            "The Devotee returns to love, memory, place, ritual, and sacred attention.",
+            "Your poems feel like offerings: careful, sincere, and emotionally clean."
+          ]
+        },
+        "coreTraits": {
+          "intro": "Your core pattern is faithful attention.",
+          "list": [
+            "Steady emotional tone",
+            "Ceremonial repetition",
+            "Values-centered language"
+          ],
+          "body": [
+            "You treat subjects with care rather than spectacle."
+          ]
+        },
+        "strengthsShadows": {
+          "intro": "Your gift is sincerity with gravity.",
+          "body": [
+            "At your strongest, your poems restore trust in tenderness.",
+            "Your shadow is over-earnestness—irony and play may disappear."
+          ]
+        },
+        "writingStyle": {
+          "intro": "Your style is anchored and devotional.",
+          "list": [
+            "Refrains and repeated invocations",
+            "Grounded imagery of home, body, earth",
+            "Measured emotional pacing"
+          ],
+          "body": [
+            "You create continuity through recurring motifs and moral warmth."
+          ]
+        },
+        "loveRelationships": {
+          "intro": "You love through loyalty and ritual.",
+          "body": [
+            "You value commitment, consistency, and shared meaning.",
+            "When strained, you may over-give; when balanced, you create relationships that feel safe, honored, and enduring."
+          ]
+        }
       }
     },
     {
@@ -209,13 +711,71 @@
       "shortBlurb": "Speaks with raw honesty and emotional exposure.",
       "subtitle": "The poet who says what others avoid.",
       "overview": "The Confessor writes from exposure rather than distance. Their poems are direct, vulnerable, and emotionally fearless.",
-      "strengths": ["fearless honesty", "high emotional impact", "deep relatability", "unforgettable intimacy"],
-      "challenges": ["can overwhelm readers", "craft may lag disclosure", "vulnerability may overtake structure"],
-      "analyzerDetects": ["first-person intensity", "high disclosure density", "low emotional masking"],
+      "strengths": [
+        "fearless honesty",
+        "high emotional impact",
+        "deep relatability",
+        "unforgettable intimacy"
+      ],
+      "challenges": [
+        "can overwhelm readers",
+        "craft may lag disclosure",
+        "vulnerability may overtake structure"
+      ],
+      "analyzerDetects": [
+        "first-person intensity",
+        "high disclosure density",
+        "low emotional masking"
+      ],
       "idealTagline": "You write the truth before it is comfortable.",
       "famousPoetsWithSimilarEnergy": {
         "disclaimer": "Illustrative creative affinities, not official classifications.",
         "copy": "Readers drawn here might resonate with Sylvia Plath, Anne Sexton, and Maya Angelou."
+      },
+      "profileTabs": {
+        "overview": {
+          "intro": "You write what others avoid saying aloud.",
+          "body": [
+            "The Confessor is driven by raw truth, personal risk, and emotional disclosure.",
+            "Your work often reads like necessity rather than performance."
+          ]
+        },
+        "coreTraits": {
+          "intro": "Your core pattern is unmasked voice.",
+          "list": [
+            "High first-person intimacy",
+            "Direct emotional language",
+            "Courageous self-revelation"
+          ],
+          "body": [
+            "You use poetry as an act of honest exposure."
+          ]
+        },
+        "strengthsShadows": {
+          "intro": "Your gift is fearless candor.",
+          "body": [
+            "At your best, readers feel less alone in their own complexity.",
+            "Your shadow is emotional flooding—confession can outrun shaping."
+          ]
+        },
+        "writingStyle": {
+          "intro": "Your style is direct, intimate, and charged.",
+          "list": [
+            "Unflinching personal detail",
+            "Minimal emotional buffering",
+            "High-stakes openings"
+          ],
+          "body": [
+            "Your strongest pieces pair vulnerability with deliberate craft."
+          ]
+        },
+        "loveRelationships": {
+          "intro": "You love through truth and total presence.",
+          "body": [
+            "In relationships, you want realness over politeness.",
+            "When dysregulated, intensity can overwhelm; when grounded, you offer extraordinary honesty and emotional loyalty."
+          ]
+        }
       }
     },
     {
@@ -225,13 +785,71 @@
       "shortBlurb": "Observes the world with quiet depth and realism.",
       "subtitle": "The poet who notices what others miss.",
       "overview": "The Witness writes through attention. Their poems preserve ordinary detail, social texture, and understated human truth.",
-      "strengths": ["keen observation", "grounded realism", "humane restraint", "scene-based emotional resonance"],
-      "challenges": ["can feel detached", "emotion may stay implicit", "recording can outweigh transformation"],
-      "analyzerDetects": ["concrete sensory detail", "external-world anchoring", "meaning emerging through scene"],
+      "strengths": [
+        "keen observation",
+        "grounded realism",
+        "humane restraint",
+        "scene-based emotional resonance"
+      ],
+      "challenges": [
+        "can feel detached",
+        "emotion may stay implicit",
+        "recording can outweigh transformation"
+      ],
+      "analyzerDetects": [
+        "concrete sensory detail",
+        "external-world anchoring",
+        "meaning emerging through scene"
+      ],
       "idealTagline": "You make the ordinary impossible to ignore.",
       "famousPoetsWithSimilarEnergy": {
         "disclaimer": "Illustrative creative affinities, not official classifications.",
         "copy": "This type often feels close to Elizabeth Bishop, Langston Hughes, and Seamus Heaney."
+      },
+      "profileTabs": {
+        "overview": {
+          "intro": "You write by paying close attention.",
+          "body": [
+            "The Witness preserves what is easily overlooked: gestures, streets, weather, ordinary grief.",
+            "Your poems build meaning through precise observation."
+          ]
+        },
+        "coreTraits": {
+          "intro": "Your core pattern is attentive realism.",
+          "list": [
+            "Concrete sensory detail",
+            "Scene-led emotional delivery",
+            "Human-scale perspective"
+          ],
+          "body": [
+            "You trust evidence on the page more than abstraction."
+          ]
+        },
+        "strengthsShadows": {
+          "intro": "Your gift is grounded truth.",
+          "body": [
+            "At your strongest, your restraint creates deep emotional impact.",
+            "Your shadow is distance—recording can eclipse revelation."
+          ]
+        },
+        "writingStyle": {
+          "intro": "Your style is scene-based and humane.",
+          "list": [
+            "Specific nouns and physical detail",
+            "Measured narrative distance",
+            "Subtle tonal control"
+          ],
+          "body": [
+            "You reveal feeling by showing the world clearly."
+          ]
+        },
+        "loveRelationships": {
+          "intro": "You love through presence and noticing.",
+          "body": [
+            "You show care by remembering details and honoring reality as it is.",
+            "When guarded, you may understate need; when open, you become a deeply dependable and emotionally perceptive partner."
+          ]
+        }
       }
     },
     {
@@ -241,13 +859,71 @@
       "shortBlurb": "Challenges convention, restraint, and falsehood.",
       "subtitle": "The poet who writes against what feels dead.",
       "overview": "The Rebel resists the safe version. Their poems push against falsehood, inherited rules, and emotional or political silence.",
-      "strengths": ["bold originality", "strong viewpoint", "high risk tolerance", "energizing force"],
-      "challenges": ["can become reactionary", "coherence may loosen", "softness may be underused"],
-      "analyzerDetects": ["confrontational diction", "structural disruption", "resistance-centered themes"],
+      "strengths": [
+        "bold originality",
+        "strong viewpoint",
+        "high risk tolerance",
+        "energizing force"
+      ],
+      "challenges": [
+        "can become reactionary",
+        "coherence may loosen",
+        "softness may be underused"
+      ],
+      "analyzerDetects": [
+        "confrontational diction",
+        "structural disruption",
+        "resistance-centered themes"
+      ],
       "idealTagline": "You would rather disrupt than pretend.",
       "famousPoetsWithSimilarEnergy": {
         "disclaimer": "Illustrative creative affinities, not official classifications.",
         "copy": "People drawn to this type might admire Allen Ginsberg, Audre Lorde, and Adrienne Rich."
+      },
+      "profileTabs": {
+        "overview": {
+          "intro": "You write against numbness and pretense.",
+          "body": [
+            "The Rebel is oppositional in service of truth, life, and freedom.",
+            "Your poems push form, language, and expectation to create real contact."
+          ]
+        },
+        "coreTraits": {
+          "intro": "Your core pattern is principled disruption.",
+          "list": [
+            "Confrontational clarity",
+            "Rule-breaking formal instinct",
+            "Urgent moral energy"
+          ],
+          "body": [
+            "You reject dead language and inherited scripts."
+          ]
+        },
+        "strengthsShadows": {
+          "intro": "Your gift is catalytic force.",
+          "body": [
+            "At your best, your work wakes readers up.",
+            "Your shadow is reaction without integration—defiance can flatten complexity."
+          ]
+        },
+        "writingStyle": {
+          "intro": "Your style is kinetic and high-contrast.",
+          "list": [
+            "Abrupt turns and ruptures",
+            "Charged diction",
+            "Unpredictable line energy"
+          ],
+          "body": [
+            "Your strongest poems channel anger into shape, not noise."
+          ]
+        },
+        "loveRelationships": {
+          "intro": "You love with intensity and autonomy.",
+          "body": [
+            "You need authenticity, freedom, and mutual courage in connection.",
+            "When threatened, you may escalate or withdraw; when secure, you become fiercely protective and electrifyingly honest."
+          ]
+        }
       }
     },
     {
@@ -257,13 +933,71 @@
       "shortBlurb": "Holds grief, memory, and tenderness with dignity.",
       "subtitle": "The poet who gives sorrow a voice.",
       "overview": "The Mourner writes with elegiac gravity. Their poems hold endings, absence, and remembrance with tenderness and control.",
-      "strengths": ["emotional gravity", "reflective depth", "tender resonance", "shared humanity in loss"],
-      "challenges": ["tone can narrow", "sorrow may dominate range", "repetition risk"],
-      "analyzerDetects": ["elegiac pacing", "loss-centered motifs", "lingering-memory structures"],
+      "strengths": [
+        "emotional gravity",
+        "reflective depth",
+        "tender resonance",
+        "shared humanity in loss"
+      ],
+      "challenges": [
+        "tone can narrow",
+        "sorrow may dominate range",
+        "repetition risk"
+      ],
+      "analyzerDetects": [
+        "elegiac pacing",
+        "loss-centered motifs",
+        "lingering-memory structures"
+      ],
       "idealTagline": "You know how to hold what is gone.",
       "famousPoetsWithSimilarEnergy": {
         "disclaimer": "Illustrative creative affinities, not official classifications.",
         "copy": "This type may resonate with readers who love Sylvia Plath, Anne Sexton, and Elizabeth Bishop."
+      },
+      "profileTabs": {
+        "overview": {
+          "intro": "You write with elegiac intelligence.",
+          "body": [
+            "The Mourner gives language to absence without sentimentality.",
+            "Your poems honor grief as a living relationship, not a solved event."
+          ]
+        },
+        "coreTraits": {
+          "intro": "Your core pattern is tender endurance.",
+          "list": [
+            "Memory-driven emotional structure",
+            "Measured sorrow",
+            "Quiet dignity in tone"
+          ],
+          "body": [
+            "You create space where loss can be held, named, and shared."
+          ]
+        },
+        "strengthsShadows": {
+          "intro": "Your gift is compassionate gravity.",
+          "body": [
+            "At your best, your work provides solace and recognition.",
+            "Your shadow is tonal narrowing—sorrow can eclipse other colors."
+          ]
+        },
+        "writingStyle": {
+          "intro": "Your style is patient and resonant.",
+          "list": [
+            "Elegiac pacing",
+            "Recurring memory motifs",
+            "Controlled emotional cadence"
+          ],
+          "body": [
+            "You often write from aftershocks, where detail becomes devotion."
+          ]
+        },
+        "loveRelationships": {
+          "intro": "You love through remembrance and care.",
+          "body": [
+            "You carry people deeply, even across distance and time.",
+            "When burdened, you may linger in ache; when supported, you offer extraordinary tenderness, loyalty, and emotional depth."
+          ]
+        }
       }
     },
     {
@@ -273,13 +1007,71 @@
       "shortBlurb": "Builds poems through scene, character, and unfolding.",
       "subtitle": "The poet who moves through moments.",
       "overview": "The Storyteller thinks in scenes. Their poems unfold through sequence, character, and emotional progression.",
-      "strengths": ["narrative momentum", "reader accessibility", "strong emotional build", "memorable movement"],
-      "challenges": ["can become prose-like", "language may trail plot", "over-explaining risk"],
-      "analyzerDetects": ["temporal sequencing", "scene shifts", "event-led emotional reveals"],
+      "strengths": [
+        "narrative momentum",
+        "reader accessibility",
+        "strong emotional build",
+        "memorable movement"
+      ],
+      "challenges": [
+        "can become prose-like",
+        "language may trail plot",
+        "over-explaining risk"
+      ],
+      "analyzerDetects": [
+        "temporal sequencing",
+        "scene shifts",
+        "event-led emotional reveals"
+      ],
       "idealTagline": "You make poems feel lived.",
       "famousPoetsWithSimilarEnergy": {
         "disclaimer": "Illustrative creative affinities, not official classifications.",
         "copy": "This type might resonate with Maya Angelou, Langston Hughes, and Seamus Heaney."
+      },
+      "profileTabs": {
+        "overview": {
+          "intro": "You think in scenes and movement.",
+          "body": [
+            "The Storyteller builds poems that unfold rather than merely declare.",
+            "Your strongest work carries readers through lived moments with momentum."
+          ]
+        },
+        "coreTraits": {
+          "intro": "Your core pattern is narrative embodiment.",
+          "list": [
+            "Temporal progression",
+            "Character and voice awareness",
+            "Emotional payoff through sequence"
+          ],
+          "body": [
+            "You trust story as a vessel for feeling and meaning."
+          ]
+        },
+        "strengthsShadows": {
+          "intro": "Your gift is accessibility with arc.",
+          "body": [
+            "At your best, your poems are vivid, humane, and memorable.",
+            "Your shadow is over-explanation—plot can crowd lyric lift."
+          ]
+        },
+        "writingStyle": {
+          "intro": "Your style is cinematic and reader-forward.",
+          "list": [
+            "Scene-setting detail",
+            "Narrative turns",
+            "Clear emotional progression"
+          ],
+          "body": [
+            "You often land impact through ending reversals or final reframing."
+          ]
+        },
+        "loveRelationships": {
+          "intro": "You love through shared experience.",
+          "body": [
+            "You bond by telling, listening, and co-creating meaningful memories.",
+            "Under stress, you may narrate instead of feel; in balance, you bring warmth, play, and deep relational continuity."
+          ]
+        }
       }
     },
     {
@@ -289,13 +1081,71 @@
       "shortBlurb": "Uses restraint, silence, and precision for impact.",
       "subtitle": "The poet who trusts what is left unsaid.",
       "overview": "The Minimalist writes with compression and intent. Their poems distill feeling into clean lines, controlled space, and exact language.",
-      "strengths": ["precision", "clarity", "high impact per line", "disciplined tone control"],
-      "challenges": ["can feel distant", "context may thin", "sparseness can limit access"],
-      "analyzerDetects": ["short-line density", "minimal ornamentation", "meaning through omission"],
+      "strengths": [
+        "precision",
+        "clarity",
+        "high impact per line",
+        "disciplined tone control"
+      ],
+      "challenges": [
+        "can feel distant",
+        "context may thin",
+        "sparseness can limit access"
+      ],
+      "analyzerDetects": [
+        "short-line density",
+        "minimal ornamentation",
+        "meaning through omission"
+      ],
       "idealTagline": "You know how little a poem needs to stay.",
       "famousPoetsWithSimilarEnergy": {
         "disclaimer": "Illustrative creative affinities, not official classifications.",
         "copy": "Readers close to this type might appreciate Bashō, Emily Dickinson, and Robert Frost."
+      },
+      "profileTabs": {
+        "overview": {
+          "intro": "You trust precision over excess.",
+          "body": [
+            "The Minimalist compresses emotion into clean, durable language.",
+            "Your poems prove that silence and spacing can carry as much force as statement."
+          ]
+        },
+        "coreTraits": {
+          "intro": "Your core pattern is distilled impact.",
+          "list": [
+            "Economy of language",
+            "High signal-to-noise lines",
+            "Meaning through omission"
+          ],
+          "body": [
+            "You remove until only the necessary remains."
+          ]
+        },
+        "strengthsShadows": {
+          "intro": "Your gift is concentrated clarity.",
+          "body": [
+            "At your best, each line carries disproportionate weight.",
+            "Your shadow is emotional coolness—spareness can feel withholding."
+          ]
+        },
+        "writingStyle": {
+          "intro": "Your style is spare, exact, and architectural.",
+          "list": [
+            "Short-line tension",
+            "Minimal ornament",
+            "Strategic white space"
+          ],
+          "body": [
+            "Your strongest poems leave room for reader participation without losing center."
+          ]
+        },
+        "loveRelationships": {
+          "intro": "You love through consistency and clean communication.",
+          "body": [
+            "You value honesty, simplicity, and emotional signal over dramatic display.",
+            "When defended, you can seem distant; when open, you offer steadiness, trust, and deeply intentional care."
+          ]
+        }
       }
     },
     {
@@ -305,13 +1155,71 @@
       "shortBlurb": "Writes with rhythm, voice, and spoken energy.",
       "subtitle": "The poet who knows how a line lands out loud.",
       "overview": "The Performer writes for breath and impact. Their poems carry cadence, momentum, and oral presence.",
-      "strengths": ["vocal force", "memorable cadence", "audience impact", "quotable lines"],
-      "challenges": ["can prioritize punch over depth", "subtlety may drop", "rhetorical overdrive risk"],
-      "analyzerDetects": ["cadential repetition", "spoken-word momentum", "high-impact line endings"],
+      "strengths": [
+        "vocal force",
+        "memorable cadence",
+        "audience impact",
+        "quotable lines"
+      ],
+      "challenges": [
+        "can prioritize punch over depth",
+        "subtlety may drop",
+        "rhetorical overdrive risk"
+      ],
+      "analyzerDetects": [
+        "cadential repetition",
+        "spoken-word momentum",
+        "high-impact line endings"
+      ],
       "idealTagline": "You write to be heard and remembered.",
       "famousPoetsWithSimilarEnergy": {
         "disclaimer": "Illustrative creative affinities, not official classifications.",
         "copy": "This type often shares energy with Maya Angelou, Langston Hughes, and Allen Ginsberg."
+      },
+      "profileTabs": {
+        "overview": {
+          "intro": "You write for breath, room, and impact.",
+          "body": [
+            "The Performer hears the body in language: cadence, pause, strike, release.",
+            "Your poems are built to land aloud and stay remembered."
+          ]
+        },
+        "coreTraits": {
+          "intro": "Your core pattern is vocal momentum.",
+          "list": [
+            "Cadence-first composition",
+            "Audience awareness",
+            "High-energy rhetorical phrasing"
+          ],
+          "body": [
+            "You understand performance as craft, not just charisma."
+          ]
+        },
+        "strengthsShadows": {
+          "intro": "Your gift is communicative force.",
+          "body": [
+            "At your strongest, your work electrifies and connects instantly.",
+            "Your shadow is overprojection—punch can replace depth."
+          ]
+        },
+        "writingStyle": {
+          "intro": "Your style is rhythmic and sonically intentional.",
+          "list": [
+            "Repetition for lift",
+            "Strong line-end impact",
+            "Breath-aware pacing"
+          ],
+          "body": [
+            "You often shape poems around how they move through a listener, not only a page."
+          ]
+        },
+        "loveRelationships": {
+          "intro": "You love expressively and openly.",
+          "body": [
+            "You bring enthusiasm, language, and visible devotion to relationships.",
+            "When unsteady, intensity can dominate; when grounded, you bring joy, courage, and unforgettable affirmation."
+          ]
+        }
       }
     },
     {
@@ -321,13 +1229,71 @@
       "shortBlurb": "Braids image, meaning, and emotion into layered work.",
       "subtitle": "The poet who connects everything beneath the surface.",
       "overview": "The Weaver creates layered coherence. Their poems braid symbol, thought, memory, and emotional tension into textured wholes.",
-      "strengths": ["rich thematic integration", "complex emotional range", "high reread value", "strong motif architecture"],
-      "challenges": ["can become dense", "central point may blur", "reader load can rise"],
-      "analyzerDetects": ["interlocking motifs", "multi-layer emotional structure", "cohesive symbolic braiding"],
+      "strengths": [
+        "rich thematic integration",
+        "complex emotional range",
+        "high reread value",
+        "strong motif architecture"
+      ],
+      "challenges": [
+        "can become dense",
+        "central point may blur",
+        "reader load can rise"
+      ],
+      "analyzerDetects": [
+        "interlocking motifs",
+        "multi-layer emotional structure",
+        "cohesive symbolic braiding"
+      ],
       "idealTagline": "You make complexity feel woven, not scattered.",
       "famousPoetsWithSimilarEnergy": {
         "disclaimer": "Illustrative creative affinities, not official classifications.",
         "copy": "People who identify with this type may be drawn to Adrienne Rich, T. S. Eliot, and Emily Dickinson."
+      },
+      "profileTabs": {
+        "overview": {
+          "intro": "You braid complexity into coherence.",
+          "body": [
+            "The Weaver interlaces memory, symbol, thought, and feeling across layers.",
+            "Your work rewards rereading because meaning accumulates with each pass."
+          ]
+        },
+        "coreTraits": {
+          "intro": "Your core pattern is integrative intelligence.",
+          "list": [
+            "Motif architecture",
+            "Multi-layer emotional logic",
+            "Cross-thread thematic cohesion"
+          ],
+          "body": [
+            "You are skilled at holding contradiction without collapsing it."
+          ]
+        },
+        "strengthsShadows": {
+          "intro": "Your gift is layered depth.",
+          "body": [
+            "At your best, your poems feel rich without feeling random.",
+            "Your shadow is density overload—too many threads can diffuse focus."
+          ]
+        },
+        "writingStyle": {
+          "intro": "Your style is textured and interdependent.",
+          "list": [
+            "Interlocking symbols",
+            "Echo structures",
+            "Long-form thematic callbacks"
+          ],
+          "body": [
+            "You compose in networks rather than single-line statements."
+          ]
+        },
+        "loveRelationships": {
+          "intro": "You love in patterns, not fragments.",
+          "body": [
+            "You connect through nuance, memory, and meaningful synthesis.",
+            "When stressed, you may over-process; when regulated, you offer profound understanding and emotionally intelligent companionship."
+          ]
+        }
       }
     }
   ],
