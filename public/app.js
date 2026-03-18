@@ -18,27 +18,58 @@ function buildRadarChart(type){
   ];
 
   const values=axes.map((a)=>Math.max(0,Math.min(100,Number(profile[a.key]||0))));
-  const size=360;
+
+  // Use a larger viewBox with generous padding so labels never clip.
+  const size=460;
   const c=size/2;
-  const r=122;
+  const radarRadius=118;
+  const labelRadius=176;
+  const valueRadius=156;
   const steps=[20,40,60,80,100];
-  const point=(idx,val)=>{
+
+  const point=(idx,val,radius=radarRadius)=>{
     const angle=(-Math.PI/2)+(idx*(Math.PI*2/axes.length));
-    const rr=(val/100)*r;
-    return [c+Math.cos(angle)*rr,c+Math.sin(angle)*rr];
+    const rr=(val/100)*radius;
+    return [c+Math.cos(angle)*rr,c+Math.sin(angle)*rr,angle];
   };
-  const poly=(val)=>axes.map((_,i)=>point(i,val).join(',')).join(' ');
-  const area=values.map((v,i)=>point(i,v).join(',')).join(' ');
+
+  const splitLabel=(label)=>{
+    const words=String(label||'').split(' ');
+    if(words.length<=2) return [label];
+    const first=[];
+    const second=[];
+    words.forEach((w)=>{
+      const target=(first.join(' ').length<=second.join(' ').length)?first:second;
+      target.push(w);
+    });
+    return [first.join(' '),second.join(' ')].filter(Boolean).slice(0,2);
+  };
+
+  const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+  const poly=(val)=>axes.map((_,i)=>{const [x,y]=point(i,val);return `${x},${y}`;}).join(' ');
+  const area=values.map((v,i)=>{const [x,y]=point(i,v);return `${x},${y}`;}).join(' ');
 
   const axisLines=axes.map((_,i)=>{const [x,y]=point(i,100);return `<line x1='${c}' y1='${c}' x2='${x}' y2='${y}'/>`;}).join('');
   const rings=steps.map((s)=>`<polygon points='${poly(s)}'/>`).join('');
+
   const labels=axes.map((a,i)=>{
-    const [x,y]=point(i,112);
-    const [lx,ly]=point(i,118);
+    const [vx,vy]=point(i,100,valueRadius);
+    let [lx,ly,angle]=point(i,100,labelRadius);
+    lx=clamp(lx,26,size-26);
+    ly=clamp(ly,24,size-24);
+
     let anchor='middle';
-    if(x<c-8) anchor='end';
-    if(x>c+8) anchor='start';
-    return `<g><text class='radar-value' x='${x}' y='${y-8}' text-anchor='${anchor}'>${values[i]}</text><text class='radar-label' x='${lx}' y='${ly+8}' text-anchor='${anchor}'>${a.label}</text></g>`;
+    const cos=Math.cos(angle);
+    if(cos<-0.28) anchor='end';
+    if(cos>0.28) anchor='start';
+
+    const lines=splitLabel(a.label);
+    const labelLines=lines.map((line,idx)=>`<tspan x='${lx}' dy='${idx===0?0:12}'>${escapeHtml(line)}</tspan>`).join('');
+
+    return `<g>
+      <text class='radar-value' x='${vx}' y='${vy-6}' text-anchor='${anchor}'>${values[i]}</text>
+      <text class='radar-label' x='${lx}' y='${ly}' text-anchor='${anchor}'>${labelLines}</text>
+    </g>`;
   }).join('');
 
   return `
@@ -47,7 +78,7 @@ function buildRadarChart(type){
         <h3>Signature Trait Map</h3>
         <p class='muted'>Baseline pattern for ${escapeHtml(type.name)} (0–100)</p>
       </div>
-      <svg class='type-radar' viewBox='0 0 ${size} ${size}' role='img' aria-label='Radar chart of ${escapeHtml(type.name)} traits'>
+      <svg class='type-radar' viewBox='0 0 ${size} ${size}' preserveAspectRatio='xMidYMid meet' role='img' aria-label='Radar chart of ${escapeHtml(type.name)} traits'>
         <g class='radar-rings'>${rings}</g>
         <g class='radar-axes'>${axisLines}</g>
         <polygon class='radar-area' points='${area}'/>
