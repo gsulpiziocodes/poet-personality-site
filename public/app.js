@@ -435,11 +435,14 @@ function renderTypeProfileTabs(root,t,siblings){
               ? (tab.sections||buildLoveRelationshipSections(t))
               : [];
     const sectionNav=detailSections.length>1?`<nav class='type-section-nav' aria-label='Section quick links'>${detailSections.map((section,idx)=>`<a href='#type-section-${idx}' class='type-section-link'>${escapeHtml(section.title||`Section ${idx+1}`)}</a>`).join('')}</nav>`:'';
-    const sectionHtml=detailSections.length?detailSections.map((section,idx)=>{
+    const sectionBlocks=detailSections.map((section,idx)=>{
       const sBody=(section.body||[]).map((p)=>`<p>${escapeHtml(p)}</p>`).join('');
       const sList=(section.list||[]).length?`<ul class='list'>${section.list.map((x)=>`<li>${escapeHtml(x)}</li>`).join('')}</ul>`:'';
       return `<section class='type-detail-block' id='type-section-${idx}'><h3>${escapeHtml(section.title||'')}</h3>${sBody}${sList}</section>`;
-    }).join(''):'';
+    });
+    const firstOverviewSection=(tab.id==='overview'&&sectionBlocks.length)?sectionBlocks[0]:'';
+    const remainingOverviewSections=(tab.id==='overview'&&sectionBlocks.length>1)?sectionBlocks.slice(1).join(''):'';
+    const sectionHtml=tab.id==='overview'?remainingOverviewSections:sectionBlocks.join('');
 
     const radarHtml=(tab.id==='overview')?buildRadarChart(t):'';
     const related=siblings.length?`<p class='footer-note'>Related in ${escapeHtml(t.group)}: ${siblings.map((x)=>`<a href='/type/${x.slug}'>${escapeHtml(x.name)}</a>`).join(' · ')}</p>`:'';
@@ -451,10 +454,9 @@ function renderTypeProfileTabs(root,t,siblings){
         <div class='type-panel-inner'>
           <p class='kicker'>${escapeHtml(tab.kicker||'')}</p>
           <h2>${escapeHtml(tab.heading)}</h2>
-          ${tab.id==='overview' ? `<section class='overview-split'><div class='overview-copy'><p class='lead'>${escapeHtml(tab.intro||'')}</p>${bodyHtml}${listHtml}${splitHtml}</div><div class='overview-chart'>${radarHtml}</div></section>` : `<p class='lead'>${escapeHtml(tab.intro||'')}</p>${bodyHtml}${listHtml}${splitHtml}`}
-          ${tab.id!=='overview' ? radarHtml : ''}
-          ${sectionNav}
-          ${sectionHtml}
+          ${tab.id==='overview'
+            ? `<p class='lead'>${escapeHtml(tab.intro||'')}</p>${bodyHtml}${listHtml}${splitHtml}${sectionNav}<section class='overview-detail-split'><div class='overview-detail-copy'>${firstOverviewSection}</div><div class='overview-chart'>${radarHtml}</div></section>${sectionHtml}`
+            : `<p class='lead'>${escapeHtml(tab.intro||'')}</p>${bodyHtml}${listHtml}${splitHtml}${radarHtml}${sectionNav}${sectionHtml}`}
           ${tab.callout?`<p class='quote type-pull-quote'><strong>${escapeHtml(tab.callout)}</strong></p>`:''}
           ${tab.id==='overview'?poets:''}
           ${related}
