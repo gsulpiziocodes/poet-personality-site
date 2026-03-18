@@ -157,6 +157,8 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .type-panel-content.in{opacity:1;transform:none}
 .type-panel-inner{max-width:74ch}
 .type-panel-inner p{line-height:1.7}
+.type-hero-art{margin:10px 0 12px;border:1px solid var(--line-soft);border-radius:14px;overflow:hidden;background:var(--surface-soft)}
+.type-hero-art img{display:block;width:100%;height:auto;max-height:360px;object-fit:cover}
 .overview-radar-row{display:flex;justify-content:center;margin:16px 0 18px}
 .overview-radar-row .type-radar-card{width:min(100%,620px);margin:0}
 .type-section-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;margin-bottom:8px;padding-bottom:6px}
