@@ -159,6 +159,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .type-panel-inner p{line-height:1.7}
 .overview-split{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:14px;align-items:start;margin-top:6px}
 .overview-copy .lead{margin-top:0}
+.overview-copy .type-detail-block{margin-top:0;padding-top:0;border-top:0}
 .overview-chart .type-radar-card{margin-top:0}
 .type-section-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;margin-bottom:8px;padding-bottom:6px}
 .type-section-link{text-decoration:none;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface-soft);color:color-mix(in oklab,var(--ink) 84%, transparent);font-size:.84rem;font-weight:600;transition:all .2s ease}
