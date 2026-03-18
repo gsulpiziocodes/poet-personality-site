@@ -406,7 +406,7 @@ function renderTypeProfileTabs(root,t,siblings){
             <h1>${escapeHtml(t.name)}</h1>
             <p class='lead'>${escapeHtml(t.subtitle)}</p>
           </div>
-          <figure class='type-hero-art'><img src='${escapeHtml(typeImageSrc)}' alt='${escapeHtml(t.name)} personality illustration' loading='lazy'/></figure>
+          <figure class='type-hero-art' data-type='${escapeHtml(t.slug)}'><img src='${escapeHtml(typeImageSrc)}' alt='${escapeHtml(t.name)} personality illustration' loading='lazy'/></figure>
         </div>
         <article id='typeTabContent' class='type-panel-content'></article>
       </section>
