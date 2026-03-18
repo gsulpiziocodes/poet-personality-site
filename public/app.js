@@ -20,11 +20,11 @@ function buildRadarChart(type){
   const values=axes.map((a)=>Math.max(0,Math.min(100,Number(profile[a.key]||0))));
 
   // Use a larger viewBox with generous padding so labels never clip.
-  const size=460;
+  const size=440;
   const c=size/2;
-  const radarRadius=118;
-  const labelRadius=176;
-  const valueRadius=156;
+  const radarRadius=108;
+  const labelRadius=162;
+  const valueRadius=145;
   const steps=[20,40,60,80,100];
 
   const point=(idx,val,radius=radarRadius)=>{
@@ -55,8 +55,8 @@ function buildRadarChart(type){
   const labels=axes.map((a,i)=>{
     const [vx,vy]=point(i,100,valueRadius);
     let [lx,ly,angle]=point(i,100,labelRadius);
-    lx=clamp(lx,26,size-26);
-    ly=clamp(ly,24,size-24);
+    lx=clamp(lx,30,size-30);
+    ly=clamp(ly,28,size-28);
 
     let anchor='middle';
     const cos=Math.cos(angle);
