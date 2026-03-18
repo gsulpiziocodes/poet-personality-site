@@ -286,6 +286,14 @@
             "When insecure, you may test devotion through intensity; when grounded, you offer profound emotional healing."
           ]
         }
+      },
+      "radarProfile": {
+        "emotionalIntensity": 92,
+        "imagerySymbolism": 86,
+        "structuralControl": 62,
+        "narrativeDrive": 58,
+        "directness": 54,
+        "vulnerability": 90
       }
     },
     {
@@ -462,6 +470,14 @@
             "When regulated, you offer rare emotional attunement; when overwhelmed, you can retreat into silence or riddles."
           ]
         }
+      },
+      "radarProfile": {
+        "emotionalIntensity": 74,
+        "imagerySymbolism": 95,
+        "structuralControl": 66,
+        "narrativeDrive": 48,
+        "directness": 32,
+        "vulnerability": 64
       }
     },
     {
@@ -638,6 +654,14 @@
             "Under stress, you may default to control; in trust, you become deeply reliable and emotionally articulate."
           ]
         }
+      },
+      "radarProfile": {
+        "emotionalIntensity": 60,
+        "imagerySymbolism": 68,
+        "structuralControl": 94,
+        "narrativeDrive": 62,
+        "directness": 82,
+        "vulnerability": 52
       }
     },
     {
@@ -814,6 +838,14 @@
             "When uncertain, you may keep seeking instead of settling; when centered, you bring depth, wonder, and evolution to partnership."
           ]
         }
+      },
+      "radarProfile": {
+        "emotionalIntensity": 72,
+        "imagerySymbolism": 70,
+        "structuralControl": 64,
+        "narrativeDrive": 76,
+        "directness": 58,
+        "vulnerability": 78
       }
     },
     {
@@ -990,6 +1022,14 @@
             "When hurt, you may idealize or cling; when secure, you become generous, grounding, and profoundly affectionate."
           ]
         }
+      },
+      "radarProfile": {
+        "emotionalIntensity": 90,
+        "imagerySymbolism": 76,
+        "structuralControl": 56,
+        "narrativeDrive": 68,
+        "directness": 74,
+        "vulnerability": 92
       }
     },
     {
@@ -1166,6 +1206,14 @@
             "When ungrounded, projection can replace presence; when grounded, you offer romance with real emotional care."
           ]
         }
+      },
+      "radarProfile": {
+        "emotionalIntensity": 78,
+        "imagerySymbolism": 90,
+        "structuralControl": 52,
+        "narrativeDrive": 50,
+        "directness": 38,
+        "vulnerability": 72
       }
     },
     {
@@ -1342,6 +1390,14 @@
             "When insecure, performance can replace vulnerability; when open, you become deeply affectionate and emotionally elegant."
           ]
         }
+      },
+      "radarProfile": {
+        "emotionalIntensity": 70,
+        "imagerySymbolism": 88,
+        "structuralControl": 78,
+        "narrativeDrive": 58,
+        "directness": 60,
+        "vulnerability": 66
       }
     },
     {
@@ -1518,6 +1574,14 @@
             "When strained, you may over-give; when balanced, you create relationships that feel safe, honored, and enduring."
           ]
         }
+      },
+      "radarProfile": {
+        "emotionalIntensity": 76,
+        "imagerySymbolism": 72,
+        "structuralControl": 74,
+        "narrativeDrive": 62,
+        "directness": 70,
+        "vulnerability": 80
       }
     },
     {
@@ -1694,6 +1758,14 @@
             "When dysregulated, intensity can overwhelm; when grounded, you offer extraordinary honesty and emotional loyalty."
           ]
         }
+      },
+      "radarProfile": {
+        "emotionalIntensity": 94,
+        "imagerySymbolism": 64,
+        "structuralControl": 54,
+        "narrativeDrive": 66,
+        "directness": 90,
+        "vulnerability": 96
       }
     },
     {
@@ -1870,6 +1942,14 @@
             "When guarded, you may understate need; when open, you become a deeply dependable and emotionally perceptive partner."
           ]
         }
+      },
+      "radarProfile": {
+        "emotionalIntensity": 62,
+        "imagerySymbolism": 66,
+        "structuralControl": 76,
+        "narrativeDrive": 70,
+        "directness": 84,
+        "vulnerability": 58
       }
     },
     {
@@ -2046,6 +2126,14 @@
             "When threatened, you may escalate or withdraw; when secure, you become fiercely protective and electrifyingly honest."
           ]
         }
+      },
+      "radarProfile": {
+        "emotionalIntensity": 88,
+        "imagerySymbolism": 70,
+        "structuralControl": 60,
+        "narrativeDrive": 72,
+        "directness": 92,
+        "vulnerability": 62
       }
     },
     {
@@ -2222,6 +2310,14 @@
             "When burdened, you may linger in ache; when supported, you offer extraordinary tenderness, loyalty, and emotional depth."
           ]
         }
+      },
+      "radarProfile": {
+        "emotionalIntensity": 86,
+        "imagerySymbolism": 74,
+        "structuralControl": 72,
+        "narrativeDrive": 60,
+        "directness": 68,
+        "vulnerability": 88
       }
     },
     {
@@ -2398,6 +2494,14 @@
             "Under stress, you may narrate instead of feel; in balance, you bring warmth, play, and deep relational continuity."
           ]
         }
+      },
+      "radarProfile": {
+        "emotionalIntensity": 70,
+        "imagerySymbolism": 62,
+        "structuralControl": 74,
+        "narrativeDrive": 92,
+        "directness": 78,
+        "vulnerability": 68
       }
     },
     {
@@ -2574,6 +2678,14 @@
             "When defended, you can seem distant; when open, you offer steadiness, trust, and deeply intentional care."
           ]
         }
+      },
+      "radarProfile": {
+        "emotionalIntensity": 58,
+        "imagerySymbolism": 64,
+        "structuralControl": 90,
+        "narrativeDrive": 48,
+        "directness": 72,
+        "vulnerability": 50
       }
     },
     {
@@ -2750,6 +2862,14 @@
             "When unsteady, intensity can dominate; when grounded, you bring joy, courage, and unforgettable affirmation."
           ]
         }
+      },
+      "radarProfile": {
+        "emotionalIntensity": 84,
+        "imagerySymbolism": 68,
+        "structuralControl": 66,
+        "narrativeDrive": 86,
+        "directness": 88,
+        "vulnerability": 70
       }
     },
     {
@@ -2926,6 +3046,14 @@
             "When stressed, you may over-process; when regulated, you offer profound understanding and emotionally intelligent companionship."
           ]
         }
+      },
+      "radarProfile": {
+        "emotionalIntensity": 78,
+        "imagerySymbolism": 92,
+        "structuralControl": 82,
+        "narrativeDrive": 64,
+        "directness": 46,
+        "vulnerability": 74
       }
     }
   ],

@@ -6,6 +6,57 @@ function escapeHtml(value=''){return String(value).replace(/[&<>"']/g,(ch)=>({ '
 
 function titleCaseWords(value=''){return String(value).split(/\s+/).filter(Boolean).map((w)=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');}
 
+function buildRadarChart(type){
+  const profile=type.radarProfile||{};
+  const axes=[
+    {key:'emotionalIntensity',label:'Emotional Intensity'},
+    {key:'imagerySymbolism',label:'Imagery & Symbolism'},
+    {key:'structuralControl',label:'Structural Control'},
+    {key:'narrativeDrive',label:'Narrative Drive'},
+    {key:'directness',label:'Directness'},
+    {key:'vulnerability',label:'Vulnerability'}
+  ];
+
+  const values=axes.map((a)=>Math.max(0,Math.min(100,Number(profile[a.key]||0))));
+  const size=360;
+  const c=size/2;
+  const r=122;
+  const steps=[20,40,60,80,100];
+  const point=(idx,val)=>{
+    const angle=(-Math.PI/2)+(idx*(Math.PI*2/axes.length));
+    const rr=(val/100)*r;
+    return [c+Math.cos(angle)*rr,c+Math.sin(angle)*rr];
+  };
+  const poly=(val)=>axes.map((_,i)=>point(i,val).join(',')).join(' ');
+  const area=values.map((v,i)=>point(i,v).join(',')).join(' ');
+
+  const axisLines=axes.map((_,i)=>{const [x,y]=point(i,100);return `<line x1='${c}' y1='${c}' x2='${x}' y2='${y}'/>`;}).join('');
+  const rings=steps.map((s)=>`<polygon points='${poly(s)}'/>`).join('');
+  const labels=axes.map((a,i)=>{
+    const [x,y]=point(i,112);
+    const [lx,ly]=point(i,118);
+    let anchor='middle';
+    if(x<c-8) anchor='end';
+    if(x>c+8) anchor='start';
+    return `<g><text class='radar-value' x='${x}' y='${y-8}' text-anchor='${anchor}'>${values[i]}</text><text class='radar-label' x='${lx}' y='${ly+8}' text-anchor='${anchor}'>${a.label}</text></g>`;
+  }).join('');
+
+  return `
+    <section class='type-radar-card' aria-label='Signature trait map'>
+      <div class='type-radar-head'>
+        <h3>Signature Trait Map</h3>
+        <p class='muted'>Baseline pattern for ${escapeHtml(type.name)} (0–100)</p>
+      </div>
+      <svg class='type-radar' viewBox='0 0 ${size} ${size}' role='img' aria-label='Radar chart of ${escapeHtml(type.name)} traits'>
+        <g class='radar-rings'>${rings}</g>
+        <g class='radar-axes'>${axisLines}</g>
+        <polygon class='radar-area' points='${area}'/>
+        <polyline class='radar-outline' points='${area}'/>
+        ${labels}
+      </svg>
+    </section>`;
+}
+
 function buildOverviewSections(type){
   const strengths=(type.strengths||[]).slice(0,4).map(titleCaseWords);
   const challenges=(type.challenges||[]).slice(0,3).map(titleCaseWords);
@@ -359,6 +410,7 @@ function renderTypeProfileTabs(root,t,siblings){
       return `<section class='type-detail-block' id='type-section-${idx}'><h3>${escapeHtml(section.title||'')}</h3>${sBody}${sList}</section>`;
     }).join(''):'';
 
+    const radarHtml=(tab.id==='overview')?buildRadarChart(t):'';
     const related=siblings.length?`<p class='footer-note'>Related in ${escapeHtml(t.group)}: ${siblings.map((x)=>`<a href='/type/${x.slug}'>${escapeHtml(x.name)}</a>`).join(' · ')}</p>`:'';
     const poets=`<p class='footer-note'>${escapeHtml(t.famousPoetsWithSimilarEnergy.copy)}<br/><span class='muted'>${escapeHtml(t.famousPoetsWithSimilarEnergy.disclaimer)}</span></p>`;
 
@@ -372,6 +424,7 @@ function renderTypeProfileTabs(root,t,siblings){
           ${bodyHtml}
           ${listHtml}
           ${splitHtml}
+          ${radarHtml}
           ${sectionNav}
           ${sectionHtml}
           ${tab.callout?`<p class='quote type-pull-quote'><strong>${escapeHtml(tab.callout)}</strong></p>`:''}
