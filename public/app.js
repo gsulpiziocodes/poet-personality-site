@@ -321,6 +321,14 @@ function renderTypeProfileTabs(root,t,siblings){
   const signals=(t.analyzerDetects||[]).slice(0,3);
   const custom=t.profileTabs||{};
 
+  const motifByType={
+    'the-alchemist':'✦ ember', 'the-oracle':'◌ omen', 'the-architect':'▦ form', 'the-seeker':'↗ quest',
+    'the-lover':'♡ devotion', 'the-dreamer':'☾ atmosphere', 'the-muse':'✶ lyric', 'the-devotee':'✧ ritual',
+    'the-confessor':'◉ truth', 'the-witness':'◍ detail', 'the-rebel':'⚡ rupture', 'the-mourner':'❖ elegy',
+    'the-storyteller':'➶ arc', 'the-minimalist':'— silence', 'the-performer':'♪ cadence', 'the-weaver':'⌘ thread'
+  };
+  const readMins=Math.max(5,Math.min(10,Math.ceil((String(t.overview||'').length + JSON.stringify(t.profileTabs||{}).length)/1200)));
+
   const mergeTab=(base,customTab)=>{
     if(!customTab) return base;
     const out={...base,...customTab};
@@ -455,10 +463,12 @@ function renderTypeProfileTabs(root,t,siblings){
         <div class='type-panel-inner'>
           <p class='kicker'>${escapeHtml(tab.kicker||'')}</p>
           <h2>${escapeHtml(tab.heading)}</h2>
+          ${tab.id==='overview'?`<div class='type-meta-row'><span>${readMins} min read</span><span>Deep profile</span><span>${escapeHtml(t.group)}</span></div><div class='type-motif-strip'>${escapeHtml(motifByType[t.slug]||'✶ signature')} · ${escapeHtml(t.name)}</div>`:''}
+          ${tab.id==='overview'&&tab.callout?`<div class='type-quote-band'>${escapeHtml(tab.callout)}</div>`:''}
           ${tab.id==='overview'
             ? `<p class='lead'>${escapeHtml(tab.intro||'')}</p>${bodyHtml}${listHtml}${splitHtml}${sectionNav}<div class='overview-radar-row'>${radarHtml}</div>${sectionHtml}`
             : `<p class='lead'>${escapeHtml(tab.intro||'')}</p>${bodyHtml}${listHtml}${splitHtml}${radarHtml}${sectionNav}${sectionHtml}`}
-          ${tab.callout?`<p class='quote type-pull-quote'><strong>${escapeHtml(tab.callout)}</strong></p>`:''}
+          ${tab.id!=='overview'&&tab.callout?`<p class='quote type-pull-quote'><strong>${escapeHtml(tab.callout)}</strong></p>`:''}
           ${tab.id==='overview'?poets:''}
           ${related}
         </div>`;
