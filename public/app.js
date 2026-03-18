@@ -44,6 +44,56 @@ function buildOverviewSections(type){
   ];
 }
 
+function buildStrengthsShadowSections(type){
+  const strengths=(type.strengths||[]).slice(0,4).map(titleCaseWords);
+  const challenges=(type.challenges||[]).slice(0,4).map(titleCaseWords);
+  const groupStress={
+    'Visionaries':`Under stress, ${type.name} may retreat into abstraction and become harder to read emotionally.`,
+    'Romantics':`Under stress, ${type.name} may become emotionally overextended and read situations through longing or fear.`,
+    'Truth-Tellers':`Under stress, ${type.name} may sharpen into defensiveness, intensity, or emotional hard lines.`,
+    'Makers':`Under stress, ${type.name} may over-focus on delivery or structure and lose contact with emotional center.`
+  };
+  const groupMotivation={
+    'Visionaries':`What motivates this type most is discovery: finding new meaning, deeper coherence, and hidden pattern.`,
+    'Romantics':`What motivates this type most is emotional resonance: writing that creates closeness, beauty, and felt connection.`,
+    'Truth-Tellers':`What motivates this type most is honesty: saying what matters clearly, courageously, and without pretense.`,
+    'Makers':`What motivates this type most is craft mastery: shaping language with precision, momentum, and memorable form.`
+  };
+
+  return [
+    {
+      title:`The most prominent ${type.name} strengths`,
+      list:strengths
+    },
+    {
+      title:`The key ${type.name} shadows`,
+      list:challenges
+    },
+    {
+      title:'How this type handles stress',
+      body:[
+        groupStress[type.group]||`${type.name} tends to narrow toward familiar instincts under pressure.`,
+        `When this pattern is unexamined, common shadow expressions include ${challenges.join(', ').toLowerCase()}.`
+      ]
+    },
+    {
+      title:`What motivates ${type.name}`,
+      body:[
+        groupMotivation[type.group]||`This type is motivated by meaningful expression and artistic integrity.`,
+        `At its best, motivation increases when there is both emotional truth and clear artistic direction.`
+      ]
+    },
+    {
+      title:`How to grow as ${type.name}`,
+      body:[
+        `Practice range intentionally: keep your strengths, but write against your default habits at least once per week.`,
+        `Choose one shadow to work on at a time—for example, moving from "${(challenges[0]||'over-control').toLowerCase()}" toward clarity and balance.`,
+        `Use revision as integration: preserve your voice while improving readability, contrast, and emotional precision.`
+      ]
+    }
+  ];
+}
+
 function renderTypeProfileTabs(root,t,siblings){
   const traits=(t.strengths||[]).slice(0,3);
   const shadows=(t.challenges||[]).slice(0,3);
@@ -156,8 +206,12 @@ function renderTypeProfileTabs(root,t,siblings){
       </div>
     `:'';
 
-    const overviewSections=(tab.id==='overview')?(tab.sections||buildOverviewSections(t)):[];
-    const sectionHtml=overviewSections.length?overviewSections.map((section)=>{
+    const detailSections=(tab.id==='overview')
+      ? (tab.sections||buildOverviewSections(t))
+      : (tab.id==='strengths-shadows')
+        ? (tab.sections||buildStrengthsShadowSections(t))
+        : [];
+    const sectionHtml=detailSections.length?detailSections.map((section)=>{
       const sBody=(section.body||[]).map((p)=>`<p>${escapeHtml(p)}</p>`).join('');
       const sList=(section.list||[]).length?`<ul class='list'>${section.list.map((x)=>`<li>${escapeHtml(x)}</li>`).join('')}</ul>`:'';
       return `<section class='type-detail-block'><h3>${escapeHtml(section.title||'')}</h3>${sBody}${sList}</section>`;
