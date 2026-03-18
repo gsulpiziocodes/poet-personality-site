@@ -24,7 +24,6 @@ function buildRadarChart(type){
   const c=size/2;
   const radarRadius=108;
   const labelRadius=162;
-  const valueRadius=145;
   const steps=[20,40,60,80,100];
 
   const point=(idx,val,radius=radarRadius)=>{
@@ -53,22 +52,27 @@ function buildRadarChart(type){
   const rings=steps.map((s)=>`<polygon points='${poly(s)}'/>`).join('');
 
   const labels=axes.map((a,i)=>{
-    const [vx,vy]=point(i,100,valueRadius);
     let [lx,ly,angle]=point(i,100,labelRadius);
     lx=clamp(lx,30,size-30);
-    ly=clamp(ly,28,size-28);
+    ly=clamp(ly,30,size-30);
 
-    let anchor='middle';
     const cos=Math.cos(angle);
+    const sin=Math.sin(angle);
+    let anchor='middle';
     if(cos<-0.28) anchor='end';
     if(cos>0.28) anchor='start';
 
     const lines=splitLabel(a.label);
-    const labelLines=lines.map((line,idx)=>`<tspan x='${lx}' dy='${idx===0?0:12}'>${escapeHtml(line)}</tspan>`).join('');
+    const lineHeight=12;
+    const scoreGap=sin>0.45?9:8;
+    const labelStartY=ly;
+    const scoreY=labelStartY-scoreGap;
 
-    return `<g>
-      <text class='radar-value' x='${vx}' y='${vy-6}' text-anchor='${anchor}'>${values[i]}</text>
-      <text class='radar-label' x='${lx}' y='${ly}' text-anchor='${anchor}'>${labelLines}</text>
+    const labelLines=lines.map((line,idx)=>`<tspan x='${lx}' dy='${idx===0?0:lineHeight}'>${escapeHtml(line)}</tspan>`).join('');
+
+    return `<g class='radar-label-group'>
+      <text class='radar-value' x='${lx}' y='${scoreY}' text-anchor='${anchor}'>${values[i]}</text>
+      <text class='radar-label' x='${lx}' y='${labelStartY}' text-anchor='${anchor}'>${labelLines}</text>
     </g>`;
   }).join('');
 

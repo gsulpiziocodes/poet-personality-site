@@ -173,8 +173,8 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .radar-axes line{stroke:color-mix(in oklab,var(--line) 76%, var(--surface));stroke-width:.8}
 .radar-area{fill:color-mix(in oklab,var(--accent-soft) 18%, transparent);stroke:none}
 .radar-outline{fill:none;stroke:color-mix(in oklab,var(--accent) 82%, var(--accent-soft));stroke-width:1.5}
-.radar-label{font-size:11px;line-height:1.34;letter-spacing:.01em;fill:color-mix(in oklab,var(--ink) 72%, transparent)}
-.radar-value{font-size:12px;font-weight:700;fill:color-mix(in oklab,var(--ink) 86%, transparent)}
+.radar-label{font-size:11px;letter-spacing:.01em;fill:color-mix(in oklab,var(--ink) 72%, transparent);dominant-baseline:hanging}
+.radar-value{font-size:12px;font-weight:700;letter-spacing:.01em;fill:color-mix(in oklab,var(--ink) 86%, transparent)}
 .type-pull-quote{margin-top:18px;padding:12px 14px;border-left:3px solid var(--accent-soft);background:color-mix(in oklab,var(--surface-soft) 82%, transparent);border-radius:10px}
 .type-panel-inner .quote{margin-top:16px}
 .type-panel-inner .footer-note a{color:var(--accent)}
