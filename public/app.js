@@ -451,11 +451,8 @@ function renderTypeProfileTabs(root,t,siblings){
         <div class='type-panel-inner'>
           <p class='kicker'>${escapeHtml(tab.kicker||'')}</p>
           <h2>${escapeHtml(tab.heading)}</h2>
-          <p class='lead'>${escapeHtml(tab.intro||'')}</p>
-          ${radarHtml}
-          ${bodyHtml}
-          ${listHtml}
-          ${splitHtml}
+          ${tab.id==='overview' ? `<section class='overview-split'><div class='overview-copy'><p class='lead'>${escapeHtml(tab.intro||'')}</p>${bodyHtml}${listHtml}${splitHtml}</div><div class='overview-chart'>${radarHtml}</div></section>` : `<p class='lead'>${escapeHtml(tab.intro||'')}</p>${bodyHtml}${listHtml}${splitHtml}`}
+          ${tab.id!=='overview' ? radarHtml : ''}
           ${sectionNav}
           ${sectionHtml}
           ${tab.callout?`<p class='quote type-pull-quote'><strong>${escapeHtml(tab.callout)}</strong></p>`:''}
