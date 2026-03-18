@@ -352,10 +352,11 @@ function renderTypeProfileTabs(root,t,siblings){
             : (tab.id==='love-relationships')
               ? (tab.sections||buildLoveRelationshipSections(t))
               : [];
-    const sectionHtml=detailSections.length?detailSections.map((section)=>{
+    const sectionNav=detailSections.length>1?`<nav class='type-section-nav' aria-label='Section quick links'>${detailSections.map((section,idx)=>`<a href='#type-section-${idx}' class='type-section-link'>${escapeHtml(section.title||`Section ${idx+1}`)}</a>`).join('')}</nav>`:'';
+    const sectionHtml=detailSections.length?detailSections.map((section,idx)=>{
       const sBody=(section.body||[]).map((p)=>`<p>${escapeHtml(p)}</p>`).join('');
       const sList=(section.list||[]).length?`<ul class='list'>${section.list.map((x)=>`<li>${escapeHtml(x)}</li>`).join('')}</ul>`:'';
-      return `<section class='type-detail-block'><h3>${escapeHtml(section.title||'')}</h3>${sBody}${sList}</section>`;
+      return `<section class='type-detail-block' id='type-section-${idx}'><h3>${escapeHtml(section.title||'')}</h3>${sBody}${sList}</section>`;
     }).join(''):'';
 
     const related=siblings.length?`<p class='footer-note'>Related in ${escapeHtml(t.group)}: ${siblings.map((x)=>`<a href='/type/${x.slug}'>${escapeHtml(x.name)}</a>`).join(' · ')}</p>`:'';
@@ -371,8 +372,9 @@ function renderTypeProfileTabs(root,t,siblings){
           ${bodyHtml}
           ${listHtml}
           ${splitHtml}
+          ${sectionNav}
           ${sectionHtml}
-          ${tab.callout?`<p class='quote'><strong>${escapeHtml(tab.callout)}</strong></p>`:''}
+          ${tab.callout?`<p class='quote type-pull-quote'><strong>${escapeHtml(tab.callout)}</strong></p>`:''}
           ${tab.id==='overview'?poets:''}
           ${related}
         </div>`;
