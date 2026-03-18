@@ -567,6 +567,26 @@ function setupReveal(){
   items.forEach(i=>io.observe(i));
 }
 
+function setupTopNav(){
+  const currentPath=location.pathname;
+  const activeHref=currentPath.startsWith('/type/')?'/types':currentPath;
+  document.querySelectorAll('.site-top nav a[href^="/"]').forEach((a)=>{
+    const hrefRaw=a.getAttribute('href')||'';
+    const href=hrefRaw==='/'?'/':hrefRaw.replace(/\/+$/,'');
+    const isCurrent=activeHref===href;
+    const baseLabel=(a.dataset.baseLabel||a.textContent||'').trim();
+    a.dataset.baseLabel=baseLabel;
+    a.classList.toggle('active',isCurrent);
+    if(isCurrent){
+      a.setAttribute('aria-current','page');
+      a.textContent=`${baseLabel} · current`;
+    }else{
+      a.removeAttribute('aria-current');
+      a.textContent=baseLabel;
+    }
+  });
+}
+
 function setupClickTracking(){
   document.querySelectorAll('a.btn, nav a').forEach((a)=>{
     a.addEventListener('click',()=>track('cta_click',{label:a.textContent?.trim()||'',href:a.getAttribute('href')||''}));
@@ -1324,6 +1344,7 @@ function setupMyPoemsPage(){
   applyTheme(getPreferredTheme());
   const data=await loadContent();
   const path=location.pathname;
+  setupTopNav();
   track('page_view',{path});
 
   if(path==='/'){
