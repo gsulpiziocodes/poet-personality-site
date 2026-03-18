@@ -4,6 +4,46 @@ function card(inner,cls='card'){const d=el('div',cls);d.innerHTML=inner;return d
 
 function escapeHtml(value=''){return String(value).replace(/[&<>"']/g,(ch)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[ch]));}
 
+function titleCaseWords(value=''){return String(value).split(/\s+/).filter(Boolean).map((w)=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');}
+
+function buildOverviewSections(type){
+  const strengths=(type.strengths||[]).slice(0,4).map(titleCaseWords);
+  const challenges=(type.challenges||[]).slice(0,3).map(titleCaseWords);
+  const signals=(type.analyzerDetects||[]).slice(0,3).map(titleCaseWords);
+
+  return [
+    {
+      title:`What is ${type.name} like?`,
+      body:[
+        `${type.name} is a poetic orientation shaped by recurring themes, tonal instincts, and craft decisions over time.`,
+        `${type.overview}`
+      ]
+    },
+    {
+      title:'Words that capture this type',
+      list:strengths
+    },
+    {
+      title:`How to recognize ${type.name}`,
+      body:[
+        `You can usually recognize this type through patterns such as ${signals.join(', ')}.`,
+        `In practice, this voice tends to feel consistent in emotional posture and aesthetic choices across poems.`
+      ]
+    },
+    {
+      title:`What ${type.name} values`,
+      body:[
+        `This type values emotional and artistic integrity: writing that says something true, sounds intentional, and leaves resonance.`,
+        `Its healthiest expression blends authenticity with craft rather than choosing one over the other.`
+      ]
+    },
+    {
+      title:'Growth edges',
+      body:[`Common growth edges include ${challenges.join(', ')}. Developing range here usually deepens both clarity and impact.`]
+    }
+  ];
+}
+
 function renderTypeProfileTabs(root,t,siblings){
   const traits=(t.strengths||[]).slice(0,3);
   const shadows=(t.challenges||[]).slice(0,3);
@@ -116,6 +156,13 @@ function renderTypeProfileTabs(root,t,siblings){
       </div>
     `:'';
 
+    const overviewSections=(tab.id==='overview')?(tab.sections||buildOverviewSections(t)):[];
+    const sectionHtml=overviewSections.length?overviewSections.map((section)=>{
+      const sBody=(section.body||[]).map((p)=>`<p>${escapeHtml(p)}</p>`).join('');
+      const sList=(section.list||[]).length?`<ul class='list'>${section.list.map((x)=>`<li>${escapeHtml(x)}</li>`).join('')}</ul>`:'';
+      return `<section class='type-detail-block'><h3>${escapeHtml(section.title||'')}</h3>${sBody}${sList}</section>`;
+    }).join(''):'';
+
     const related=siblings.length?`<p class='footer-note'>Related in ${escapeHtml(t.group)}: ${siblings.map((x)=>`<a href='/type/${x.slug}'>${escapeHtml(x.name)}</a>`).join(' · ')}</p>`:'';
     const poets=`<p class='footer-note'>${escapeHtml(t.famousPoetsWithSimilarEnergy.copy)}<br/><span class='muted'>${escapeHtml(t.famousPoetsWithSimilarEnergy.disclaimer)}</span></p>`;
 
@@ -129,6 +176,7 @@ function renderTypeProfileTabs(root,t,siblings){
           ${bodyHtml}
           ${listHtml}
           ${splitHtml}
+          ${sectionHtml}
           ${tab.callout?`<p class='quote'><strong>${escapeHtml(tab.callout)}</strong></p>`:''}
           ${tab.id==='overview'?poets:''}
           ${related}
