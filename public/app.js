@@ -57,22 +57,41 @@ function buildRadarChart(type){
     ly=clamp(ly,30,size-30);
 
     const cos=Math.cos(angle);
-    const sin=Math.sin(angle);
     let anchor='middle';
     if(cos<-0.28) anchor='end';
     if(cos>0.28) anchor='start';
 
     const lines=splitLabel(a.label);
     const lineHeight=12;
-    const scoreGap=sin>0.45?9:8;
     const labelStartY=ly;
-    const scoreY=labelStartY-scoreGap;
 
-    const labelLines=lines.map((line,idx)=>`<tspan x='${lx}' dy='${idx===0?0:lineHeight}'>${escapeHtml(line)}</tspan>`).join('');
+    let labelX=lx;
+    let scoreX=lx;
+    let labelAnchor=anchor;
+    let scoreAnchor=anchor;
+
+    // Score sits to the LEFT of the trait text as one paired label unit.
+    if(anchor==='start'){
+      scoreX=lx-16;
+      scoreAnchor='end';
+      labelAnchor='start';
+    }else if(anchor==='end'){
+      scoreX=lx-18;
+      scoreAnchor='end';
+      labelAnchor='end';
+    }else{
+      // top/bottom: keep pair centered, with score left of label block
+      labelX=lx-8;
+      scoreX=labelX-14;
+      labelAnchor='start';
+      scoreAnchor='end';
+    }
+
+    const labelLines=lines.map((line,idx)=>`<tspan x='${labelX}' dy='${idx===0?0:lineHeight}'>${escapeHtml(line)}</tspan>`).join('');
 
     return `<g class='radar-label-group'>
-      <text class='radar-value' x='${lx}' y='${scoreY}' text-anchor='${anchor}'>${values[i]}</text>
-      <text class='radar-label' x='${lx}' y='${labelStartY}' text-anchor='${anchor}'>${labelLines}</text>
+      <text class='radar-value' x='${scoreX}' y='${labelStartY+1}' text-anchor='${scoreAnchor}'>${values[i]}</text>
+      <text class='radar-label' x='${labelX}' y='${labelStartY}' text-anchor='${labelAnchor}'>${labelLines}</text>
     </g>`;
   }).join('');
 
