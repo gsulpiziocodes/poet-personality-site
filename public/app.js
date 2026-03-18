@@ -451,10 +451,9 @@ function renderTypeProfileTabs(root,t,siblings){
         <div class='type-panel-inner'>
           <p class='kicker'>${escapeHtml(tab.kicker||'')}</p>
           <h2>${escapeHtml(tab.heading)}</h2>
-          ${tab.id==='overview' ? `<section class='overview-split'><div class='overview-copy'><p class='lead'>${escapeHtml(tab.intro||'')}</p>${bodyHtml}${listHtml}${splitHtml}</div><div class='overview-chart'>${radarHtml}</div></section>` : `<p class='lead'>${escapeHtml(tab.intro||'')}</p>${bodyHtml}${listHtml}${splitHtml}`}
-          ${tab.id!=='overview' ? radarHtml : ''}
-          ${sectionNav}
-          ${sectionHtml}
+          ${tab.id==='overview'
+            ? `<p class='lead'>${escapeHtml(tab.intro||'')}</p>${bodyHtml}${listHtml}${splitHtml}${sectionNav}<div class='overview-radar-row'>${radarHtml}</div>${sectionHtml}`
+            : `<p class='lead'>${escapeHtml(tab.intro||'')}</p>${bodyHtml}${listHtml}${splitHtml}${radarHtml}${sectionNav}${sectionHtml}`}
           ${tab.callout?`<p class='quote type-pull-quote'><strong>${escapeHtml(tab.callout)}</strong></p>`:''}
           ${tab.id==='overview'?poets:''}
           ${related}
