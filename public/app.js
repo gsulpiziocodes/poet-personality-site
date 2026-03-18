@@ -94,6 +94,64 @@ function buildStrengthsShadowSections(type){
   ];
 }
 
+function buildLoveRelationshipSections(type){
+  const traits=(type.strengths||[]).slice(0,3).map((x)=>x.toLowerCase());
+  const shadows=(type.challenges||[]).slice(0,3).map((x)=>x.toLowerCase());
+  const groupPartnerFocus={
+    'Visionaries':'an intellectually curious partner who welcomes depth, complexity, and independent thought',
+    'Romantics':'an emotionally available partner who values tenderness, intimacy, and expressive affection',
+    'Truth-Tellers':'an emotionally courageous partner who values honesty, accountability, and direct communication',
+    'Makers':'a grounded partner who appreciates craft, consistency, and expressive discipline'
+  };
+  const loveLanguageByType={
+    'The Alchemist':'Emotional attunement',
+    'The Oracle':'Deep conversation',
+    'The Architect':'Reliable follow-through',
+    'The Seeker':'Intellectual companionship',
+    'The Lover':'Affection and closeness',
+    'The Dreamer':'Tender quality time',
+    'The Muse':'Verbal affirmation',
+    'The Devotee':'Acts of devotion',
+    'The Confessor':'Radical honesty',
+    'The Witness':'Steady presence',
+    'The Rebel':'Authentic freedom',
+    'The Mourner':'Gentle reassurance',
+    'The Storyteller':'Shared experiences',
+    'The Minimalist':'Clear communication',
+    'The Performer':'Expressive affirmation',
+    'The Weaver':'Nuanced understanding'
+  };
+
+  return [
+    {
+      title:`What is ${type.name} like in romantic relationships?`,
+      body:[
+        `${type.name} often loves through ${traits.join(', ')}, and typically seeks connection that feels emotionally real rather than performative.`,
+        `In close bonds, this type tends to value autonomy and depth at the same time—space to remain themselves, and enough trust to be fully known.`
+      ]
+    },
+    {
+      title:`What ${type.name} looks for in a partner`,
+      body:[
+        `This type is often drawn to ${groupPartnerFocus[type.group]||'a partner who is emotionally mature, communicative, and growth-oriented'}.`,
+        `Compatibility is highest when both people can respect differences in process while still meeting each other with consistency.`
+      ]
+    },
+    {
+      title:`${type.name} love language`,
+      body:[`A common love-language pattern for this type is ${loveLanguageByType[type.name]||'Intentional presence'}—consistent signals of care that feel sincere, not performative.`]
+    },
+    {
+      title:`How to love ${type.name}`,
+      body:[
+        `Lead with direct, respectful communication; this type usually responds best to clarity over mind-reading.`,
+        `Support their strengths (${traits.join(', ')}) while helping them regulate shadow patterns like ${shadows.join(', ')} under stress.`,
+        `Give appreciation in the form they naturally recognize, and keep conflict focused on repair rather than point-scoring.`
+      ]
+    }
+  ];
+}
+
 function renderTypeProfileTabs(root,t,siblings){
   const traits=(t.strengths||[]).slice(0,3);
   const shadows=(t.challenges||[]).slice(0,3);
@@ -210,7 +268,9 @@ function renderTypeProfileTabs(root,t,siblings){
       ? (tab.sections||buildOverviewSections(t))
       : (tab.id==='strengths-shadows')
         ? (tab.sections||buildStrengthsShadowSections(t))
-        : [];
+        : (tab.id==='love-relationships')
+          ? (tab.sections||buildLoveRelationshipSections(t))
+          : [];
     const sectionHtml=detailSections.length?detailSections.map((section)=>{
       const sBody=(section.body||[]).map((p)=>`<p>${escapeHtml(p)}</p>`).join('');
       const sList=(section.list||[]).length?`<ul class='list'>${section.list.map((x)=>`<li>${escapeHtml(x)}</li>`).join('')}</ul>`:'';
