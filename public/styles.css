@@ -142,7 +142,23 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .danger-zone{margin-top:14px;border:1px solid color-mix(in oklab,var(--danger-text) 34%, var(--line));background:linear-gradient(180deg,color-mix(in oklab,var(--danger-bg) 88%, var(--surface)),color-mix(in oklab,var(--danger-bg) 72%, var(--surface)));border-radius:14px;padding:14px}
 .danger-zone h3{margin:0 0 6px;font-size:1.05rem;color:color-mix(in oklab,var(--danger-text) 88%, var(--ink))}
 .settings-save-row{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:8px 4px}
-@media(max-width:900px){.poems-shell{grid-template-columns:1fr}.poems-sidebar{min-height:unset;border-right:0;border-bottom:1px solid #efe5d6}#editorText{min-height:320px}.analysis-grid{grid-template-columns:1fr}.settings-shell{grid-template-columns:1fr}.settings-sidebar{position:static;overflow:auto;flex-direction:row}.settings-grid,.settings-grid.compact{grid-template-columns:1fr}}
+.type-tabs-shell{padding:0;overflow:hidden;background:linear-gradient(180deg,color-mix(in oklab,var(--surface) 72%,transparent),color-mix(in oklab,var(--surface) 55%,transparent)),var(--paper)}
+.type-tabs-wrap{display:grid;grid-template-columns:260px minmax(0,1fr);gap:18px;padding:18px}
+.type-tabs-nav{position:relative}
+.type-tabs-card{position:sticky;top:14px;background:color-mix(in oklab,var(--surface) 92%, var(--paper));border:1px solid var(--line-soft);border-radius:18px;padding:10px;box-shadow:0 8px 24px rgba(40,23,9,.08);display:flex;flex-direction:column;gap:6px}
+.type-tab-btn{appearance:none;border:0;background:transparent;border-radius:12px;padding:11px 12px;text-align:left;font-weight:600;color:color-mix(in oklab,var(--ink) 84%, transparent);cursor:pointer;transition:all .22s ease}
+.type-tab-btn:hover{background:color-mix(in oklab,var(--surface-soft) 86%, transparent);transform:translateX(2px);color:var(--ink)}
+.type-tab-btn.active{background:color-mix(in oklab,var(--surface-soft) 76%, white);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.type-tabs-panel{background:color-mix(in oklab,var(--surface) 88%,transparent);border:1px solid var(--line-soft);border-radius:20px;overflow:hidden}
+.type-panel-hero{padding:24px 24px 16px;border-bottom:1px solid var(--line-soft);background:linear-gradient(180deg,color-mix(in oklab,var(--surface-soft) 72%,transparent),transparent)}
+.type-panel-hero h1{margin-bottom:8px}
+.type-panel-content{padding:22px 24px 24px;opacity:0;transform:translateY(6px);transition:opacity .25s ease,transform .25s ease}
+.type-panel-content.in{opacity:1;transform:none}
+.type-panel-inner{max-width:74ch}
+.type-panel-inner p{line-height:1.7}
+.type-panel-inner .quote{margin-top:16px}
+.type-panel-inner .footer-note a{color:var(--accent)}
+@media(max-width:900px){.poems-shell{grid-template-columns:1fr}.poems-sidebar{min-height:unset;border-right:0;border-bottom:1px solid #efe5d6}#editorText{min-height:320px}.analysis-grid{grid-template-columns:1fr}.settings-shell{grid-template-columns:1fr}.settings-sidebar{position:static;overflow:auto;flex-direction:row}.settings-grid,.settings-grid.compact{grid-template-columns:1fr}.type-tabs-wrap{grid-template-columns:1fr;gap:12px}.type-tabs-card{position:static;flex-direction:row;overflow:auto;white-space:nowrap;padding:8px}.type-tab-btn{flex:0 0 auto;border:1px solid var(--line-soft);background:var(--surface)}.type-tab-btn.active{border-color:var(--line);background:var(--surface-soft)}.type-tabs-panel{border-radius:16px}.type-panel-hero,.type-panel-content{padding:16px}}
 .funnel-steps{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}.funnel-step{padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink)}
 .sticky-cta{position:fixed;left:12px;right:12px;bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,253,249,.96);box-shadow:0 10px 22px rgba(40,23,9,.16);backdrop-filter:blur(4px)}
 .sticky-cta span{font-size:.95rem;color:color-mix(in oklab,var(--ink) 86%, transparent)}

@@ -2,6 +2,136 @@ async function loadContent(){const r=await fetch('/api/content');return r.json()
 const el=(tag,cls)=>{const x=document.createElement(tag);if(cls)x.className=cls;return x;};
 function card(inner,cls='card'){const d=el('div',cls);d.innerHTML=inner;return d;}
 
+function escapeHtml(value=''){return String(value).replace(/[&<>"']/g,(ch)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[ch]));}
+
+function renderTypeProfileTabs(root,t,siblings){
+  const traits=(t.strengths||[]).slice(0,3);
+  const shadows=(t.challenges||[]).slice(0,3);
+  const signals=(t.analyzerDetects||[]).slice(0,3);
+
+  const tabs=[
+    {
+      id:'overview',
+      label:'Overview',
+      heading:`${t.name}: Overview`,
+      kicker:t.group,
+      intro:t.subtitle,
+      body:[
+        t.overview,
+        `This profile sits inside the ${t.group} family, where poetic energy tends to prioritize ${signals.join(', ')}.`
+      ],
+      callout:`${t.idealTagline}`
+    },
+    {
+      id:'core-traits',
+      label:'Core traits',
+      heading:`Core traits of ${t.name}`,
+      kicker:'Poetic signature',
+      intro:'The recurring energies this type returns to across poems.',
+      list:traits.map((x)=>`<li>${escapeHtml(x)}</li>`),
+      body:[`At its center, this type carries a distinct pattern of voice, emotional stance, and aesthetic instinct.`]
+    },
+    {
+      id:'strengths-shadows',
+      label:'Strengths & shadows',
+      heading:'Strengths & shadows',
+      kicker:'Range and risk',
+      intro:'Every poetic gift has an edge. This section maps both.',
+      split:{leftTitle:'Strengths',leftItems:traits,rightTitle:'Shadows',rightItems:shadows},
+      body:['When consciously balanced, this type can produce deeply memorable work with both force and nuance.']
+    },
+    {
+      id:'writing-style',
+      label:'Writing style',
+      heading:'Writing style',
+      kicker:'Craft signals',
+      intro:'How this voice typically appears on the page.',
+      list:signals.map((x)=>`<li>${escapeHtml(x)}</li>`),
+      body:[`Readers often experience ${t.name} writing as intentional, textured, and emotionally coherent.`]
+    },
+    {
+      id:'love-relationships',
+      label:'In love & relationships',
+      heading:'In love & relationships',
+      kicker:'Relational expression',
+      intro:'How this poetic energy may show up in intimacy, attachment, and emotional language.',
+      body:[
+        `${t.name} energy in relationships often mirrors its writing tendencies: ${traits.join(', ')}.`,
+        `In close bonds, the shadow side can look like ${shadows.join(', ')}, especially under stress or uncertainty.`,
+        'When grounded, this type tends to communicate with sincerity, depth, and a strong desire to be truly understood.'
+      ]
+    }
+  ];
+
+  const shell=card(`
+    <section class='type-tabs-wrap'>
+      <aside class='type-tabs-nav' aria-label='Type profile sections'>
+        <div class='type-tabs-card' role='tablist' aria-orientation='vertical'>
+          ${tabs.map((tab,idx)=>`<button class='type-tab-btn ${idx===0?'active':''}' role='tab' aria-selected='${idx===0?'true':'false'}' data-tab='${tab.id}' id='tab-${tab.id}'>${tab.label}</button>`).join('')}
+        </div>
+      </aside>
+      <section class='type-tabs-panel' aria-live='polite'>
+        <div class='type-panel-hero'>
+          <p class='kicker'>${escapeHtml(t.group)}</p>
+          <h1>${escapeHtml(t.name)}</h1>
+          <p class='lead'>${escapeHtml(t.subtitle)}</p>
+        </div>
+        <article id='typeTabContent' class='type-panel-content'></article>
+      </section>
+    </section>
+  `,'card type-tabs-shell');
+
+  const content=shell.querySelector('#typeTabContent');
+  const buttons=[...shell.querySelectorAll('.type-tab-btn')];
+
+  const renderBody=(tab)=>{
+    const bodyHtml=(tab.body||[]).map((p)=>`<p>${escapeHtml(p)}</p>`).join('');
+    const listHtml=tab.list?.length?`<ul class='list'>${tab.list.join('')}</ul>`:'';
+    const splitHtml=tab.split?`
+      <div class='two-col'>
+        <section>
+          <h3>${escapeHtml(tab.split.leftTitle)}</h3>
+          <ul class='list'>${tab.split.leftItems.map((x)=>`<li>${escapeHtml(x)}</li>`).join('')}</ul>
+        </section>
+        <section>
+          <h3>${escapeHtml(tab.split.rightTitle)}</h3>
+          <ul class='list'>${tab.split.rightItems.map((x)=>`<li>${escapeHtml(x)}</li>`).join('')}</ul>
+        </section>
+      </div>
+    `:'';
+
+    const related=siblings.length?`<p class='footer-note'>Related in ${escapeHtml(t.group)}: ${siblings.map((x)=>`<a href='/type/${x.slug}'>${escapeHtml(x.name)}</a>`).join(' · ')}</p>`:'';
+    const poets=`<p class='footer-note'>${escapeHtml(t.famousPoetsWithSimilarEnergy.copy)}<br/><span class='muted'>${escapeHtml(t.famousPoetsWithSimilarEnergy.disclaimer)}</span></p>`;
+
+    content.classList.remove('in');
+    window.requestAnimationFrame(()=>{
+      content.innerHTML=`
+        <div class='type-panel-inner'>
+          <p class='kicker'>${escapeHtml(tab.kicker||'')}</p>
+          <h2>${escapeHtml(tab.heading)}</h2>
+          <p class='lead'>${escapeHtml(tab.intro||'')}</p>
+          ${bodyHtml}
+          ${listHtml}
+          ${splitHtml}
+          ${tab.callout?`<p class='quote'><strong>${escapeHtml(tab.callout)}</strong></p>`:''}
+          ${tab.id==='overview'?poets:''}
+          ${related}
+        </div>`;
+      content.classList.add('in');
+    });
+  };
+
+  buttons.forEach((btn)=>btn.addEventListener('click',()=>{
+    const tab=tabs.find((x)=>x.id===btn.dataset.tab);
+    if(!tab) return;
+    buttons.forEach((b)=>{const active=b===btn;b.classList.toggle('active',active);b.setAttribute('aria-selected',active?'true':'false');});
+    renderBody(tab);
+  }));
+
+  renderBody(tabs[0]);
+  root.append(shell);
+}
+
 function getPreferredTheme(){
   const saved=localStorage.getItem('pp_theme');
   if(saved==='light'||saved==='dark') return saved;
@@ -890,12 +1020,7 @@ root?.insertAdjacentHTML('beforeend',`<section id='analyzeUploader' class='revea
     if(!t){elRoot?.append(card('<h2>Type not found</h2><p class="muted">Try browsing from the 16 types page.</p>'));setupReveal();setupClickTracking();return;}
 
     const siblings=all.filter(x=>x.group===t.group && x.slug!==t.slug).slice(0,3);
-
-    elRoot?.append(card(`<section class='hero'><p class='kicker'>${t.group}</p><h1>${t.name}</h1><p class='lead'>${t.subtitle}</p><p>${t.overview}</p><p class='quote'><strong>${t.idealTagline}</strong></p></section>`,''));
-    elRoot?.append(card(`<div class='two-col'><section><h2>Strengths</h2><ul class='list'>${t.strengths.map(x=>`<li>${x}</li>`).join('')}</ul></section><section><h2>Challenges</h2><ul class='list'>${t.challenges.map(x=>`<li>${x}</li>`).join('')}</ul></section></div>`));
-    elRoot?.append(card(`<h2>What the analyzer detects</h2><ul class='list'>${t.analyzerDetects.map(x=>`<li>${x}</li>`).join('')}</ul>`));
-    elRoot?.append(card(`<h2>Famous poets with similar energy</h2><p>${t.famousPoetsWithSimilarEnergy.copy}</p><p class='footer-note'>${t.famousPoetsWithSimilarEnergy.disclaimer}</p>`));
-    elRoot?.append(card(`<h2>Related types in ${t.group}</h2><p class='inline-links'>${siblings.map(x=>`<a href='/type/${x.slug}'>${x.name}</a>`).join(' · ')}</p>`));
+    renderTypeProfileTabs(elRoot,t,siblings);
   }
 
   if(path==='/categories'){
