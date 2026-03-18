@@ -579,11 +579,10 @@ function setupTopNav(){
     a.classList.toggle('active',isCurrent);
     if(isCurrent){
       a.setAttribute('aria-current','page');
-      a.textContent=`${baseLabel} · current`;
     }else{
       a.removeAttribute('aria-current');
-      a.textContent=baseLabel;
     }
+    a.textContent=baseLabel;
   });
 }
 
