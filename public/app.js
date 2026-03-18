@@ -152,6 +152,83 @@ function buildLoveRelationshipSections(type){
   ];
 }
 
+function buildCoreTraitSections(type){
+  const traits=(type.strengths||[]).slice(0,4).map(titleCaseWords);
+  const signals=(type.analyzerDetects||[]).slice(0,3).map(titleCaseWords);
+  const groupLens={
+    'Visionaries':'interpretive depth and meaning-making',
+    'Romantics':'emotional atmosphere and relational resonance',
+    'Truth-Tellers':'candor, realism, and moral clarity',
+    'Makers':'craft control, delivery, and form intelligence'
+  };
+
+  return [
+    {
+      title:`What defines ${type.name}`,
+      body:[
+        `${type.name} is primarily defined by ${groupLens[type.group]||'a distinct emotional and stylistic center'}, expressed consistently across poems.`,
+        `These traits usually show up regardless of topic, because they describe your default poetic operating system.`
+      ]
+    },
+    {
+      title:`Core ${type.name} traits`,
+      list:traits
+    },
+    {
+      title:'How these traits appear in real writing',
+      body:[
+        `In practice, this type often reveals itself through signals such as ${signals.join(', ')}.`,
+        `The strongest trait expression feels intentional, not accidental—it repeats with variation over time.`
+      ]
+    },
+    {
+      title:'Trait range: healthy vs overextended',
+      body:[
+        `At healthy range, these traits produce coherence and signature voice.`,
+        `When overextended, strengths can harden into rigidity, overuse, or tonal imbalance.`
+      ]
+    }
+  ];
+}
+
+function buildWritingStyleSections(type){
+  const signals=(type.analyzerDetects||[]).slice(0,3).map(titleCaseWords);
+  const groupCraft={
+    'Visionaries':'symbolic layering and conceptual movement',
+    'Romantics':'sensory lyricism and emotional pacing',
+    'Truth-Tellers':'direct diction and grounded scene pressure',
+    'Makers':'form architecture, rhythm, and compositional control'
+  };
+
+  return [
+    {
+      title:`How ${type.name} writes`,
+      body:[
+        `${type.name} writing is usually recognizable by its recurring relationship to ${groupCraft[type.group]||'voice, structure, and emotional movement'}.`,
+        `The page-level choices matter as much as theme: syntax, line breaks, pacing, and imagery all reinforce type identity.`
+      ]
+    },
+    {
+      title:'Signature writing signals',
+      list:signals
+    },
+    {
+      title:'Voice and line movement',
+      body:[
+        `This type typically carries a distinct cadence pattern—how lines breathe, accelerate, pause, and resolve.`,
+        `Readers often recognize the voice before they can name the technique behind it.`
+      ]
+    },
+    {
+      title:'Revision guidance for this style',
+      body:[
+        `Keep the signature signals, but reduce repetition by varying scale (line, stanza, and structural turn).`,
+        `Edit toward precision: preserve your emotional center while increasing clarity and reread value.`
+      ]
+    }
+  ];
+}
+
 function renderTypeProfileTabs(root,t,siblings){
   const traits=(t.strengths||[]).slice(0,3);
   const shadows=(t.challenges||[]).slice(0,3);
@@ -266,11 +343,15 @@ function renderTypeProfileTabs(root,t,siblings){
 
     const detailSections=(tab.id==='overview')
       ? (tab.sections||buildOverviewSections(t))
-      : (tab.id==='strengths-shadows')
-        ? (tab.sections||buildStrengthsShadowSections(t))
-        : (tab.id==='love-relationships')
-          ? (tab.sections||buildLoveRelationshipSections(t))
-          : [];
+      : (tab.id==='core-traits')
+        ? (tab.sections||buildCoreTraitSections(t))
+        : (tab.id==='strengths-shadows')
+          ? (tab.sections||buildStrengthsShadowSections(t))
+          : (tab.id==='writing-style')
+            ? (tab.sections||buildWritingStyleSections(t))
+            : (tab.id==='love-relationships')
+              ? (tab.sections||buildLoveRelationshipSections(t))
+              : [];
     const sectionHtml=detailSections.length?detailSections.map((section)=>{
       const sBody=(section.body||[]).map((p)=>`<p>${escapeHtml(p)}</p>`).join('');
       const sList=(section.list||[]).length?`<ul class='list'>${section.list.map((x)=>`<li>${escapeHtml(x)}</li>`).join('')}</ul>`:'';
