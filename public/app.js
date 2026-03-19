@@ -1469,7 +1469,7 @@ root?.insertAdjacentHTML('beforeend',`<section id='analyzeUploader' class='revea
         .filter(Boolean)
         .map(t=>`<a href='/type/${t.slug}'>${t.name}</a>`)
         .join(' · ');
-      c?.append(card(`<h2>${g.name}</h2><p>${g.description}</p><p class='inline-links'>${list}</p>`));
+      c?.append(card(`<figure class='category-card-art'><img src='/images/${g.slug}.png' alt='${g.name} category illustration' loading='lazy'/></figure><h2>${g.name}</h2><p>${g.description}</p><p class='inline-links'>${list}</p>`));
     });
   }
 
