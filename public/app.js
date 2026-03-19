@@ -787,12 +787,34 @@ function setupPoemUploader(targetId='funnel'){
 
     editor.querySelector('#editorTitle').addEventListener('input',(e)=>{poems[selected].title=e.target.value;queueSave();});
     editor.querySelector('#editorText').addEventListener('input',(e)=>{poems[selected].text=e.target.value;queueSave();});
-    editor.querySelector('#deletePoemBtn').addEventListener('click',()=>{
-      poems.splice(selected,1);
-      selected=Math.min(selected,poems.length-1);
-      renderList();
-      renderEditor();
-      syncStatus('');
+    editor.querySelector('#deletePoemBtn').addEventListener('click',async ()=>{
+      const poemToDelete=poems[selected];
+      if(!poemToDelete) return;
+
+      try{
+        if(poemToDelete.id){
+          syncStatus('Deleting…');
+          const token=getCollectionToken();
+          if(!token) throw new Error('missing_token');
+          const del=await fetch(`/api/poems/${encodeURIComponent(poemToDelete.id)}?token=${encodeURIComponent(token)}`,{method:'DELETE'});
+          const delData=await del.json().catch(()=>({}));
+          if(!del.ok||!delData.ok) throw new Error(delData.error||'delete_failed');
+        }
+
+        poems.splice(selected,1);
+        selected=Math.min(selected,poems.length-1);
+
+        if(!poems.length){
+          poems.push({id:null,title:'',text:'',updatedAt:null});
+          selected=0;
+        }
+
+        renderList();
+        renderEditor();
+        syncStatus('Deleted');
+      }catch{
+        syncStatus('Could not delete poem');
+      }
     });
   };
 
