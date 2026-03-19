@@ -225,6 +225,24 @@ function buildLoveRelationshipSections(type){
     'The Performer':['The Storyteller','The Muse','The Rebel'],
     'The Weaver':['The Oracle','The Architect','The Minimalist']
   };
+  const compatibilityReasonByName={
+    'The Muse':'brings warmth and expressive affirmation that keeps connection emotionally alive',
+    'The Devotee':'offers steady loyalty and tenderness that supports emotional safety',
+    'The Witness':'grounds the relationship with calm presence and practical stability',
+    'The Seeker':'adds curiosity and deep conversation that keeps growth active',
+    'The Weaver':'helps both people feel understood through nuance and emotional intelligence',
+    'The Lover':'strengthens closeness through affection, openness, and emotional responsiveness',
+    'The Minimalist':'adds clarity, structure, and low-drama communication habits',
+    'The Dreamer':'softens intensity with imagination, empathy, and emotional gentleness',
+    'The Confessor':'supports honest repair by naming hard truths directly and respectfully',
+    'The Rebel':'protects authenticity and encourages freedom without emotional pretense',
+    'The Mourner':'brings depth and compassion when vulnerability is needed most',
+    'The Storyteller':'creates shared meaning and emotional momentum through lived narrative',
+    'The Performer':'adds energy, play, and expressive confidence to connection',
+    'The Architect':'stabilizes the bond through consistency, boundaries, and reliability',
+    'The Alchemist':'transforms conflict into insight and emotional growth over time',
+    'The Oracle':'offers perspective and intuitive clarity in emotionally complex moments'
+  };
   const compatible=compatibilityByType[type.name]||[];
 
   return [
@@ -261,7 +279,7 @@ function buildLoveRelationshipSections(type){
           ? `Best-fit pairings are typically ${compatible.join(', ')} because they balance this type's emotional style and communication rhythm.`
           : `Compatibility is strongest with partners who can meet this type with consistency, emotional maturity, and reciprocal respect.`
       ],
-      list:compatible
+      list:compatible.map((name)=>`${name} — ${compatibilityReasonByName[name]||'complements this type with balanced emotional and communication dynamics'}`)
     }
   ];
 }
