@@ -383,8 +383,7 @@ function renderTypeProfileTabs(root,t,siblings){
       kicker:'Creative affinities',
       intro:'Three poets whose work often shares energy with this type.',
       body:[
-        t.famousPoetsWithSimilarEnergy?.copy||'',
-        t.famousPoetsWithSimilarEnergy?.disclaimer||''
+        t.famousPoetsWithSimilarEnergy?.copy||''
       ]
     },custom.famousPoets),
     mergeTab({
