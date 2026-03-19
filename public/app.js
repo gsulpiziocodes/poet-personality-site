@@ -1175,7 +1175,7 @@ async function setupDashboardPage(){
     root.append(card(`<section class='hero'>
       <p class='kicker'>Dashboard</p>
       <h1>Welcome, ${name.replace(/</g,'&lt;')}</h1>
-      <p class='lead'>You’re signed in. Ready to keep building your Versiq?</p>
+      <p class='lead'>You’re signed in. Ready to keep building your Poet Personality profile?</p>
       <div class='cta-row'>
         <a class='btn primary' href='/analyze'>Continue Writing</a>
         <a class='btn secondary' href='/settings'>Account Settings</a>

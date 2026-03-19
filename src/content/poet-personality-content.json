@@ -1,7 +1,7 @@
 {
   "brand": {
-    "name": "Versiq",
-    "feature": "Versiq Analyzer",
+    "name": "Poet Personality",
+    "feature": "Poet Personality Analyzer",
     "voice": [
       "elegant",
       "modern",
@@ -15,7 +15,7 @@
       "kicker": "find the pattern in your poetry",
       "title": "Discover your Poet Personality",
       "subtitle": "Your poems reveal more than style. They reveal how you feel, what you notice, and how you turn experience into language.",
-      "body": "The Versiq Analyzer studies your writing across imagery, emotional tone, themes, structure, rhythm, and voice to identify your poetic type. The more poems you submit, the more accurate your profile becomes.",
+      "body": "The Poet Personality Analyzer studies your writing across imagery, emotional tone, themes, structure, rhythm, and voice to identify your poetic type. The more poems you submit, the more accurate your profile becomes.",
       "primaryCta": "Analyze Your Poems",
       "secondaryCta": "Explore the 16 Types"
     },
@@ -27,7 +27,7 @@
   },
   "howItWorks": {
     "title": "How the Analyzer Works",
-    "intro": "Your Versiq is based on recurring patterns in your writing over time.",
+    "intro": "Your Poet Personality profile is based on recurring patterns in your writing over time.",
     "steps": [
       {
         "title": "Submit your poems",
@@ -3058,7 +3058,7 @@
     }
   ],
   "resultsPage": {
-    "title": "Your Versiq Profile",
+    "title": "Your Poet Personality Profile",
     "sections": [
       {
         "name": "primaryType",
@@ -3086,7 +3086,7 @@
         "description": "Submit another poem to strengthen precision over time."
       }
     ],
-    "footnote": "Versiq Personalities are pattern maps, not fixed labels. Your profile can evolve as your writing evolves."
+    "footnote": "Poet Personality types are pattern maps, not fixed labels. Your profile can evolve as your writing evolves."
   },
   "uiCopy": {
     "buttons": {
