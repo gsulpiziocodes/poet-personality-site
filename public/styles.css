@@ -144,8 +144,8 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .danger-zone{margin-top:14px;border:1px solid color-mix(in oklab,var(--danger-text) 34%, var(--line));background:linear-gradient(180deg,color-mix(in oklab,var(--danger-bg) 88%, var(--surface)),color-mix(in oklab,var(--danger-bg) 72%, var(--surface)));border-radius:14px;padding:14px}
 .danger-zone h3{margin:0 0 6px;font-size:1.05rem;color:color-mix(in oklab,var(--danger-text) 88%, var(--ink))}
 .settings-save-row{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:8px 4px}
-.type-tabs-shell{padding:0;overflow:hidden;background:linear-gradient(180deg,color-mix(in oklab,var(--surface) 72%,transparent),color-mix(in oklab,var(--surface) 55%,transparent)),var(--paper)}
-.type-tabs-wrap{display:grid;grid-template-columns:260px minmax(0,1fr);gap:18px;padding:18px}
+.type-tabs-shell{padding:0;overflow:visible;background:linear-gradient(180deg,color-mix(in oklab,var(--surface) 72%,transparent),color-mix(in oklab,var(--surface) 55%,transparent)),var(--paper)}
+.type-tabs-wrap{display:grid;grid-template-columns:260px minmax(0,1fr);gap:18px;padding:18px;align-items:start}
 .type-tabs-nav{position:relative;align-self:start}
 .type-tabs-card{position:sticky;top:76px;background:color-mix(in oklab,var(--surface) 92%, var(--paper));border:1px solid var(--line-soft);border-radius:18px;padding:10px;box-shadow:0 8px 24px rgba(40,23,9,.08);display:flex;flex-direction:column;gap:6px}
 .type-tab-btn{appearance:none;border:0;background:transparent;border-radius:12px;padding:11px 12px;text-align:left;font-weight:600;color:color-mix(in oklab,var(--ink) 84%, transparent);cursor:pointer;transition:all .22s ease}
