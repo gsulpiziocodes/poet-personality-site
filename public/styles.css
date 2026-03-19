@@ -112,9 +112,9 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .analysis-hero-with-image{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:14px;align-items:center}
 .analysis-hero-art{margin:0;aspect-ratio:4/5;border-radius:12px;overflow:hidden;background:transparent;display:grid;place-items:end center}
 .analysis-hero-art img{width:100%;height:100%;object-fit:contain;object-position:center bottom;display:block;mix-blend-mode:multiply;filter:saturate(1.03) contrast(1.02)}
-.analysis-hero .kicker{font-size:.92rem;letter-spacing:.1em}
-.analysis-hero h2{font-size:2.9rem;line-height:1.08;margin-bottom:7px}
-.analysis-hero .lead{font-size:1.2rem;line-height:1.35;margin:0;color:color-mix(in oklab,var(--ink) 84%, transparent)}
+.analysis-hero .kicker{font-size:.92rem;letter-spacing:.16em;font-weight:500}
+.analysis-hero h2{font-size:2.9rem;line-height:1.08;margin-bottom:7px;letter-spacing:.035em;font-weight:500}
+.analysis-hero .lead{font-size:1.2rem;line-height:1.35;margin:0;letter-spacing:.02em;font-weight:400;color:color-mix(in oklab,var(--ink) 84%, transparent)}
 .analysis-end-action{display:flex;justify-content:flex-end;margin-top:14px}
 .analysis-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .analysis-chip{display:inline-block;padding:5px 10px;border-radius:999px;background:var(--surface-soft);border:1px solid var(--line);font-size:.82rem;color:var(--ink)}
