@@ -716,8 +716,10 @@ function setCollectionToken(token){
 
 function formatMeta(poem){
   const words=String(poem.text||'').trim().split(/\s+/).filter(Boolean).length;
-  const updated=poem.updatedAt?new Date(poem.updatedAt).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):'';
-  return updated?`${words}w · ${updated}`:`${words}w`;
+  const updated=poem.updatedAt
+    ? new Date(poem.updatedAt).toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'2-digit'})
+    : '';
+  return updated?`${words} words · ${updated}`:`${words} words`;
 }
 
 function setupPoemUploader(targetId='funnel'){
