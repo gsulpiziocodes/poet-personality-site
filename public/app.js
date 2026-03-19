@@ -377,6 +377,17 @@ function renderTypeProfileTabs(root,t,siblings){
       body:[`Readers often experience ${t.name} writing as intentional, textured, and emotionally coherent.`]
     },custom.writingStyle),
     mergeTab({
+      id:'famous-poets',
+      label:'Famous Poets',
+      heading:'Famous Poets',
+      kicker:'Creative affinities',
+      intro:'Three poets whose work often shares energy with this type.',
+      body:[
+        t.famousPoetsWithSimilarEnergy?.copy||'',
+        t.famousPoetsWithSimilarEnergy?.disclaimer||''
+      ]
+    },custom.famousPoets),
+    mergeTab({
       id:'love-relationships',
       label:'In love & relationships',
       heading:'In love & relationships',
@@ -452,7 +463,7 @@ function renderTypeProfileTabs(root,t,siblings){
 
     const radarHtml=(tab.id==='overview')?buildRadarChart(t):'';
     const related=siblings.length?`<p class='footer-note'>Related in ${escapeHtml(t.group)}: ${siblings.map((x)=>`<a href='/type/${x.slug}'>${escapeHtml(x.name)}</a>`).join(' · ')}</p>`:'';
-    const poets=`<p class='footer-note'>${escapeHtml(t.famousPoetsWithSimilarEnergy.copy)}<br/><span class='muted'>${escapeHtml(t.famousPoetsWithSimilarEnergy.disclaimer)}</span></p>`;
+    const poets='';
 
     content.classList.remove('in');
     window.requestAnimationFrame(()=>{
