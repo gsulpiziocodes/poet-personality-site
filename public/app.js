@@ -606,7 +606,7 @@ function renderTypeProfileTabs(root,t,siblings,allTypes=[]){
 function getPreferredTheme(){
   const saved=localStorage.getItem('pp_theme');
   if(saved==='light'||saved==='dark') return saved;
-  return window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+  return 'light';
 }
 
 function applyTheme(theme){
