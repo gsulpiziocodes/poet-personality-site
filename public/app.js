@@ -725,6 +725,7 @@ function formatMeta(poem){
 }
 
 function setupPoemUploader(targetId='funnel',types=[]){
+  const ANALYSIS_CACHE_KEY='poet_personality_last_analysis';
   const target=document.getElementById(targetId);
   if(!target) return;
   const token=getCollectionToken();
@@ -876,6 +877,19 @@ function setupPoemUploader(targetId='funnel',types=[]){
 
   const typeSlugByName=new Map((types||[]).map((t)=>[String(t.name||'').toLowerCase(),t.slug]));
 
+  const getAnalysisCache=()=>{
+    try{return JSON.parse(localStorage.getItem(ANALYSIS_CACHE_KEY)||'null');}catch{return null;}
+  };
+  const setAnalysisCache=(payload)=>{
+    try{
+      localStorage.setItem(ANALYSIS_CACHE_KEY,JSON.stringify({
+        token:getCollectionToken()||null,
+        payload,
+        savedAt:new Date().toISOString()
+      }));
+    }catch{}
+  };
+
   const pickTraitChips=(a)=>{
     const base=[...(a?.observations?.recurringThemes||[])];
     const mood=String(a?.observations?.emotionalPattern||'').toLowerCase();
@@ -934,6 +948,7 @@ function setupPoemUploader(targetId='funnel',types=[]){
 
     const stages=[...analysisResult.querySelectorAll('.analysis-stage')];
     stages.forEach((node,idx)=>setTimeout(()=>node.classList.add('in'),140*idx+120));
+    setAnalysisCache(payload);
   };
 
   addBtn.addEventListener('click',()=>addPoem({title:'',text:''}));
@@ -953,6 +968,11 @@ function setupPoemUploader(targetId='funnel',types=[]){
       analysisResult.textContent='Could not analyze right now. Please try again.';
     }finally{analyzeBtn.disabled=false;}
   });
+
+  const cachedAnalysis=getAnalysisCache();
+  if(cachedAnalysis?.payload && (!cachedAnalysis.token || cachedAnalysis.token===token)){
+    renderAnalysis(cachedAnalysis.payload);
+  }
 
   if(token){
     fetch(`/api/poems?token=${encodeURIComponent(token)}`).then(r=>r.json()).then((data)=>{
