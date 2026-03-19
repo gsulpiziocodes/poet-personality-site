@@ -1417,7 +1417,7 @@ function setupMyPoemsPage(){
   if(path==='/'){
     const h=data.homepage.hero;
     document.getElementById('hero')?.append(
-      card(`<section class='hero'><p class='kicker'>${h.kicker}</p><h1>${h.title}</h1><p class='lead'>${h.subtitle}</p><p>${h.body}</p><div class='cta-row'><a class='btn primary' href='/analyze'>${h.primaryCta}</a><a class='btn secondary' href='/types'>${h.secondaryCta}</a></div></section>`,'')
+      card(`<section class='hero hero-with-image'><div class='hero-copy'><p class='kicker'>${h.kicker}</p><h1>${h.title}</h1><p class='lead'>${h.subtitle}</p><p>${h.body}</p><div class='cta-row'><a class='btn primary' href='/analyze'>${h.primaryCta}</a><a class='btn secondary' href='/types'>${h.secondaryCta}</a></div></div><figure class='hero-image'><img src='/images/landing-page.png' alt='Poet Personality landing page visual' loading='eager'/></figure></section>`,'')
     );
 
     const proof=document.getElementById('proof');
