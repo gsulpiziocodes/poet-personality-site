@@ -576,7 +576,14 @@ function setupThemeToggle(){
   if(top){
     const existing=top.querySelector('.theme-toggle');
     if(existing) existing.remove();
-    top.append(btn);
+
+    let controls=top.querySelector('.top-right-controls');
+    if(!controls){
+      controls=el('div','top-right-controls');
+      top.append(controls);
+    }
+
+    controls.prepend(btn);
     return;
   }
 
@@ -617,7 +624,13 @@ async function setupGlobalAccountButton(){
     link.textContent='Sign In';
   }
   wrap.append(link);
-  top.append(wrap);
+
+  let controls=top.querySelector('.top-right-controls');
+  if(!controls){
+    controls=el('div','top-right-controls');
+    top.append(controls);
+  }
+  controls.append(wrap);
 }
 
 async function track(name,meta={}){

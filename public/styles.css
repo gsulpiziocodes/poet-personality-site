@@ -10,10 +10,10 @@ body{font-family:Inter,system-ui,-apple-system,sans-serif;color:var(--ink);backg
 .site-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;position:sticky;top:0;z-index:60;background:color-mix(in oklab,var(--bg) 96%, var(--paper));backdrop-filter:none;padding:10px 0 8px}
 .brand{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;letter-spacing:.02em;margin-right:52px}
 .user-corner{margin-left:auto;padding:7px 12px;border-radius:999px;background:#fff;border:1px solid var(--line);font-weight:600;color:#5a4a3a}
-.account-corner{margin-left:auto;margin-top:6px}
+.top-right-controls{margin-left:auto;display:flex;align-items:center;gap:10px;margin-top:6px}
 .account-corner-btn{text-decoration:none;display:inline-block;padding:7px 4px;border-radius:0;background:transparent;color:var(--ink);border:0;font-weight:700;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .account-corner-btn:hover{opacity:.92}
-.theme-toggle{border:0;background:transparent;color:var(--ink);padding:7px 4px;border-radius:0;font-weight:700;cursor:pointer;margin-top:6px}
+.theme-toggle{border:0;background:transparent;color:var(--ink);padding:7px 4px;border-radius:0;font-weight:700;cursor:pointer}
 .theme-toggle:hover{color:var(--accent-soft)}
 nav{display:flex;gap:14px;flex-wrap:wrap;margin-top:6px}
 nav a{text-decoration:none;color:var(--accent);border:0;padding:7px 2px;border-radius:0;background:transparent;font-weight:600;transition:all .2s ease}
