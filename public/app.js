@@ -891,12 +891,16 @@ function setupPoemUploader(targetId='funnel'){
     const chips=pickTraitChips(a);
     const archetypeHref=a.personalitySlug?`/type/${a.personalitySlug}`:'/types';
     analysisResult.classList.remove('muted');
+    const personalityImageSrc=a.personalitySlug?`/images/${a.personalitySlug}.png`:'';
     analysisResult.innerHTML=`
       <div class='analysis-stage stage-1'>
-        <div class='analysis-hero'>
-          <p class='kicker'>Matched Archetype</p>
-          <h2>${a.personalityTitle}</h2>
-          <p class='lead'>${a.summary}</p>
+        <div class='analysis-hero analysis-hero-with-image'>
+          <div>
+            <p class='kicker'>Matched Archetype</p>
+            <h2>${a.personalityTitle}</h2>
+            <p class='lead'>${a.summary}</p>
+          </div>
+          ${personalityImageSrc?`<figure class='analysis-hero-art'><img src='${personalityImageSrc}' alt='${a.personalityTitle} personality illustration' loading='lazy'/></figure>`:''}
         </div>
       </div>
       <div class='analysis-stage stage-2'>
