@@ -371,7 +371,7 @@ function buildFamousPoetSections(type){
   });
 }
 
-function renderTypeProfileTabs(root,t,siblings){
+function renderTypeProfileTabs(root,t,siblings,allTypes=[]){
   const traits=(t.strengths||[]).slice(0,3);
   const shadows=(t.challenges||[]).slice(0,3);
   const signals=(t.analyzerDetects||[]).slice(0,3);
@@ -457,6 +457,9 @@ function renderTypeProfileTabs(root,t,siblings){
   ];
 
   const typeImageSrc=`/images/${t.slug}.png`;
+  const currentIndex=Math.max(0,allTypes.findIndex((x)=>x.slug===t.slug));
+  const prevType=currentIndex>0?allTypes[currentIndex-1]:null;
+  const nextType=currentIndex<allTypes.length-1?allTypes[currentIndex+1]:null;
 
   const shell=card(`
     <section class='type-tabs-wrap'>
@@ -475,6 +478,10 @@ function renderTypeProfileTabs(root,t,siblings){
           <figure class='type-hero-art' data-type='${escapeHtml(t.slug)}'><img src='${escapeHtml(typeImageSrc)}' alt='${escapeHtml(t.name)} personality illustration' loading='lazy'/></figure>
         </div>
         <article id='typeTabContent' class='type-panel-content'></article>
+        <nav class='type-prev-next' aria-label='Personality navigation'>
+          ${prevType?`<a class='btn secondary' href='/type/${prevType.slug}' aria-label='Previous personality: ${escapeHtml(prevType.name)}'>← Previous</a>`:`<span></span>`}
+          ${nextType?`<a class='btn secondary' href='/type/${nextType.slug}' aria-label='Next personality: ${escapeHtml(nextType.name)}'>Next →</a>`:`<span></span>`}
+        </nav>
       </section>
     </section>
   `,'card type-tabs-shell');
@@ -1493,7 +1500,7 @@ root?.insertAdjacentHTML('beforeend',`<section id='analyzeUploader' class='revea
     if(!t){elRoot?.append(card('<h2>Type not found</h2><p class="muted">Try browsing from the 16 types page.</p>'));setupReveal();setupClickTracking();return;}
 
     const siblings=all.filter(x=>x.group===t.group && x.slug!==t.slug).slice(0,3);
-    renderTypeProfileTabs(elRoot,t,siblings);
+    renderTypeProfileTabs(elRoot,t,siblings,all);
   }
 
   if(path==='/categories'){
