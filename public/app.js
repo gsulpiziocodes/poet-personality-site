@@ -152,7 +152,7 @@ function buildStrengthsShadowSections(type){
       list:strengths
     },
     {
-      title:`The key ${type.name} shadows`,
+      title:`The key ${type.name} weaknesses`,
       list:challenges
     },
     {
@@ -231,7 +231,7 @@ function buildLoveRelationshipSections(type){
       title:`How to love ${type.name}`,
       body:[
         `Lead with direct, respectful communication; this type usually responds best to clarity over mind-reading.`,
-        `Support their strengths (${traits.join(', ')}) while helping them regulate shadow patterns like ${shadows.join(', ')} under stress.`,
+        `Support their strengths (${traits.join(', ')}) while helping them regulate weaker patterns like ${shadows.join(', ')} under stress.`,
         `Give appreciation in the form they naturally recognize, and keep conflict focused on repair rather than point-scoring.`
       ]
     }
@@ -385,7 +385,7 @@ function renderTypeProfileTabs(root,t,siblings){
       out.split={
         leftTitle:customTab.split.leftTitle||base.split?.leftTitle||'Strengths',
         leftItems:Array.isArray(customTab.split.leftItems)&&customTab.split.leftItems.length?customTab.split.leftItems:(base.split?.leftItems||[]),
-        rightTitle:customTab.split.rightTitle||base.split?.rightTitle||'Shadows',
+        rightTitle:customTab.split.rightTitle||base.split?.rightTitle||'Weaknesses',
         rightItems:Array.isArray(customTab.split.rightItems)&&customTab.split.rightItems.length?customTab.split.rightItems:(base.split?.rightItems||[])
       };
     }
@@ -416,11 +416,11 @@ function renderTypeProfileTabs(root,t,siblings){
     },custom.coreTraits),
     mergeTab({
       id:'strengths-shadows',
-      label:'Strengths & shadows',
-      heading:'Strengths & shadows',
+      label:'Strengths & weaknesses',
+      heading:'Strengths & weaknesses',
       kicker:'Range and risk',
       intro:'Every poetic gift has an edge. This section maps both.',
-      split:{leftTitle:'Strengths',leftItems:traits,rightTitle:'Shadows',rightItems:shadows},
+      split:{leftTitle:'Strengths',leftItems:traits,rightTitle:'Weaknesses',rightItems:shadows},
       body:['When consciously balanced, this type can produce deeply memorable work with both force and nuance.']
     },custom.strengthsShadows),
     mergeTab({
@@ -450,7 +450,7 @@ function renderTypeProfileTabs(root,t,siblings){
       intro:'How this poetic energy may show up in intimacy, attachment, and emotional language.',
       body:[
         `${t.name} energy in relationships often mirrors its writing tendencies: ${traits.join(', ')}.`,
-        `In close bonds, the shadow side can look like ${shadows.join(', ')}, especially under stress or uncertainty.`,
+        `In close bonds, weaker patterns can look like ${shadows.join(', ')}, especially under stress or uncertainty.`,
         'When grounded, this type tends to communicate with sincerity, depth, and a strong desire to be truly understood.'
       ]
     },custom.loveRelationships)
