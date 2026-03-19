@@ -760,17 +760,24 @@ function setupPoemUploader(targetId='funnel'){
 
   const queueSave=()=>{
     if(selected<0||!poems[selected]) return;
-    poems[selected].updatedAt=new Date().toISOString();
+    const poemRef=poems[selected];
+    poemRef.updatedAt=new Date().toISOString();
     renderList();
     syncStatus('Saving…');
     clearTimeout(saveTimer);
-    saveTimer=setTimeout(saveNow, 450);
+    saveTimer=setTimeout(()=>saveNow(poemRef), 450);
   };
 
-  const saveNow=async()=>{
-    if(isSaving||selected<0||!poems[selected]) return;
+  const saveNow=async(targetPoem=null)=>{
+    if(isSaving) return;
+
+    const poem=targetPoem||poems[selected];
+    if(!poem) return;
+
+    const idx=poems.findIndex((p)=>p===poem || (poem.id && p.id===poem.id));
+    if(idx<0) return;
+
     isSaving=true;
-    const poem=poems[selected];
     const text=(poem.text||'').trim();
     if(!text){isSaving=false;syncStatus('');return;}
 
@@ -781,7 +788,7 @@ function setupPoemUploader(targetId='funnel'){
       setCollectionToken(data.collection.token);
       const saved=(data.poems||[]).find((p)=>p.id===poem.id)||data.poems?.[data.poems.length-1];
       if(saved){
-        poems[selected]={id:saved.id,title:saved.title||'',text:saved.text||'',updatedAt:saved.updated_at};
+        poems[idx]={id:saved.id,title:saved.title||'',text:saved.text||'',updatedAt:saved.updated_at};
       }
       syncStatus('Saved');
       track('poems_saved',{count:data.counts?.total||0});
