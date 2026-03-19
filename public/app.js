@@ -1481,9 +1481,7 @@ function setupMyPoemsPage(){
 
   if(path==='/analyze'){
     const root=document.getElementById('analyzeRoot');
-    root?.append(card(`<section class='hero'><p class='kicker'>Analyze</p><h1>Discover Your Poet Personality</h1><p class='lead'>Build your private poem collection and save everything in one batch.</p></section>`,''));
-    root?.append(card(`<h2>Start in 3 steps</h2><div class='funnel-steps'><div class='funnel-step'><p class='kicker'>Step 1</p><h3>Add your poems</h3><p>Paste your poems into the workspace one-by-one.</p></div><div class='funnel-step'><p class='kicker'>Step 2</p><h3>Organize and refine</h3><p>Open any poem from the sidebar and edit anytime.</p></div><div class='funnel-step'><p class='kicker'>Step 3</p><h3>Keep writing</h3><p>Everything auto-saves while you work.</p></div></div>`));
-root?.insertAdjacentHTML('beforeend',`<section id='analyzeUploader' class='reveal'></section>`);
+    root?.insertAdjacentHTML('beforeend',`<section id='analyzeUploader' class='reveal'></section>`);
     setupPoemUploader('analyzeUploader');
   }
 
