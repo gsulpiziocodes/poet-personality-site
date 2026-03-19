@@ -8,7 +8,7 @@ body{font-family:Inter,system-ui,-apple-system,sans-serif;color:var(--ink);backg
 :where(button,a,input,textarea,select):focus-visible{outline:2px solid var(--accent-soft);outline-offset:2px}
 .wrap{max-width:1080px;margin:24px auto 100px;padding:0 16px}
 .site-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
-.brand{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:700;letter-spacing:.02em;margin-right:18px}
+.brand{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:700;letter-spacing:.02em;margin-right:34px}
 .user-corner{margin-left:auto;padding:7px 12px;border-radius:999px;background:#fff;border:1px solid var(--line);font-weight:600;color:#5a4a3a}
 .account-corner{margin-left:auto}
 .account-corner-btn{text-decoration:none;display:inline-block;padding:7px 4px;border-radius:0;background:transparent;color:var(--ink);border:0;font-weight:700;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
