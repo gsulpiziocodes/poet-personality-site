@@ -207,6 +207,25 @@ function buildLoveRelationshipSections(type){
     'The Performer':'Expressive affirmation',
     'The Weaver':'Nuanced understanding'
   };
+  const compatibilityByType={
+    'The Alchemist':['The Muse','The Devotee','The Witness'],
+    'The Oracle':['The Seeker','The Weaver','The Lover'],
+    'The Architect':['The Minimalist','The Witness','The Weaver'],
+    'The Seeker':['The Oracle','The Dreamer','The Confessor'],
+    'The Lover':['The Muse','The Devotee','The Storyteller'],
+    'The Dreamer':['The Seeker','The Lover','The Mourner'],
+    'The Muse':['The Lover','The Alchemist','The Performer'],
+    'The Devotee':['The Lover','The Witness','The Storyteller'],
+    'The Confessor':['The Witness','The Seeker','The Rebel'],
+    'The Witness':['The Confessor','The Architect','The Devotee'],
+    'The Rebel':['The Confessor','The Performer','The Alchemist'],
+    'The Mourner':['The Dreamer','The Witness','The Lover'],
+    'The Storyteller':['The Performer','The Lover','The Devotee'],
+    'The Minimalist':['The Architect','The Witness','The Weaver'],
+    'The Performer':['The Storyteller','The Muse','The Rebel'],
+    'The Weaver':['The Oracle','The Architect','The Minimalist']
+  };
+  const compatible=compatibilityByType[type.name]||[];
 
   return [
     {
@@ -234,6 +253,15 @@ function buildLoveRelationshipSections(type){
         `Support their strengths (${traits.join(', ')}) while helping them regulate weaker patterns like ${shadows.join(', ')} under stress.`,
         `Give appreciation in the form they naturally recognize, and keep conflict focused on repair rather than point-scoring.`
       ]
+    },
+    {
+      title:`Most compatible poet personalities for ${type.name}`,
+      body:[
+        compatible.length
+          ? `Best-fit pairings are typically ${compatible.join(', ')} because they balance this type's emotional style and communication rhythm.`
+          : `Compatibility is strongest with partners who can meet this type with consistency, emotional maturity, and reciprocal respect.`
+      ],
+      list:compatible
     }
   ];
 }
