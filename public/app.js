@@ -315,6 +315,62 @@ function buildWritingStyleSections(type){
   ];
 }
 
+function buildFamousPoetSections(type){
+  const poetProfiles={
+    'Rumi':{years:'1207–1273',bio:'Persian mystic poet whose ecstatic, spiritual verse explores love, union, and transformation.',works:['Masnavi','Divan-e Shams-e Tabrizi','The Essential Rumi']},
+    'Sylvia Plath':{years:'1932–1963',bio:'American confessional poet known for psychologically intense, image-rich poems and emotional candor.',works:['Ariel','Daddy','Lady Lazarus']},
+    'Seamus Heaney':{years:'1939–2013',bio:'Irish Nobel Prize–winning poet whose work fuses memory, place, history, and moral reflection.',works:['Death of a Naturalist','North','Field Work']},
+    'Emily Dickinson':{years:'1830–1886',bio:'American lyric poet celebrated for compressed form, paradox, and spiritually charged interiority.',works:['Because I could not stop for Death','I heard a Fly buzz—when I died','I’m Nobody! Who are you?']},
+    'T. S. Eliot':{years:'1888–1965',bio:'Modernist poet-critic whose layered allusion and formal control reshaped twentieth-century poetry.',works:['The Waste Land','Four Quartets','The Love Song of J. Alfred Prufrock']},
+    'Elizabeth Bishop':{years:'1911–1979',bio:'American poet admired for exact observation, tonal restraint, and quietly devastating emotional precision.',works:['One Art','The Fish','Questions of Travel']},
+    'Robert Frost':{years:'1874–1963',bio:'American poet of formal clarity and philosophical depth, often using rural scenes to examine human choice.',works:['Stopping by Woods on a Snowy Evening','Mending Wall','The Road Not Taken']},
+    'Walt Whitman':{years:'1819–1892',bio:'American poet of expansive free verse who celebrated selfhood, democracy, and the shared body of humanity.',works:['Leaves of Grass','Song of Myself','Crossing Brooklyn Ferry']},
+    'John Keats':{years:'1795–1821',bio:'English Romantic poet known for sensuous imagery, emotional intensity, and meditations on beauty and mortality.',works:['Ode to a Nightingale','Ode on a Grecian Urn','To Autumn']},
+    'Pablo Neruda':{years:'1904–1973',bio:'Chilean Nobel Prize–winning poet whose work spans intimate love lyrics, surrealism, and political witness.',works:['Twenty Love Poems and a Song of Despair','Residence on Earth','Canto General']},
+    'Sappho':{years:'c. 630–c. 570 BCE',bio:'Archaic Greek lyric poet whose surviving fragments remain foundational for intimate, desire-centered poetry.',works:['Fragment 31','Ode to Aphrodite','If Not, Winter (fragments)']},
+    'Bashō':{years:'1644–1694',bio:'Japanese master of haikai and haiku whose minimalist nature imagery carries philosophical and emotional depth.',works:['The Narrow Road to the Deep North','Old Pond (haiku)','Nozarashi Kiko']},
+    'Mary Oliver':{years:'1935–2019',bio:'American poet known for lucid, contemplative poems rooted in nature, attention, and spiritual tenderness.',works:['American Primitive','Dream Work','Devotions']},
+    'Anne Sexton':{years:'1928–1974',bio:'American confessional poet whose work confronts trauma, gender, and mental health with fierce intimacy.',works:['Live or Die','Transformations','The Awful Rowing Toward God']},
+    'Maya Angelou':{years:'1928–2014',bio:'American poet and memoirist whose voice blends resilience, dignity, and oratorical power.',works:['And Still I Rise','Phenomenal Woman','Just Give Me a Cool Drink of Water ’fore I Diiie']},
+    'Langston Hughes':{years:'1902–1967',bio:'Central Harlem Renaissance poet whose musical, clear, and socially grounded work reshaped American verse.',works:['The Weary Blues','Montage of a Dream Deferred','I, Too']},
+    'Allen Ginsberg':{years:'1926–1997',bio:'Beat poet known for long-breath lines, countercultural urgency, and radical public voice.',works:['Howl','Kaddish','America']},
+    'Audre Lorde':{years:'1934–1992',bio:'Poet and essayist whose writing joins political clarity, erotic power, and uncompromising self-definition.',works:['Coal','The Black Unicorn','Sister Outsider']},
+    'Adrienne Rich':{years:'1929–2012',bio:'American poet-essayist whose work evolved from formal mastery into bold feminist and political inquiry.',works:['Diving into the Wreck','Snapshots of a Daughter-in-Law','An Atlas of the Difficult World']}
+  };
+
+  const poetMap={
+    'the-alchemist':['Rumi','Sylvia Plath','Seamus Heaney'],
+    'the-oracle':['Emily Dickinson','Rumi','T. S. Eliot'],
+    'the-architect':['Elizabeth Bishop','Robert Frost','T. S. Eliot'],
+    'the-seeker':['Walt Whitman','John Keats','Seamus Heaney'],
+    'the-lover':['Pablo Neruda','Sappho','John Keats'],
+    'the-dreamer':['John Keats','Bashō','Emily Dickinson'],
+    'the-muse':['Sappho','Pablo Neruda','Mary Oliver'],
+    'the-devotee':['Mary Oliver','Rumi','Walt Whitman'],
+    'the-confessor':['Sylvia Plath','Anne Sexton','Maya Angelou'],
+    'the-witness':['Elizabeth Bishop','Langston Hughes','Seamus Heaney'],
+    'the-rebel':['Allen Ginsberg','Audre Lorde','Adrienne Rich'],
+    'the-mourner':['Sylvia Plath','Anne Sexton','Elizabeth Bishop'],
+    'the-storyteller':['Maya Angelou','Langston Hughes','Seamus Heaney'],
+    'the-minimalist':['Bashō','Emily Dickinson','Robert Frost'],
+    'the-performer':['Maya Angelou','Langston Hughes','Allen Ginsberg'],
+    'the-weaver':['Adrienne Rich','T. S. Eliot','Emily Dickinson']
+  };
+
+  const names=poetMap[type.slug]||[];
+  return names.map((name)=>{
+    const poet=poetProfiles[name];
+    if(!poet) return {title:name,body:[]};
+    return {
+      title:name,
+      body:[
+        `${poet.years}. ${poet.bio}`,
+        `Famous works: ${poet.works.join('; ')}.`
+      ]
+    };
+  });
+}
+
 function renderTypeProfileTabs(root,t,siblings){
   const traits=(t.strengths||[]).slice(0,3);
   const shadows=(t.challenges||[]).slice(0,3);
@@ -450,9 +506,11 @@ function renderTypeProfileTabs(root,t,siblings){
           ? (tab.sections||buildStrengthsShadowSections(t))
           : (tab.id==='writing-style')
             ? (tab.sections||buildWritingStyleSections(t))
-            : (tab.id==='love-relationships')
-              ? (tab.sections||buildLoveRelationshipSections(t))
-              : [];
+            : (tab.id==='famous-poets')
+              ? (tab.sections||buildFamousPoetSections(t))
+              : (tab.id==='love-relationships')
+                ? (tab.sections||buildLoveRelationshipSections(t))
+                : [];
     const sectionNav=detailSections.length>1?`<nav class='type-section-nav' aria-label='Section quick links'>${detailSections.map((section,idx)=>`<a href='#type-section-${idx}' class='type-section-link'>${escapeHtml(section.title||`Section ${idx+1}`)}</a>`).join('')}</nav>`:'';
     const sectionHtml=detailSections.length?detailSections.map((section,idx)=>{
       const sBody=(section.body||[]).map((p)=>`<p>${escapeHtml(p)}</p>`).join('');
