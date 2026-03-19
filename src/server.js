@@ -559,7 +559,7 @@ async function notifyLead(lead) {
   await resend.emails.send({
     from: leadsFromEmail,
     to: leadsNotifyEmail,
-    subject: `New Poet Personality lead: ${lead.email}`,
+    subject: `New Versiq lead: ${lead.email}`,
     html: `
       <h2>New Lead Captured</h2>
       <p><strong>Email:</strong> ${lead.email}</p>
@@ -579,7 +579,7 @@ async function sendAdminRecoveryEmail({ link, ip, ua }) {
   await resend.emails.send({
     from: leadsFromEmail,
     to: adminRecoveryEmail,
-    subject: "Poet Personality admin recovery link",
+    subject: "Versiq admin recovery link",
     html: `
       <h2>Admin recovery requested</h2>
       <p>Use this one-time sign-in link (valid for 15 minutes):</p>
@@ -602,14 +602,14 @@ async function sendSignupConfirmationEmail({ email, name, origin }) {
   await resend.emails.send({
     from: leadsFromEmail,
     to: email,
-    subject: "Welcome to Poet Personality ✨",
+    subject: "Welcome to Versiq ✨",
     html: `
       <div style="font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.5;color:#201a15;max-width:560px;margin:0 auto;padding:20px;">
         <h2 style="margin:0 0 10px;">Hey ${safeName}, your account is ready.</h2>
-        <p style="margin:0 0 12px;">Thanks for creating your Poet Personality account. You can now save your writing, revisit your analysis, and keep building your profile over time.</p>
+        <p style="margin:0 0 12px;">Thanks for creating your Versiq account. You can now save your writing, revisit your analysis, and keep building your profile over time.</p>
         <p style="margin:0 0 16px;"><a href="${analyzeUrl}" style="display:inline-block;background:#7a4416;color:#fff;text-decoration:none;padding:10px 14px;border-radius:10px;font-weight:600;">Start analyzing poems</a></p>
         <p style="margin:0 0 8px;color:#6f6254;font-size:14px;">If you didn’t create this account, you can ignore this email.</p>
-        <p style="margin:0;color:#6f6254;font-size:14px;">— Poet Personality</p>
+        <p style="margin:0;color:#6f6254;font-size:14px;">— Versiq</p>
       </div>
     `
   });
@@ -951,7 +951,7 @@ app.post("/api/auth/forgot-password", rateLimit({ keyPrefix: "auth", windowMs: 6
           await resend.emails.send({
             from: leadsFromEmail,
             to: email,
-            subject: "Reset your Poet Personality password",
+            subject: "Reset your Versiq password",
             html: `<p>You requested a password reset.</p><p><a href="${link}">Reset your password</a></p><p>This link expires in 30 minutes.</p>`
           });
         } catch {
@@ -1015,7 +1015,7 @@ small{color:#6f6254}
 .link{display:inline-block;margin-top:10px;color:#5b3b1e;text-decoration:underline}
 </style></head><body>
 <form class="card" method="post" action="/admin/login">
-<h2>Poet Personality Admin</h2>
+<h2>Versiq Admin</h2>
 <small>Sign in to view leads and events.</small>
 ${error ? '<div class="error">Invalid username or password.</div>' : ""}
 <label>Username</label>
@@ -1121,7 +1121,7 @@ app.get("/admin", rateLimit({ keyPrefix: "admin", windowMs: 60_000, maxHits: 20 
 
   const html = `<!doctype html>
 <html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Poet Personality Admin</title>
+<title>Versiq Admin</title>
 <style>
 body{font-family:Inter,system-ui,sans-serif;background:#f8f4ec;color:#1f1a15;margin:0}
 .wrap{max-width:1100px;margin:24px auto;padding:0 16px}
@@ -1166,6 +1166,6 @@ app.get("/settings", (_req, res) => res.sendFile(path.join(publicDir, "settings.
 app.get("/my-poems/:token", (_req, res) => res.sendFile(path.join(publicDir, "my-poems.html")));
 
 app.listen(port, () => {
-  console.log(`Poet Personality web running at http://localhost:${port}`);
+  console.log(`Versiq web running at http://localhost:${port}`);
   console.log(`Storage backend: ${usingSupabase ? "Supabase" : "Local JSONL"}`);
 });

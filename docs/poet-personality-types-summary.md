@@ -1,4 +1,4 @@
-# PoetDNA — 16 Poet Personalities (Full Attribute + Copy Summary)
+# Versiq — 16 Versiq Personalities (Full Attribute + Copy Summary)
 
 Generated from: `src/content/poet-personality-content.json`
 
