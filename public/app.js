@@ -724,7 +724,7 @@ function formatMeta(poem){
   return `${words} words · ${datePart} · ${timePart}`;
 }
 
-function setupPoemUploader(targetId='funnel'){
+function setupPoemUploader(targetId='funnel',types=[]){
   const target=document.getElementById(targetId);
   if(!target) return;
   const token=getCollectionToken();
@@ -874,6 +874,8 @@ function setupPoemUploader(targetId='funnel'){
     queueSave();
   };
 
+  const typeSlugByName=new Map((types||[]).map((t)=>[String(t.name||'').toLowerCase(),t.slug]));
+
   const pickTraitChips=(a)=>{
     const base=[...(a?.observations?.recurringThemes||[])];
     const mood=String(a?.observations?.emotionalPattern||'').toLowerCase();
@@ -904,7 +906,12 @@ function setupPoemUploader(targetId='funnel'){
         </div>
       </div>
       <div class='analysis-stage stage-2'>
-        <div class='analysis-chips'>${chips.map((t)=>`<span class='analysis-chip'>${t}</span>`).join('')}</div>
+        <div class='analysis-chips'>${chips.map((t)=>{
+          const slug=typeSlugByName.get(String(t||'').toLowerCase());
+          return slug
+            ? `<a class='analysis-chip analysis-chip-link' href='/type/${slug}'>${t}</a>`
+            : `<span class='analysis-chip'>${t}</span>`;
+        }).join('')}</div>
       </div>
       <div class='analysis-stage stage-3'>
         <div class='analysis-prose'>
@@ -1497,7 +1504,7 @@ function setupMyPoemsPage(){
   if(path==='/analyze'){
     const root=document.getElementById('analyzeRoot');
     root?.insertAdjacentHTML('beforeend',`<section id='analyzeUploader' class='reveal'></section>`);
-    setupPoemUploader('analyzeUploader');
+    setupPoemUploader('analyzeUploader',data.types||[]);
   }
 
   if(path==='/types'){
