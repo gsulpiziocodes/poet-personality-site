@@ -907,24 +907,6 @@ function setupPoemUploader(targetId='funnel',types=[]){
     const chips=pickTraitChips(a);
     const archetypeHref=a.personalitySlug?`/type/${a.personalitySlug}`:'/types';
     analysisResult.classList.remove('muted');
-
-    const matchedType=(types||[]).find((t)=>t.slug===a.personalitySlug) || null;
-    const sameGroup=((types||[]).filter((t)=>matchedType && t.group===matchedType.group && t.slug!==matchedType.slug)).slice(0,2);
-    const topMatches=[matchedType,...sameGroup].filter(Boolean);
-
-    const radar=matchedType?.radarProfile||{};
-    const traitBars=[
-      ['Emotional intensity',Number(radar.emotionalIntensity||0)],
-      ['Imagery & symbolism',Number(radar.imagerySymbolism||0)],
-      ['Structural control',Number(radar.structuralControl||0)],
-      ['Narrative drive',Number(radar.narrativeDrive||0)],
-      ['Directness',Number(radar.directness||0)],
-      ['Vulnerability',Number(radar.vulnerability||0)]
-    ];
-
-    const poemCount=Array.isArray(payload?.poems)?payload.poems.length:poems.filter((p)=>String(p.text||'').trim()).length;
-    const confidence=poemCount>=8?'High':poemCount>=4?'Medium':'Early';
-
     const personalityImageSrc=a.personalitySlug?`/images/${a.personalitySlug}.png`:'';
     analysisResult.innerHTML=`
       <div class='analysis-stage stage-1'>
@@ -938,10 +920,6 @@ function setupPoemUploader(targetId='funnel',types=[]){
         </div>
       </div>
       <div class='analysis-stage stage-2'>
-        <div class='analysis-top-matches'>
-          <h3>Top matches</h3>
-          <div class='analysis-match-row'>${topMatches.map((m,idx)=>`<a class='analysis-match-card' href='/type/${m.slug}'><span class='rank'>#${idx+1}</span><span>${m.name}</span></a>`).join('')}</div>
-        </div>
         <div class='analysis-chips'>${chips.map((t)=>{
           const slug=typeSlugByName.get(String(t||'').toLowerCase());
           return slug
@@ -950,12 +928,9 @@ function setupPoemUploader(targetId='funnel',types=[]){
         }).join('')}</div>
       </div>
       <div class='analysis-stage stage-3'>
-        <div class='analysis-micro-stats'>
-          <span class='analysis-pill'>Confidence: <strong>${confidence}</strong></span>
-          <span class='analysis-pill'>Poems analyzed: <strong>${poemCount}</strong></span>
-        </div>
-        <div class='analysis-traits'>
-          ${traitBars.map(([label,val])=>`<div class='analysis-trait'><div class='analysis-trait-label'><span>${label}</span><span>${Math.round(val)}</span></div><div class='analysis-trait-bar'><span style='width:${Math.max(0,Math.min(100,val))}%'></span></div></div>`).join('')}
+        <div class='analysis-prose'>
+          <h3>Why this personality fits</h3>
+          <p>${a.commentary}</p>
         </div>
       </div>
       <div class='analysis-stage stage-4'>
@@ -963,6 +938,8 @@ function setupPoemUploader(targetId='funnel',types=[]){
           <div><h4>Core emotional signature</h4><p>${a.observations?.emotionalPattern||''}</p></div>
           <div><h4>Recurring themes</h4><p>${(a.observations?.recurringThemes||[]).join(' · ')}</p></div>
           <div><h4>Imagery and symbols</h4><p>${a.observations?.imageryAndTone||''}</p></div>
+          <div><h4>Voice and tone</h4><p>${a.observations?.structureAndVoice||''}</p></div>
+          <div><h4>Worldview / poetic instincts</h4><p>${a.observations?.worldview||''}</p></div>
         </div>
       </div>
       <div class='analysis-stage stage-5'>
