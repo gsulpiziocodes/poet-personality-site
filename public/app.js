@@ -510,11 +510,16 @@ function renderTypeProfileTabs(root,t,siblings,allTypes=[]){
   const shell=card(`
     <section class='type-tabs-wrap'>
       <aside class='type-tabs-nav' aria-label='Type profile sections'>
+        <div class='type-tabs-mobile-head'>
+          <strong>Sections</strong>
+          <button class='type-tabs-close' type='button' aria-label='Close sections'>✕</button>
+        </div>
         <div class='type-tabs-card' role='tablist' aria-orientation='vertical'>
           ${tabs.map((tab,idx)=>`<button class='type-tab-btn ${idx===0?'active':''}' role='tab' aria-selected='${idx===0?'true':'false'}' data-tab='${tab.id}' id='tab-${tab.id}'>${tab.label}</button>`).join('')}
         </div>
       </aside>
       <section class='type-tabs-panel' aria-live='polite'>
+        <button class='type-mobile-sections-toggle' type='button' aria-label='Open sections'>Sections</button>
         <div class='type-panel-hero type-panel-hero-split'>
           <div class='type-panel-hero-copy'>
             <p class='kicker'>${escapeHtml(t.group)}</p>
@@ -534,6 +539,14 @@ function renderTypeProfileTabs(root,t,siblings,allTypes=[]){
 
   const content=shell.querySelector('#typeTabContent');
   const buttons=[...shell.querySelectorAll('.type-tab-btn')];
+  const navAside=shell.querySelector('.type-tabs-nav');
+  const navOpenBtn=shell.querySelector('.type-mobile-sections-toggle');
+  const navCloseBtn=shell.querySelector('.type-tabs-close');
+
+  const closeMobileSections=()=>navAside?.classList.remove('open');
+  const openMobileSections=()=>navAside?.classList.add('open');
+  navOpenBtn?.addEventListener('click',openMobileSections);
+  navCloseBtn?.addEventListener('click',closeMobileSections);
 
   const renderBody=(tab)=>{
     const bodyHtml=(tab.body||[]).map((p)=>`<p>${escapeHtml(p)}</p>`).join('');
@@ -597,6 +610,7 @@ function renderTypeProfileTabs(root,t,siblings,allTypes=[]){
     if(!tab) return;
     buttons.forEach((b)=>{const active=b===btn;b.classList.toggle('active',active);b.setAttribute('aria-selected',active?'true':'false');});
     renderBody(tab);
+    closeMobileSections();
   }));
 
   renderBody(tabs[0]);
