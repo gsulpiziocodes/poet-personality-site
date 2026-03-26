@@ -1153,7 +1153,23 @@ ${poems.map((x) => `<pre>${JSON.stringify({ ...x, text: String(x.text || "").sli
 });
 
 app.get("/", (_req, res) => res.sendFile(path.join(publicDir, "index.html")));
-app.get("/types", (_req, res) => res.sendFile(path.join(publicDir, "types.html")));
+app.get("/types", async (_req, res) => {
+  try {
+    const templatePath = path.join(publicDir, "types.html");
+    const template = await fs.readFile(templatePath, "utf8");
+    const cards = (contentData.types || [])
+      .map(
+        (t) =>
+          `<div class='card'><div class='type-card'><a class='type-card-art-link' href='/type/${t.slug}' aria-label='Open ${t.name} profile'><figure class='type-card-art'><img src='/images/${t.slug}.png' alt='${t.name} personality illustration' loading='lazy'/></figure></a><span class='chip'>${t.group}</span><h3>${t.name}</h3><p>${t.shortBlurb}</p><a class='type-card-cta' href='/type/${t.slug}'><span>View full profile</span><span aria-hidden='true'>→</span></a></div></div>`
+      )
+      .join("");
+
+    const html = template.replace("<div id='typesGrid' class='grid reveal'></div>", `<div id='typesGrid' class='grid reveal'>${cards}</div>`);
+    res.type("html").send(html);
+  } catch {
+    res.sendFile(path.join(publicDir, "types.html"));
+  }
+});
 app.get("/type/:slug", (_req, res) => res.sendFile(path.join(publicDir, "type.html")));
 app.get("/categories", (_req, res) => res.sendFile(path.join(publicDir, "categories.html")));
 app.get("/tool-kits", (_req, res) => res.redirect("/categories"));

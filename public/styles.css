@@ -207,7 +207,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .funnel-steps{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}.funnel-step{padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink)}
 .sticky-cta{position:fixed;left:12px;right:12px;bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,253,249,.96);box-shadow:0 10px 22px rgba(40,23,9,.16);backdrop-filter:blur(4px)}
 .sticky-cta span{font-size:.95rem;color:color-mix(in oklab,var(--ink) 86%, transparent)}
-.reveal{opacity:0;transform:translateY(10px);transition:opacity .55s ease,transform .55s ease}.reveal.in{opacity:1;transform:none}
+.reveal{opacity:1;transform:none;transition:opacity .55s ease,transform .55s ease}.js-enabled .reveal{opacity:0;transform:translateY(10px)}.reveal.in{opacity:1;transform:none}
 [data-theme='dark'] .poems-shell{border-color:var(--line);background:var(--paper)}
 [data-theme='dark'] .poems-sidebar{background:var(--surface-soft);border-right-color:var(--line)}
 [data-theme='dark'] .poems-main{background:var(--surface)}

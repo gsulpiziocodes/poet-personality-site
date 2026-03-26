@@ -1,3 +1,4 @@
+document.documentElement.classList.add('js-enabled');
 async function loadContent(){const r=await fetch('/api/content');return r.json();}
 const el=(tag,cls)=>{const x=document.createElement(tag);if(cls)x.className=cls;return x;};
 function card(inner,cls='card'){const d=el('div',cls);d.innerHTML=inner;return d;}
