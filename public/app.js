@@ -615,46 +615,22 @@ function applyTheme(theme){
 }
 
 function setupThemeToggle(){
-  const top=document.querySelector('.site-top');
   const current=document.documentElement.getAttribute('data-theme')||'light';
   const next=current==='dark'?'light':'dark';
   const label=current==='dark'?'☀ Light':'🌙 Dark';
 
-  const btn=el('button','theme-toggle');
-  btn.type='button';
-  btn.textContent=label;
-  btn.setAttribute('aria-label',`Switch to ${next} mode`);
-  btn.addEventListener('click',()=>{applyTheme(next);setupThemeToggle();});
+  const bind=(btn)=>{
+    if(!btn) return;
+    btn.textContent=label;
+    btn.setAttribute('aria-label',`Switch to ${next} mode`);
+    btn.onclick=()=>{applyTheme(next);setupThemeToggle();};
+  };
 
-  if(top){
-    const existing=top.querySelector('.theme-toggle');
-    if(existing) existing.remove();
-
-    let controls=top.querySelector('.top-right-controls');
-    if(!controls){
-      controls=el('div','top-right-controls');
-      top.append(controls);
-    }
-
-    controls.prepend(btn);
-    return;
-  }
-
-  const floating=document.querySelector('.theme-floating');
-  if(floating) floating.remove();
-  const wrap=el('div','theme-floating');
-  wrap.style.position='fixed';
-  wrap.style.top='14px';
-  wrap.style.right='14px';
-  wrap.style.zIndex='999';
-  wrap.append(btn);
-  document.body.append(wrap);
+  bind(document.getElementById('themeToggleInline'));
+  bind(document.getElementById('themeToggleMobile'));
 }
 
 async function setupGlobalAccountButton(){
-  const top=document.querySelector('.site-top');
-  if(!top) return;
-
   let user=null;
   try{
     const res=await fetch('/api/auth/me');
@@ -662,28 +638,20 @@ async function setupGlobalAccountButton(){
     user=data?.user||null;
   }catch{}
 
-  const existing=top.querySelector('.account-corner');
-  if(existing) existing.remove();
+  const desktopLink=document.getElementById('accountInlineBtn');
+  const mobileLink=document.querySelector('#mobileNav a[href="/account"]');
+  const userLabel=user?(user.name||String(user.email||'').split('@')[0]||'Account').trim():'Sign In';
+  const href=user?'/settings':'/account';
 
-  const wrap=el('div','account-corner');
-  const link=el('a','account-corner-btn');
-  if(user){
-    const userLabel=(user.name||String(user.email||'').split('@')[0]||'Account').trim();
-    link.href='/settings';
-    link.textContent=userLabel;
-    link.title='Account settings';
-  }else{
-    link.href='/account';
-    link.textContent='Sign In';
+  if(desktopLink){
+    desktopLink.href=href;
+    desktopLink.textContent=userLabel;
+    desktopLink.title=user?'Account settings':'Sign in';
   }
-  wrap.append(link);
-
-  let controls=top.querySelector('.top-right-controls');
-  if(!controls){
-    controls=el('div','top-right-controls');
-    top.append(controls);
+  if(mobileLink){
+    mobileLink.href=href;
+    mobileLink.textContent=user?'Account':'Account';
   }
-  controls.append(wrap);
 }
 
 async function track(name,meta={}){
@@ -704,7 +672,7 @@ function setupReveal(){
 function setupTopNav(){
   const currentPath=location.pathname;
   const activeHref=currentPath.startsWith('/type/')?'/types':currentPath;
-  document.querySelectorAll('.site-top nav a[href^="/"]').forEach((a)=>{
+  document.querySelectorAll('.site-top nav a[href^="/"], #mobileNav a[href^="/"]').forEach((a)=>{
     const hrefRaw=a.getAttribute('href')||'';
     const href=hrefRaw==='/'?'/':hrefRaw.replace(/\/+$/,'');
     const isCurrent=activeHref===href;
@@ -718,11 +686,52 @@ function setupTopNav(){
     }
     a.textContent=baseLabel;
   });
+
+  const menu=document.getElementById('mobileNav');
+  const backdrop=document.getElementById('mobileNavBackdrop');
+  const toggle=document.getElementById('menuToggle');
+  const close=document.getElementById('menuClose');
+
+  if(menu&&toggle&&backdrop){
+    const open=()=>{
+      menu.classList.add('open');
+      menu.setAttribute('aria-hidden','false');
+      toggle.setAttribute('aria-expanded','true');
+      backdrop.hidden=false;
+      document.body.style.overflow='hidden';
+    };
+    const shut=()=>{
+      menu.classList.remove('open');
+      menu.setAttribute('aria-hidden','true');
+      toggle.setAttribute('aria-expanded','false');
+      backdrop.hidden=true;
+      document.body.style.overflow='';
+    };
+
+    toggle.onclick=open;
+    if(close) close.onclick=shut;
+    backdrop.onclick=shut;
+    menu.querySelectorAll('a').forEach((link)=>link.addEventListener('click',shut));
+  }
 }
 
 function setupClickTracking(){
   document.querySelectorAll('a.btn, nav a').forEach((a)=>{
     a.addEventListener('click',()=>track('cta_click',{label:a.textContent?.trim()||'',href:a.getAttribute('href')||''}));
+  });
+}
+
+function setupStickyCta(){
+  const sticky=document.getElementById('stickyCta');
+  const dismiss=document.getElementById('stickyDismiss');
+  if(!sticky||!dismiss) return;
+
+  const dismissed=localStorage.getItem('pp_sticky_cta_dismissed')==='1';
+  if(dismissed) sticky.classList.add('hidden');
+
+  dismiss.addEventListener('click',()=>{
+    sticky.classList.add('hidden');
+    localStorage.setItem('pp_sticky_cta_dismissed','1');
   });
 }
 
@@ -1545,9 +1554,8 @@ function setupMyPoemsPage(){
   track('page_view',{path});
 
   if(path==='/'){
-    const h=data.homepage.hero;
     document.getElementById('hero')?.append(
-      card(`<section class='hero hero-with-image'><div class='hero-copy'><p class='kicker'>${h.kicker}</p><h1>${h.title}</h1><p class='lead'>${h.subtitle}</p><p>${h.body}</p><div class='cta-row'><a class='btn primary' href='/analyze'>${h.primaryCta}</a><a class='btn secondary' href='/types'>${h.secondaryCta}</a></div></div><figure class='hero-image'><img src='/images/landing-page.png' alt='Poet Personality landing page visual' loading='eager'/></figure></section>`,'')
+      card(`<section class='hero hero-with-image'><div class='hero-copy'><p class='kicker'>Poetry Personality Analysis</p><h1>Discover the personality in your poetry.</h1><p class='lead'>Paste your poems and get a clear personality profile inspired by poetic style, tone, and emotional patterns.</p><p>Thoughtful insights in seconds—beautifully organized, easy to explore.</p><div class='cta-row'><a class='btn primary' href='/analyze'>Analyze Your Poems</a><a class='btn secondary' href='/results-demo'>View Sample Result</a></div></div><figure class='hero-image'><img src='/images/landing-page.png' alt='Poet Personality landing page visual' loading='eager'/></figure></section>`,'')
     );
 
     const proof=document.getElementById('proof');
@@ -1611,6 +1619,7 @@ function setupMyPoemsPage(){
   setupReveal();
   setupClickTracking();
   setupEmailCapture();
+  setupStickyCta();
   setupThemeToggle();
   await setupGlobalAccountButton();
 })();
