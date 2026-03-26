@@ -1555,6 +1555,7 @@ function setupMyPoemsPage(){
 }
 
 (async()=>{
+  try{
   applyTheme(getPreferredTheme());
   const data=await loadContent();
   const path=location.pathname;
@@ -1591,7 +1592,11 @@ function setupMyPoemsPage(){
 
   if(path==='/types'){
     const grid=document.getElementById('typesGrid');
-    data.types.forEach(t=>grid?.append(card(`<div class='type-card'><a class='type-card-art-link' href='/type/${t.slug}' aria-label='Open ${t.name} profile'><figure class='type-card-art'><img src='/images/${t.slug}.png' alt='${t.name} personality illustration' loading='lazy'/></figure></a><span class='chip'>${t.group}</span><h3>${t.name}</h3><p>${t.shortBlurb}</p><a class='type-card-cta' href='/type/${t.slug}'><span>View full profile</span><span aria-hidden='true'>→</span></a></div>`)));
+    const types=Array.isArray(data?.types)?data.types:[];
+    if(!types.length){
+      grid?.append(card("<h3>Type profiles are loading…</h3><p class='muted'>If this persists, refresh once.</p>"));
+    }
+    types.forEach(t=>grid?.append(card(`<div class='type-card'><a class='type-card-art-link' href='/type/${t.slug}' aria-label='Open ${t.name} profile'><figure class='type-card-art'><img src='/images/${t.slug}.png' alt='${t.name} personality illustration' loading='lazy'/></figure></a><span class='chip'>${t.group}</span><h3>${t.name}</h3><p>${t.shortBlurb}</p><a class='type-card-cta' href='/type/${t.slug}'><span>View full profile</span><span aria-hidden='true'>→</span></a></div>`)));
   }
 
   if(path.startsWith('/type/')){
@@ -1631,4 +1636,11 @@ function setupMyPoemsPage(){
   setupStickyCta();
   setupThemeToggle();
   await setupGlobalAccountButton();
+  }catch(error){
+    console.error('App bootstrap failed', error);
+    const root=document.getElementById('typesGrid')||document.getElementById('hero')||document.querySelector('main');
+    if(root){
+      root.append(card("<h3>We couldn't load this content right now.</h3><p class='muted'>Please refresh in a few seconds.</p>"));
+    }
+  }
 })();
