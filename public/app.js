@@ -669,6 +669,46 @@ function setupReveal(){
   items.forEach(i=>io.observe(i));
 }
 
+function ensureResponsiveHeader(){
+  const top=document.querySelector('.site-top');
+  if(!top) return;
+
+  const nav=top.querySelector('nav');
+  if(nav && !nav.id) nav.id='primaryNav';
+
+  if(!top.querySelector('#menuToggle')){
+    const btn=el('button','menu-toggle');
+    btn.id='menuToggle';
+    btn.setAttribute('aria-expanded','false');
+    btn.setAttribute('aria-controls','mobileNav');
+    btn.setAttribute('aria-label','Open menu');
+    btn.textContent='☰';
+    top.insertBefore(btn, nav||top.querySelector('.top-right-controls')||null);
+  }
+
+  if(!top.querySelector('.top-right-controls')){
+    const controls=el('div','top-right-controls');
+    controls.innerHTML="<button class='theme-toggle' id='themeToggleInline' type='button'>🌙 Dark</button><a href='/account' class='account-corner-btn' id='accountInlineBtn'>Sign In</a>";
+    top.append(controls);
+  }
+
+  if(!document.getElementById('mobileNav')){
+    const drawer=el('aside','mobile-drawer');
+    drawer.id='mobileNav';
+    drawer.setAttribute('aria-hidden','true');
+    drawer.innerHTML="<div class='mobile-drawer-head'><strong>Menu</strong><button id='menuClose' class='menu-close' aria-label='Close menu'>✕</button></div><a class='btn primary mobile-primary' href='/analyze'>Analyze</a><a href='/types'>16 Types</a><a href='/categories'>Categories</a><a href='/results-demo'>Results Demo</a><a href='/account'>Account</a><button class='theme-toggle mobile-theme' id='themeToggleMobile' type='button'>🌙 Dark</button>";
+    top.insertAdjacentElement('afterend',drawer);
+  }
+
+  if(!document.getElementById('mobileNavBackdrop')){
+    const backdrop=el('div','mobile-backdrop');
+    backdrop.id='mobileNavBackdrop';
+    backdrop.hidden=true;
+    const wrap=document.querySelector('main.wrap')||document.body;
+    wrap.insertAdjacentElement('afterend',backdrop);
+  }
+}
+
 function setupTopNav(){
   const currentPath=location.pathname;
   const activeHref=currentPath.startsWith('/type/')?'/types':currentPath;
@@ -1559,6 +1599,7 @@ function setupMyPoemsPage(){
   applyTheme(getPreferredTheme());
   const data=await loadContent();
   const path=location.pathname;
+  ensureResponsiveHeader();
   setupTopNav();
   track('page_view',{path});
 

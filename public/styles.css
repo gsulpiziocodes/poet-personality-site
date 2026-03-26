@@ -2,9 +2,9 @@
 :root{--bg:#f4efe6;--bg-radial:#fff8ef;--paper:#fffdf9;--surface:#ffffff;--surface-soft:#fcf9f3;--ink:#201a15;--muted:#6f6254;--line:#dfd1bc;--line-soft:#eadfce;--accent:#7a4416;--accent-soft:#a0622d;--accent-strong:#1f1a15;--btn-primary-text:#fff;--btn-secondary-bg:#fff;--btn-secondary-text:#7a4416;--danger-bg:#fff1f0;--danger-text:#9b2d20;--success-bg:#effbf3;--success-line:#c8ecd4;--success-text:#245d37;--error-bg:#fff2f1;--error-line:#f0c4bf;--error-text:#8c2c22;--input-bg:#fff;--input-text:#201a15;--input-line:#e7dac8;--shadow:0 10px 24px rgba(40,23,9,.08)}
 [data-theme='dark']{--bg:#17131b;--bg-radial:#2a1d2f;--paper:#1f1a24;--surface:#221d29;--surface-soft:#1b1721;--ink:#f3ebff;--muted:#b6a8c8;--line:#3a3245;--line-soft:#463d54;--accent:#d4a46a;--accent-soft:#c58f53;--accent-strong:#f3ebff;--btn-primary-text:#16111d;--btn-secondary-bg:#272032;--btn-secondary-text:#e7d2ff;--danger-bg:#3a1d25;--danger-text:#ffb8bf;--success-bg:#1f352b;--success-line:#2d5d49;--success-text:#bdeed5;--error-bg:#3a1f22;--error-line:#6b383d;--error-text:#ffc1c6;--input-bg:#272032;--input-text:#f3ebff;--input-line:#4a4059;--shadow:0 14px 30px rgba(0,0,0,.38)}
 *{box-sizing:border-box}html,body{margin:0;padding:0}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 .hidden{display:none!important}
-body{font-family:Inter,system-ui,-apple-system,sans-serif;color:var(--ink);background:radial-gradient(circle at 10% 0%,var(--bg-radial),transparent 35%),var(--bg);transition:background .25s ease,color .25s ease}
+body{font-family:Inter,system-ui,-apple-system,sans-serif;color:var(--ink);background:radial-gradient(circle at 10% 0%,var(--bg-radial),transparent 35%),var(--bg);transition:background .25s ease,color .25s ease;overflow-x:hidden}
 :where(button,a,input,textarea,select):focus-visible{outline:2px solid var(--accent-soft);outline-offset:2px}
 .wrap{max-width:1080px;margin:24px auto 100px;padding:0 16px}
 .site-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;position:sticky;top:0;z-index:60;background:color-mix(in oklab,var(--bg) 96%, var(--paper));backdrop-filter:none;padding:10px 0 8px;transition:box-shadow .22s ease,background .22s ease,border-color .22s ease}
