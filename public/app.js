@@ -715,6 +715,14 @@ function setupTopNav(){
   }
 }
 
+function setupHeaderScroll(){
+  const top=document.querySelector('.site-top');
+  if(!top) return;
+  const sync=()=>top.classList.toggle('scrolled',window.scrollY>10);
+  sync();
+  window.addEventListener('scroll',sync,{passive:true});
+}
+
 function setupClickTracking(){
   document.querySelectorAll('a.btn, nav a').forEach((a)=>{
     a.addEventListener('click',()=>track('cta_click',{label:a.textContent?.trim()||'',href:a.getAttribute('href')||''}));
@@ -1617,6 +1625,7 @@ function setupMyPoemsPage(){
   if(path.startsWith('/my-poems/')) setupMyPoemsPage();
 
   setupReveal();
+  setupHeaderScroll();
   setupClickTracking();
   setupEmailCapture();
   setupStickyCta();
