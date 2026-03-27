@@ -651,6 +651,50 @@ function csvEscape(value) {
   return s;
 }
 
+function buildStyleProfileFromPoems(poems = []) {
+  const texts = (poems || []).map((p) => String(p?.text || "").trim()).filter(Boolean);
+  const corpus = texts.join("\n");
+  const lines = corpus.split("\n").map((x) => x.trim()).filter(Boolean);
+  const words = corpus.toLowerCase().match(/[a-z']+/g) || [];
+
+  const avgLineWords = lines.length
+    ? Number((lines.reduce((sum, line) => sum + line.split(/\s+/).filter(Boolean).length, 0) / lines.length).toFixed(1))
+    : 0;
+  const avgSentenceWords = (() => {
+    const sentences = corpus.split(/[.!?]+/).map((s) => s.trim()).filter(Boolean);
+    if (!sentences.length) return 0;
+    return Number((sentences.reduce((sum, s) => sum + (s.match(/[a-z']+/gi) || []).length, 0) / sentences.length).toFixed(1));
+  })();
+
+  const pronounI = words.filter((w) => w === "i" || w === "me" || w === "my").length;
+  const pronounYou = words.filter((w) => w === "you" || w === "your").length;
+  const questionLines = lines.filter((l) => l.includes("?")).length;
+
+  const stop = new Set(["the", "and", "a", "to", "of", "in", "is", "it", "that", "for", "on", "with", "as", "at", "by", "an", "be", "this", "from", "or", "are", "was", "were", "but", "not", "have", "has", "had", "i", "you", "my", "me", "your"]);
+  const freq = new Map();
+  for (const w of words) {
+    if (w.length < 4 || stop.has(w)) continue;
+    freq.set(w, (freq.get(w) || 0) + 1);
+  }
+  const signatureWords = [...freq.entries()].sort((a, b) => b[1] - a[1]).slice(0, 14).map(([w]) => w);
+
+  const snippets = texts
+    .flatMap((text) => text.split("\n").map((line) => line.trim()).filter((line) => line.length >= 28 && line.length <= 150))
+    .slice(0, 8);
+
+  return {
+    poemCount: texts.length,
+    lineCount: lines.length,
+    avgLineWords,
+    avgSentenceWords,
+    questionLineRate: lines.length ? Number((questionLines / lines.length).toFixed(3)) : 0,
+    firstPersonRate: words.length ? Number((pronounI / words.length).toFixed(3)) : 0,
+    secondPersonRate: words.length ? Number((pronounYou / words.length).toFixed(3)) : 0,
+    signatureWords,
+    snippets
+  };
+}
+
 function analyzePoemCorpus(poems = []) {
   const corpus = poems.map((p) => String(p?.text || "").trim()).filter(Boolean).join("\n");
   const words = corpus.toLowerCase().match(/[a-z']+/g) || [];
@@ -863,6 +907,24 @@ app.delete("/api/poems/:poemId", rateLimit({ keyPrefix: "poems", windowMs: 60_00
     return res.json({ ok: true, message: "Deleted" });
   } catch (error) {
     return res.status(500).json({ ok: false, error: "poem_delete_failed", details: error.message });
+  }
+});
+
+app.get("/api/style-profile", rateLimit({ keyPrefix: "poems", windowMs: 60_000, maxHits: 30 }), async (req, res) => {
+  try {
+    const token = String(req.query?.token || "").trim();
+    if (!token) return res.status(400).json({ ok: false, error: "missing_token" });
+
+    const poems = await getPoemsByCollectionToken(token);
+    const valid = poems
+      .map((p) => ({ text: String(p?.text || "").trim() }))
+      .filter((p) => p.text);
+
+    if (!valid.length) return res.json({ ok: true, profile: buildStyleProfileFromPoems([]) });
+
+    return res.json({ ok: true, profile: buildStyleProfileFromPoems(valid) });
+  } catch (error) {
+    return res.status(500).json({ ok: false, error: "style_profile_failed", details: error.message });
   }
 });
 

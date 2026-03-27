@@ -1677,12 +1677,19 @@ function setupPersonalityCoachChat(root,t){
   const form=host.querySelector('#poetChatForm');
   const input=host.querySelector('#poetChatInput');
   let turn=0;
+  let styleProfile=null;
 
   const addMsg=(who,text)=>{
     const row=el('div',`poet-chat-msg ${who}`);
     row.innerHTML=`<p>${escapeHtml(text)}</p>`;
     log.append(row);
     log.scrollTop=log.scrollHeight;
+  };
+
+  const styleLine=()=>{
+    if(!styleProfile||!styleProfile.poemCount) return '';
+    const words=(styleProfile.signatureWords||[]).slice(0,3).join(', ');
+    return `I’m tuning to your style (${styleProfile.poemCount} poems, ~${styleProfile.avgLineWords||0} words/line${words?`, signature words: ${words}`:''}).`;
   };
 
   const makeReply=(userText)=>{
@@ -1692,15 +1699,32 @@ function setupPersonalityCoachChat(root,t){
     const open=words<8
       ? `Good start. Give me 4-6 more lines so we can build momentum.`
       : `Strong material. I can hear the ${coach.name.toLowerCase()} energy.`;
+    const styleNudge=styleProfile?.poemCount
+      ? `Try writing this next pass around ${Math.max(4,Math.min(12,Math.round(styleProfile.avgLineWords||8)))} words per line to match your natural rhythm.`
+      : '';
     const follow=words<20
       ? `Try this now: ${tip}`
       : `Revision pass: ${tip}`;
     const q=turn%2===0?'What line feels most honest to you right now?':'Want me to help tighten rhythm line-by-line?';
     turn+=1;
-    return `${open} ${follow} ${q}`;
+    return [open,styleNudge,follow,q].filter(Boolean).join(' ');
   };
 
+  root.append(host);
   addMsg('bot',coach.first);
+
+  const token=getCollectionToken();
+  if(token){
+    fetch(`/api/style-profile?token=${encodeURIComponent(token)}`)
+      .then((r)=>r.json())
+      .then((data)=>{
+        if(data?.ok&&data?.profile&&data.profile.poemCount>0){
+          styleProfile=data.profile;
+          addMsg('bot',styleLine());
+        }
+      })
+      .catch(()=>{});
+  }
 
   form?.addEventListener('submit',(e)=>{
     e.preventDefault();
@@ -1710,8 +1734,6 @@ function setupPersonalityCoachChat(root,t){
     if(input) input.value='';
     setTimeout(()=>addMsg('bot',makeReply(text)),220);
   });
-
-  root.append(host);
 }
 
 function setupTypeHoverVideos(scope=document){
