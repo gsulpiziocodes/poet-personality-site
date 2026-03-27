@@ -7,8 +7,8 @@ html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{font-family:Inter,system-ui,-apple-system,sans-serif;color:var(--ink);background:radial-gradient(circle at 10% 0%,var(--bg-radial),transparent 35%),var(--bg);transition:background .25s ease,color .25s ease;overflow-x:hidden}
 :where(button,a,input,textarea,select):focus-visible{outline:2px solid var(--accent-soft);outline-offset:2px}
 .wrap{max-width:1080px;margin:24px auto 100px;padding:0 16px}
-.site-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;position:sticky;top:0;z-index:60;background:var(--bg);backdrop-filter:none;padding:10px 0 8px;transition:box-shadow .22s ease,background .22s ease,border-color .22s ease}
-.site-top.scrolled{box-shadow:none;background:var(--bg);border-bottom-color:transparent}
+.site-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;position:sticky;top:0;z-index:60;background:transparent;backdrop-filter:none;padding:10px 0 8px;transition:box-shadow .22s ease,background .22s ease,border-color .22s ease}
+.site-top.scrolled{box-shadow:none;background:transparent;border-bottom-color:transparent}
 .brand{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;letter-spacing:.02em;margin-right:52px}
 .user-corner{margin-left:auto;padding:7px 12px;border-radius:999px;background:#fff;border:1px solid var(--line);font-weight:600;color:#5a4a3a}
 .top-right-controls{margin-left:auto;display:flex;align-items:center;gap:10px;margin-top:6px}
