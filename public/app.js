@@ -1993,6 +1993,7 @@ function setupStorytellerGuide(types=[]){
       <div class='story-guide-dialogue'>
         <p class='story-guide-speaker'>The Storyteller</p>
         <div class='story-guide-chatlog' id='storyGuideChatLog'></div>
+        <div class='story-guide-starters' id='storyGuideStarters'></div>
         <form class='story-guide-chatform' id='storyGuideChatForm'>
           <input id='storyGuideChatInput' type='text' placeholder='Share a line, draft, or question…' autocomplete='off'/>
           <button type='submit' class='btn secondary'>Send</button>
@@ -2007,6 +2008,7 @@ function setupStorytellerGuide(types=[]){
   const intro=root.querySelector('.story-guide-intro');
   const select=root.querySelector('#storyGuideType');
   const chatLog=root.querySelector('#storyGuideChatLog');
+  const startersWrap=root.querySelector('#storyGuideStarters');
   const chatForm=root.querySelector('#storyGuideChatForm');
   const chatInput=root.querySelector('#storyGuideChatInput');
   const speaker=root.querySelector('.story-guide-speaker');
@@ -2107,12 +2109,28 @@ function setupStorytellerGuide(types=[]){
     artVideo.addEventListener('loadeddata',stopVideo);
   }
 
+  const renderStarters=(coach)=>{
+    if(!startersWrap) return;
+    const options=(coach.tips||[]).slice(0,4);
+    startersWrap.innerHTML=options.map((tip,idx)=>`<button type='button' class='story-guide-starter-btn' data-tip='${idx}'>${escapeHtml(tip)}</button>`).join('');
+    startersWrap.querySelectorAll('.story-guide-starter-btn').forEach((btn)=>{
+      btn.addEventListener('click',()=>{
+        const i=Number(btn.getAttribute('data-tip')||0);
+        const picked=options[i]||options[0]||'';
+        if(!picked) return;
+        addMsg('bot',`Starter idea: ${picked}`);
+        if(chatInput){ chatInput.value=picked; chatInput.focus(); }
+      });
+    });
+  };
+
   let turn=0;
   const renderCoach=(reset=true)=>{
     const name=select?.value||'The Storyteller';
     const {slug,coach}=getCoach(name);
     if(speaker) speaker.textContent=coach.name;
     updateCoachMedia(slug);
+    renderStarters(coach);
     if(reset&&chatLog){
       chatLog.innerHTML='';
       turn=0;

@@ -249,6 +249,9 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .story-guide-msg p{margin:0;font-size:.86rem;line-height:1.45;color:color-mix(in oklab,var(--ink) 90%, transparent)}
 .story-guide-msg.clickable{cursor:pointer;border-style:dashed}
 .story-guide-msg.clickable:hover{border-color:var(--accent-soft);background:color-mix(in oklab,var(--surface-soft) 90%, var(--paper))}
+.story-guide-starters{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
+.story-guide-starter-btn{border:1px solid var(--line-soft);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 9px;font-size:.78rem;cursor:pointer;line-height:1.2}
+.story-guide-starter-btn:hover{border-color:var(--accent-soft);background:color-mix(in oklab,var(--surface-soft) 88%, var(--paper))}
 .story-guide-chatform{display:grid;grid-template-columns:1fr auto;gap:6px}
 .story-guide-chatform input{border:1px solid var(--line-soft);border-radius:9px;padding:8px 9px;background:var(--surface);color:var(--ink);font-size:.86rem}
 .story-guide-chatform .btn{padding:8px 10px;min-height:auto;border-radius:9px}
@@ -297,6 +300,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 [data-theme='dark'] .story-guide-msg{background:#fff;border-color:#ddd3c4}
 [data-theme='dark'] .story-guide-msg.user{background:#f2eee5;border-color:#d7cbb7}
 [data-theme='dark'] .story-guide-chatform input{background:#fff;border-color:#d8cfbf;color:#231915}
+[data-theme='dark'] .story-guide-starter-btn{background:#fff;border-color:#d8cfbf;color:#231915}
 [data-theme='dark'] .story-guide-tip{color:#2f2420}
 [data-theme='dark'] .poem-pre{background:#2a2333;border-color:var(--line);color:var(--ink)}
 @media(min-width:920px){.two-col{grid-template-columns:1fr 1fr}.wrap{padding:0 20px}.funnel-steps{grid-template-columns:repeat(3,1fr)}#proof{margin-top:38px;margin-bottom:14px}#how,#funnel{margin-top:30px;padding-top:10px}}
