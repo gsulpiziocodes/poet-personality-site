@@ -2030,13 +2030,23 @@ function setupStorytellerGuide(types=[]){
 
   if(path==='/categories'){
     const c=document.getElementById('categories');
+    const groupVideoBySlug={
+      'visionaries':'visionaries-group.mp4',
+      'romantics':'romantics-group.mp4',
+      'truth-tellers':'truth-tellers-group.mp4',
+      'makers':'makers-group.mp4'
+    };
     data.groups.forEach(g=>{
       const list=g.types
         .map(slug=>data.types.find(t=>t.slug===slug))
         .filter(Boolean)
         .map(t=>`<a href='/type/${t.slug}'>${t.name}</a>`)
         .join('');
-      c?.append(card(`<figure class='category-card-art'><img src='/images/${g.slug}.png' alt='${g.name} category illustration' loading='lazy'/></figure><h2>${g.name}</h2><p>${g.description}</p><div class='category-type-links'>${list}</div>`));
+      const videoFile=groupVideoBySlug[g.slug];
+      const media=videoFile
+        ? `<video muted loop autoplay playsinline preload='metadata' poster='/images/${g.slug}.png'><source src='/videos/${videoFile}' type='video/mp4'></video>`
+        : `<img src='/images/${g.slug}.png' alt='${g.name} category illustration' loading='lazy'/>`;
+      c?.append(card(`<figure class='category-card-art'>${media}</figure><h2>${g.name}</h2><p>${g.description}</p><div class='category-type-links'>${list}</div>`));
     });
   }
 
