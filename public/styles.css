@@ -218,10 +218,8 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .sticky-cta{position:fixed;left:12px;right:12px;bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,253,249,.96);box-shadow:0 10px 22px rgba(40,23,9,.16);backdrop-filter:blur(4px)}
 .sticky-cta span{font-size:.95rem;color:color-mix(in oklab,var(--ink) 86%, transparent)}
 
-.story-guide{position:fixed;right:16px;bottom:56px;z-index:130;display:flex;flex-direction:column;align-items:flex-end;gap:8px;transform:translateY(26px) scale(.97);opacity:0;transition:transform .32s cubic-bezier(.2,.85,.28,1.02),opacity .26s ease}
-.story-guide.in{transform:translateY(0) scale(1);opacity:1}
-.story-guide.in .story-guide-panel{animation:storyPop .45s cubic-bezier(.18,.9,.28,1.08)}
-.story-guide.pulse .story-guide-panel{animation:storyPulse .34s ease}
+.story-guide{position:fixed;right:16px;bottom:56px;z-index:130;display:flex;flex-direction:column;align-items:flex-end;gap:8px;transform:translateY(26px);opacity:0;transition:transform .26s ease,opacity .26s ease}
+.story-guide.in{transform:translateY(0);opacity:1}
 .story-guide-close{position:absolute;right:8px;top:8px;width:30px;height:30px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-size:1.05rem;line-height:1;cursor:pointer;z-index:3}
 .story-guide-panel{position:relative;z-index:2;width:min(360px,calc(100vw - 28px));padding:14px 14px 12px;border:1px solid color-mix(in oklab,var(--line) 72%, var(--surface));border-radius:24px;background:#fff;box-shadow:0 12px 28px rgba(16,10,6,.12)}
 .story-guide-panel::after{content:'';position:absolute;right:38px;bottom:-12px;width:20px;height:20px;background:#fff;border-right:1px solid color-mix(in oklab,var(--line) 72%, var(--surface));border-bottom:1px solid color-mix(in oklab,var(--line) 72%, var(--surface));transform:rotate(38deg) skewX(-14deg)}
@@ -233,9 +231,6 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .story-guide-tip{margin:0;font-size:.92rem;line-height:1.5;color:color-mix(in oklab,var(--ink) 88%, transparent)}
 .story-guide-art{margin:0;align-self:flex-end;z-index:1}
 .story-guide-art img{display:block;width:min(240px,46vw);height:auto;max-height:280px;object-fit:contain;filter:drop-shadow(0 12px 18px rgba(20,14,10,.2))}
-
-@keyframes storyPop{0%{transform:translateY(8px) scale(.96)}55%{transform:translateY(-2px) scale(1.02)}100%{transform:translateY(0) scale(1)}}
-@keyframes storyPulse{0%{transform:scale(1)}50%{transform:scale(1.018)}100%{transform:scale(1)}}
 
 .reveal{opacity:1;transform:none;transition:opacity .55s ease,transform .55s ease}.reveal.in{opacity:1;transform:none}
 [data-theme='dark'] .poems-shell{border-color:var(--line);background:var(--paper)}

@@ -1698,31 +1698,14 @@ function setupStorytellerGuide(types=[]){
   };
   writer();
 
-  let tipTimer;
-  const typeInto=(target,text,speed=16)=>{
-    if(!target) return;
-    if(tipTimer) clearTimeout(tipTimer);
-    let idx=0;
-    target.textContent='';
-    const step=()=>{
-      target.textContent=text.slice(0,idx);
-      idx+=1;
-      if(idx<=text.length) tipTimer=setTimeout(step,speed);
-    };
-    step();
-  };
-
   const renderTip=()=>{
     const name=select?.value||'The Storyteller';
-    const nextTip=tipByType[name]||'Start with one image you trust, then build from there line by line.';
-    typeInto(tip,nextTip,14);
+    tip.textContent=tipByType[name]||'Start with one image you trust, then build from there line by line.';
     const slug=slugByName[name]||'the-storyteller';
     if(art){
       art.src=`/images/${slug}.png`;
       art.alt=`${name} guide`;
     }
-    root.classList.remove('pulse');
-    requestAnimationFrame(()=>root.classList.add('pulse'));
   };
   select?.addEventListener('change',renderTip);
   renderTip();
