@@ -1623,7 +1623,13 @@ function setupMyPoemsPage(){
     );
 
     const proof=document.getElementById('proof');
-    (data.homepage.proofStrip||[]).forEach(line=>proof?.append(card(`<p>${line}</p>`)));
+    const proofMoments=[
+      {kicker:'Signal',title:'Pattern-based analysis',body:'Across your submitted poems, recurring structure, tone, and imagery reveal your deeper poetic signature.'},
+      {kicker:'Archetypes',title:'16 original poetry personalities',body:'A crafted typology designed for poets—distinct energies, not generic labels.'},
+      {kicker:'Depth',title:'Confidence grows over time',body:'Each new submission refines your profile, moving from impression toward identity.'}
+    ];
+    proof?.classList.add('proof-moment-grid');
+    proofMoments.forEach((m,idx)=>proof?.append(card(`<div class='proof-card'><div class='proof-ornament'>✦</div><p class='proof-kicker'>${m.kicker}</p><h3 class='proof-title'>${m.title}</h3><p class='proof-body'>${m.body}</p></div>`, `proof-wrap proof-${idx+1}`)));
 
     const how=document.getElementById('how');
     how?.append(card(`<h2>${data.howItWorks.title}</h2><p class='muted'>${data.howItWorks.intro}</p>`));
