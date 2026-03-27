@@ -1640,7 +1640,6 @@ function setupStorytellerGuide(types=[]){
   root.setAttribute('aria-live','polite');
   root.innerHTML=`
     <button class='story-guide-close' type='button' aria-label='Close writing helper'>×</button>
-    <figure class='story-guide-art'><img src='/images/the-storyteller.png' alt='The Storyteller guide' loading='lazy'/></figure>
     <div class='story-guide-panel'>
       <p class='story-guide-intro'></p>
       <label class='story-guide-label' for='storyGuideType'>Pick a personality</label>
@@ -1651,7 +1650,8 @@ function setupStorytellerGuide(types=[]){
         <p class='story-guide-speaker'>The Storyteller</p>
         <p class='story-guide-tip'></p>
       </div>
-    </div>`;
+    </div>
+    <figure class='story-guide-art'><img src='/images/the-storyteller.png' alt='The Storyteller guide' loading='lazy'/></figure>`;
 
   document.body.append(root);
   requestAnimationFrame(()=>root.classList.add('in'));
