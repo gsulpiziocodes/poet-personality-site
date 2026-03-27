@@ -1945,7 +1945,19 @@ function setupStorytellerGuide(types=[]){
     'The Storyteller','The Minimalist','The Performer','The Weaver'
   ];
 
-  const typeRows=types.map(t=>({name:t?.name,slug:t?.slug})).filter(t=>t.name&&t.slug);
+  const typeRows=types.map((t)=>({
+    name:t?.name,
+    slug:t?.slug,
+    subtitle:t?.subtitle||'',
+    overview:t?.overview||'',
+    strengths:Array.isArray(t?.strengths)?t.strengths:[],
+    challenges:Array.isArray(t?.challenges)?t.challenges:[],
+    detects:Array.isArray(t?.analyzerDetects)?t.analyzerDetects:[],
+    idealTagline:t?.idealTagline||'',
+    writingIntro:t?.profileTabs?.writingStyle?.intro||'',
+    loveIntro:t?.profileTabs?.loveRelationships?.intro||''
+  })).filter(t=>t.name&&t.slug);
+  const typeByName=Object.fromEntries(typeRows.map((t)=>[t.name,t]));
   const ordered=(typeRows.length?typeRows.map(t=>t.name):orderedFallback);
 
   const slugByName={
@@ -2029,9 +2041,32 @@ function setupStorytellerGuide(types=[]){
 
   const getCoach=(name)=>{
     const slug=slugByName[name]||'the-storyteller';
+    const rich=typeByName[name];
+    const base=POET_COACH_BY_SLUG[slug]||{name,first:'Share your first lines and I will help you shape the next draft.',tips:(tipDeckByType[name]||[]).slice(0,3)};
+
+    if(!rich){
+      return { slug, coach: base };
+    }
+
+    const introLine=`Hi, I am ${rich.name}. ${rich.subtitle||base.first}`;
+    const first=`${introLine} ${rich.overview||''}`.trim();
+    const dynamicTips=[
+      rich.detects[0]?`Your style usually leans toward ${rich.detects[0]}. Try opening there.`:'',
+      rich.strengths[0]?`Lead with your strength: ${rich.strengths[0]}.`:'',
+      rich.challenges[0]?`Watch for this while drafting: ${rich.challenges[0]}.`:'',
+      rich.writingIntro||'',
+      rich.loveIntro||'',
+      rich.idealTagline?`North star: ${rich.idealTagline}`:''
+    ].filter(Boolean);
+
     return {
       slug,
-      coach: POET_COACH_BY_SLUG[slug]||{name,first:'Share your first lines and I will help you shape the next draft.',tips:(tipDeckByType[name]||[]).slice(0,3)}
+      coach:{
+        ...base,
+        name:rich.name,
+        first,
+        tips:[...dynamicTips, ...(base.tips||[])].slice(0,6)
+      }
     };
   };
 
