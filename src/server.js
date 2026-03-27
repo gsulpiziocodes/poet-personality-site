@@ -1213,7 +1213,8 @@ app.get("/types", async (_req, res) => {
       "the-seeker": "the-seeker-hover.mp4",
       "the-lover": "the-lover-hover.mp4",
       "the-dreamer": "the-dreamer-hover.mp4",
-      "the-muse": "the-muse-hover.mp4"
+      "the-muse": "the-muse-hover.mp4",
+      "the-devotee": "the-devotee-hover.mp4"
     };
 
     const cards = (contentData.types || [])
