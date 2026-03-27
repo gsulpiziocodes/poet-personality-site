@@ -1761,7 +1761,7 @@ function setupStorytellerGuide(types=[]){
         <p class='story-guide-tip'></p>
       </div>
     </div>
-    <figure class='story-guide-art'><img src='/images/the-storyteller.png' alt='The Storyteller guide' loading='lazy'/></figure>`;
+    <figure class='story-guide-art'><video class='story-guide-art-video' muted loop playsinline autoplay preload='metadata' poster='/images/the-storyteller.png'><source src='/videos/the-storyteller-hover.mp4' type='video/mp4'></video></figure>`;
 
   document.body.append(root);
   requestAnimationFrame(()=>root.classList.add('in'));
@@ -1769,7 +1769,7 @@ function setupStorytellerGuide(types=[]){
   const intro=root.querySelector('.story-guide-intro');
   const select=root.querySelector('#storyGuideType');
   const tip=root.querySelector('.story-guide-tip');
-  const art=root.querySelector('.story-guide-art img');
+  const artVideo=root.querySelector('.story-guide-art-video');
   const closeBtn=root.querySelector('.story-guide-close');
   const opening='Need some help?';
   if(intro) intro.textContent=opening;
@@ -1778,9 +1778,12 @@ function setupStorytellerGuide(types=[]){
     const name=select?.value||'The Storyteller';
     tip.textContent=tipByType[name]||'Start with one image you trust, then build from there line by line.';
     const slug=slugByName[name]||'the-storyteller';
-    if(art){
-      art.src=`/images/${slug}.png`;
-      art.alt=`${name} guide`;
+    const videoFile=TYPE_HOVER_VIDEO_BY_SLUG[slug]||'the-storyteller-hover.mp4';
+    if(artVideo){
+      artVideo.poster=`/images/${slug}.png`;
+      artVideo.innerHTML=`<source src='/videos/${videoFile}' type='video/mp4'>`;
+      artVideo.load();
+      artVideo.play().catch(()=>{});
     }
   };
   select?.addEventListener('change',renderTip);
