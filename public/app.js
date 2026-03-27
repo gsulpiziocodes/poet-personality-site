@@ -1648,22 +1648,22 @@ const TYPE_HOVER_VIDEO_BY_SLUG={
 };
 
 const POET_COACH_BY_SLUG={
-  'the-alchemist':{name:'The Alchemist',first:"Let's begin with change. Write 6 lines about something in your life that broke and became useful.",tips:['Turn one object into a symbol of transformation.','Move from wound to wisdom by line 6.','Use fire/water/metal imagery to anchor the poem.']},
-  'the-oracle':{name:'The Oracle',first:"Start with a sign you noticed today. Give it meaning in 8 lines.",tips:['Write in short visionary fragments.','Ask one haunting question in the middle.','End with an image that feels fated.']},
-  'the-architect':{name:'The Architect',first:'Let’s structure this: 3 stanzas, 4 lines each. Scene, turn, resolution.',tips:['Keep one central image in every stanza.','Trim soft filler words after your first draft.','Use line breaks to control emphasis.']},
-  'the-seeker':{name:'The Seeker',first:'Write from a real question you cannot answer yet. 8-12 lines.',tips:['Let curiosity drive each stanza.','Use one concrete detail from your room.','End open, not solved.']},
-  'the-lover':{name:'The Lover',first:'Write a memory of tenderness using touch, scent, or sound.',tips:['Make emotion physical, not abstract.','Use closeness and distance as tension.','End with a line that aches softly.']},
-  'the-dreamer':{name:'The Dreamer',first:'Start with a dream image, then anchor each stanza with one real detail.',tips:['Let transitions feel soft and fluid.','Use moon/light/mist imagery with restraint.','Close like waking up slowly.']},
-  'the-muse':{name:'The Muse',first:'Give me one beautiful opening line, then echo its rhythm through 8 lines.',tips:['Read aloud and tune by ear.','Repeat one phrase with variation.','Prioritize image and cadence over explanation.']},
-  'the-devotee':{name:'The Devotee',first:'Write a small offering poem to someone/something you are loyal to.',tips:['Let sincerity lead the language.','Name one ritual and why it matters.','End with a vow or promise.']},
-  'the-confessor':{name:'The Confessor',first:'Start with one truth you avoid saying out loud. Keep it plain.',tips:['First stanza: no metaphor, just truth.','Name body sensations while writing.','Revise for honesty, not polish first.']},
-  'the-witness':{name:'The Witness',first:'Describe what is actually around you right now before interpretation.',tips:['Use sensory detail from the scene.','Trust observation to carry feeling.','Keep diction clear and grounded.']},
-  'the-rebel':{name:'The Rebel',first:'Write what you refuse in 10 lines. Be direct and intentional.',tips:['Use active verbs in each line.','Break one rule on purpose.','Turn anger into clarity.']},
-  'the-mourner':{name:'The Mourner',first:'Write about what is missing by describing the space it left.',tips:['Say less and let silence work.','Use gentle domestic details.','End with one line of tenderness.']},
-  'the-storyteller':{name:'The Storyteller',first:'Open in-scene: where, who, what just happened. Then give us a turn.',tips:['Build before/after movement.','Carry one object through the narrative.','Final line reveals what changed.']},
-  'the-minimalist':{name:'The Minimalist',first:'Write 6 short lines, max 6 words each.',tips:['Cut anything non-essential.','One image per line is enough.','Keep ending plain and sharp.']},
-  'the-performer':{name:'The Performer',first:'Write this for voice. Mark where breath should hit.',tips:['Use repetition for momentum.','Read aloud and revise by sound.','End with your strongest spoken line.']},
-  'the-weaver':{name:'The Weaver',first:'Choose two threads (past/present, self/world) and braid them.',tips:['Alternate threads by stanza.','Repeat an image to stitch layers.','Let both threads meet at the end.']}
+  'the-alchemist':{name:'The Alchemist',first:"Hey — want to start with something real? Give me 4-6 lines about a hard moment that changed you.",tips:['Turn one object into a symbol of transformation.','Move from wound to wisdom by line 6.','Use fire/water/metal imagery to anchor the poem.']},
+  'the-oracle':{name:'The Oracle',first:"Okay, quick exercise: what’s one sign you noticed today that felt weirdly meaningful? Write from that.",tips:['Write in short visionary fragments.','Ask one haunting question in the middle.','End with an image that feels fated.']},
+  'the-architect':{name:'The Architect',first:'Let’s keep it simple: 3 short stanzas. First = scene, second = turn, third = landing.',tips:['Keep one central image in every stanza.','Trim soft filler words after your first draft.','Use line breaks to control emphasis.']},
+  'the-seeker':{name:'The Seeker',first:'Start with a question you genuinely don’t have the answer to yet, then follow it for 8-10 lines.',tips:['Let curiosity drive each stanza.','Use one concrete detail from your room.','End open, not solved.']},
+  'the-lover':{name:'The Lover',first:'Write one small moment of closeness — touch, breath, distance, anything intimate and specific.',tips:['Make emotion physical, not abstract.','Use closeness and distance as tension.','End with a line that aches softly.']},
+  'the-dreamer':{name:'The Dreamer',first:'Give me one dream-like image, then ground it with one real detail from your day.',tips:['Let transitions feel soft and fluid.','Use moon/light/mist imagery with restraint.','Close like waking up slowly.']},
+  'the-muse':{name:'The Muse',first:'Drop your prettiest opening line first — then we’ll build the rest around its rhythm.',tips:['Read aloud and tune by ear.','Repeat one phrase with variation.','Prioritize image and cadence over explanation.']},
+  'the-devotee':{name:'The Devotee',first:'Who or what are you deeply loyal to right now? Write to them like it’s a quiet vow.',tips:['Let sincerity lead the language.','Name one ritual and why it matters.','End with a vow or promise.']},
+  'the-confessor':{name:'The Confessor',first:'Let’s be honest first, poetic second. Write one truth you usually avoid saying out loud.',tips:['First stanza: no metaphor, just truth.','Name body sensations while writing.','Revise for honesty, not polish first.']},
+  'the-witness':{name:'The Witness',first:'Look around for 20 seconds. Now write exactly what you see before trying to interpret it.',tips:['Use sensory detail from the scene.','Trust observation to carry feeling.','Keep diction clear and grounded.']},
+  'the-rebel':{name:'The Rebel',first:'What are you done tolerating? Write it direct — no soft language.',tips:['Use active verbs in each line.','Break one rule on purpose.','Turn anger into clarity.']},
+  'the-mourner':{name:'The Mourner',first:'Write about what’s missing by describing what feels different now in ordinary life.',tips:['Say less and let silence work.','Use gentle domestic details.','End with one line of tenderness.']},
+  'the-storyteller':{name:'The Storyteller',first:'Start in the middle of a moment: where are we, what just happened, and why should I care?',tips:['Build before/after movement.','Carry one object through the narrative.','Final line reveals what changed.']},
+  'the-minimalist':{name:'The Minimalist',first:'Try 6 short lines, super clean. Keep only what actually hits.',tips:['Cut anything non-essential.','One image per line is enough.','Keep ending plain and sharp.']},
+  'the-performer':{name:'The Performer',first:'Write this like you’re saying it out loud to a room. Where does your voice punch?',tips:['Use repetition for momentum.','Read aloud and revise by sound.','End with your strongest spoken line.']},
+  'the-weaver':{name:'The Weaver',first:'Pick two threads (past/present, love/loss) and braid them together in one draft.',tips:['Alternate threads by stanza.','Repeat an image to stitch layers.','Let both threads meet at the end.']}
 };
 
 function setupPersonalityCoachChat(root,t){
@@ -2070,7 +2070,7 @@ function setupStorytellerGuide(types=[]){
     const tips=(coach.tips&&coach.tips.length)?coach.tips:['Add one concrete image.','Tighten your emotional turn.','Read aloud and refine rhythm.'];
     const tip=tips[turn%tips.length];
     const rhythm=styleProfile?.avgLineWords?`Try ~${Math.max(4,Math.min(12,Math.round(styleProfile.avgLineWords)))} words per line in your next pass.`:'';
-    const open=words<10?'Nice start—give me 4-6 more lines so I can shape the arc.':`Strong draft. I can hear ${coach.name.toLowerCase()} energy.`;
+    const open=words<10?'Nice start — add a few more lines and I can help shape it.':`This is good. I can hear your voice coming through.`;
     turn+=1;
     return [open, rhythm, `Next move: ${tip}`, (turn%2?'What line feels truest right now?':'Want a line-by-line tightening pass?')].filter(Boolean).join(' ');
   };
