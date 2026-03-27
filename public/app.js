@@ -1633,8 +1633,35 @@ function setupStorytellerGuide(types=[]){
     'The Weaver':'Interlace two timelines or motifs and let them meet in the final stanza with emotional precision.'
   };
 
-  const typeNames=types.map(t=>t.name).filter(Boolean);
-  const ordered=(typeNames.length?typeNames:Object.keys(tipByType));
+  const orderedFallback=[
+    'The Alchemist','The Oracle','The Architect','The Seeker',
+    'The Lover','The Dreamer','The Muse','The Devotee',
+    'The Confessor','The Witness','The Rebel','The Mourner',
+    'The Storyteller','The Minimalist','The Performer','The Weaver'
+  ];
+
+  const typeRows=types.map(t=>({name:t?.name,slug:t?.slug})).filter(t=>t.name&&t.slug);
+  const ordered=(typeRows.length?typeRows.map(t=>t.name):orderedFallback);
+
+  const slugByName={
+    ...Object.fromEntries(typeRows.map(t=>[t.name,t.slug])),
+    'The Alchemist':'the-alchemist',
+    'The Oracle':'the-oracle',
+    'The Architect':'the-architect',
+    'The Seeker':'the-seeker',
+    'The Lover':'the-lover',
+    'The Dreamer':'the-dreamer',
+    'The Muse':'the-muse',
+    'The Devotee':'the-devotee',
+    'The Confessor':'the-confessor',
+    'The Witness':'the-witness',
+    'The Rebel':'the-rebel',
+    'The Mourner':'the-mourner',
+    'The Storyteller':'the-storyteller',
+    'The Minimalist':'the-minimalist',
+    'The Performer':'the-performer',
+    'The Weaver':'the-weaver'
+  };
 
   const root=el('aside','story-guide');
   root.setAttribute('aria-live','polite');
@@ -1659,6 +1686,7 @@ function setupStorytellerGuide(types=[]){
   const intro=root.querySelector('.story-guide-intro');
   const select=root.querySelector('#storyGuideType');
   const tip=root.querySelector('.story-guide-tip');
+  const art=root.querySelector('.story-guide-art img');
   const closeBtn=root.querySelector('.story-guide-close');
   const opening='Need some help?';
   let i=0;
@@ -1673,6 +1701,11 @@ function setupStorytellerGuide(types=[]){
   const renderTip=()=>{
     const name=select?.value||'The Storyteller';
     tip.textContent=tipByType[name]||'Start with one image you trust, then build from there line by line.';
+    const slug=slugByName[name]||'the-storyteller';
+    if(art){
+      art.src=`/images/${slug}.png`;
+      art.alt=`${name} guide`;
+    }
   };
   select?.addEventListener('change',renderTip);
   renderTip();
