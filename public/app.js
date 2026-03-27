@@ -1761,7 +1761,7 @@ function setupStorytellerGuide(types=[]){
         <p class='story-guide-tip'></p>
       </div>
     </div>
-    <figure class='story-guide-art'><video class='story-guide-art-video' muted loop playsinline autoplay preload='metadata' poster='/images/the-storyteller.png'><source src='/videos/the-storyteller-hover.mp4' type='video/mp4'></video></figure>`;
+    <figure class='story-guide-art'><video class='story-guide-art-video' muted loop playsinline preload='metadata' poster='/images/the-storyteller.png'><source src='/videos/the-storyteller-hover.mp4' type='video/mp4'></video></figure>`;
 
   document.body.append(root);
   requestAnimationFrame(()=>root.classList.add('in'));
@@ -1774,6 +1774,16 @@ function setupStorytellerGuide(types=[]){
   const opening='Need some help?';
   if(intro) intro.textContent=opening;
 
+  if(artVideo){
+    const playVideo=()=>{ artVideo.currentTime=0; artVideo.play().catch(()=>{}); };
+    const stopVideo=()=>{ artVideo.pause(); artVideo.currentTime=0.01; };
+    artVideo.addEventListener('mouseenter',playVideo);
+    artVideo.addEventListener('mouseleave',stopVideo);
+    artVideo.addEventListener('focusin',playVideo);
+    artVideo.addEventListener('focusout',stopVideo);
+    artVideo.addEventListener('loadeddata',stopVideo);
+  }
+
   const renderTip=()=>{
     const name=select?.value||'The Storyteller';
     tip.textContent=tipByType[name]||'Start with one image you trust, then build from there line by line.';
@@ -1783,7 +1793,6 @@ function setupStorytellerGuide(types=[]){
       artVideo.poster=`/images/${slug}.png`;
       artVideo.innerHTML=`<source src='/videos/${videoFile}' type='video/mp4'>`;
       artVideo.load();
-      artVideo.play().catch(()=>{});
     }
   };
   select?.addEventListener('change',renderTip);
