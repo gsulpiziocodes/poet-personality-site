@@ -248,7 +248,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 @media(max-width:900px){.hero-with-image{grid-template-columns:1fr}.hero-image{width:100%;max-width:100%;margin:4px auto 0}.hero-image img{width:100%;height:auto;max-height:340px;object-fit:cover;display:block}.analysis-hero-with-image{grid-template-columns:1fr}.analysis-hero-art{max-width:260px;margin:4px auto 0}.type-hero-art img{transform:none!important;max-width:100%;height:auto}}
 
 /* 2026 mobile/tablet/desktop nav + hero polish */
-.site-top{min-height:64px;gap:14px;padding:10px 0;border-bottom:1px solid var(--line-soft);backdrop-filter:blur(8px)}
+.site-top{min-height:64px;gap:14px;padding:10px 0;border-bottom:0;backdrop-filter:none;box-shadow:none}
 #primaryNav{margin-top:0}
 .menu-toggle,.menu-close{display:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;width:42px;height:42px;font-size:1.1rem;cursor:pointer}
 .mobile-drawer{display:none}
