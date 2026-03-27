@@ -2116,13 +2116,28 @@ function setupStorytellerGuide(types=[]){
 
   const makeReply=(coach,userText)=>{
     const text=String(userText||'').trim();
+    const lower=text.toLowerCase();
     const words=text.split(/\s+/).filter(Boolean).length;
+
+    const smallTalk= /^(hi|hello|hey|yo|sup|what'?s up|how are you|good morning|good afternoon|good evening)\b/.test(lower);
+    const asksWhatToDo = /what should i write|how do i start|help me start|where do i start|what now/.test(lower);
+    const looksLikePoem = /\n/.test(text) || words>=12;
+
+    if(smallTalk && !looksLikePoem){
+      return `Hey, good to meet you. I am ${coach.name}. Want to just chat first, or do you want a quick prompt to start writing?`;
+    }
+
+    if(asksWhatToDo && !looksLikePoem){
+      const firstTip=(coach.tips&&coach.tips[0])?coach.tips[0]:'Start with one honest image from your day.';
+      return `Great question. Easiest way in is this: ${firstTip} If you want, I can give you a softer prompt or a more intense one.`;
+    }
+
     const tips=(coach.tips&&coach.tips.length)?coach.tips:['Add one concrete image.','Tighten your emotional turn.','Read aloud and refine rhythm.'];
     const tip=tips[turn%tips.length];
-    const rhythm=styleProfile?.avgLineWords?`Try ~${Math.max(4,Math.min(12,Math.round(styleProfile.avgLineWords)))} words per line in your next pass.`:'';
+    const rhythm=styleProfile?.avgLineWords?`Try around ${Math.max(4,Math.min(12,Math.round(styleProfile.avgLineWords)))} words per line in your next pass.`:'';
     const open=words<10?'Nice start. Keep going with whatever feels natural and I will help shape it.':`This is good. I can hear your voice coming through.`;
     turn+=1;
-    return [open, rhythm, `Next move: ${tip}`, (turn%2?'What line feels truest right now?':'Want a line-by-line tightening pass?')].filter(Boolean).join(' ');
+    return [open, rhythm, `Next move: ${tip}`, (turn%2?'What line feels truest right now?':'Want a line by line tightening pass?')].filter(Boolean).join(' ');
   };
 
   select?.addEventListener('change',()=>renderCoach(true));
