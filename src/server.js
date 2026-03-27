@@ -1209,7 +1209,7 @@ app.get("/types", async (_req, res) => {
     const cards = (contentData.types || [])
       .map(
         (t) =>
-          `<div class='card'><div class='type-card'><a class='type-card-art-link' href='/type/${t.slug}' aria-label='Open ${t.name} profile'><figure class='type-card-art'><img src='/images/${t.slug}.png' alt='${t.name} personality illustration' loading='lazy'/></figure></a><span class='chip'>${t.group}</span><h3>${t.name}</h3><p>${t.shortBlurb}</p><a class='type-card-cta' href='/type/${t.slug}'><span>View full profile</span><span aria-hidden='true'>→</span></a></div></div>`
+          `<div class='card'><div class='type-card' data-type-slug='${t.slug}'><a class='type-card-art-link' href='/type/${t.slug}' aria-label='Open ${t.name} profile'><figure class='type-card-art'><img src='/images/${t.slug}.png' alt='${t.name} personality illustration' loading='lazy'/>${t.slug === "the-alchemist" ? "<video class='alchemist-hover-video' muted loop playsinline preload='metadata'><source src='/videos/alchemist-hover.mp4' type='video/mp4'></video>" : ""}</figure></a><span class='chip'>${t.group}</span><h3>${t.name}</h3><p>${t.shortBlurb}</p><a class='type-card-cta' href='/type/${t.slug}'><span>View full profile</span><span aria-hidden='true'>→</span></a></div></div>`
       )
       .join("");
 

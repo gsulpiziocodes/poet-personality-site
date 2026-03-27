@@ -1608,6 +1608,33 @@ function setupResetPasswordPage(){
   init().catch(()=>invalid.classList.remove('hidden'));
 }
 
+function setupAlchemistHoverVideo(scope=document){
+  const cards=[...scope.querySelectorAll('.type-card[data-type-slug="the-alchemist"] .type-card-art')];
+  cards.forEach((card)=>{
+    const video=card.querySelector('video.alchemist-hover-video');
+    if(!video||video.dataset.bound==='1') return;
+    video.dataset.bound='1';
+    video.pause();
+    video.currentTime=0;
+
+    const play=()=>{
+      video.currentTime=0;
+      video.play().catch(()=>{});
+      card.classList.add('hover-active');
+    };
+    const stop=()=>{
+      video.pause();
+      video.currentTime=0;
+      card.classList.remove('hover-active');
+    };
+
+    card.addEventListener('mouseenter',play);
+    card.addEventListener('mouseleave',stop);
+    card.addEventListener('focusin',play);
+    card.addEventListener('focusout',stop);
+  });
+}
+
 function setupMyPoemsPage(){
   const root=document.getElementById('myPoems');
   if(!root) return;
@@ -1793,11 +1820,13 @@ function setupStorytellerGuide(types=[]){
     if(grid?.querySelector('.type-card')){
       // Make sure cards are visible even if reveal scripts fail.
       grid.classList.add('in');
+      setupAlchemistHoverVideo(grid);
     }else{
       const renderTypes=(types)=>{
         if(!grid) return;
         grid.innerHTML='';
-        types.forEach(t=>grid.append(card(`<div class='type-card'><a class='type-card-art-link' href='/type/${t.slug}' aria-label='Open ${t.name} profile'><figure class='type-card-art'><img src='/images/${t.slug}.png' alt='${t.name} personality illustration' loading='lazy'/></figure></a><span class='chip'>${t.group}</span><h3>${t.name}</h3><p>${t.shortBlurb}</p><a class='type-card-cta' href='/type/${t.slug}'><span>View full profile</span><span aria-hidden='true'>→</span></a></div>`)));
+        types.forEach(t=>grid.append(card(`<div class='type-card' data-type-slug='${t.slug}'><a class='type-card-art-link' href='/type/${t.slug}' aria-label='Open ${t.name} profile'><figure class='type-card-art'><img src='/images/${t.slug}.png' alt='${t.name} personality illustration' loading='lazy'/>${t.slug==='the-alchemist'?"<video class='alchemist-hover-video' muted loop playsinline preload='metadata'><source src='/videos/alchemist-hover.mp4' type='video/mp4'></video>":''}</figure></a><span class='chip'>${t.group}</span><h3>${t.name}</h3><p>${t.shortBlurb}</p><a class='type-card-cta' href='/type/${t.slug}'><span>View full profile</span><span aria-hidden='true'>→</span></a></div>`)));
+        setupAlchemistHoverVideo(grid);
       };
 
       const types=Array.isArray(data?.types)?data.types:[];
