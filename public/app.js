@@ -1616,16 +1616,21 @@ function setupAlchemistHoverVideo(scope=document){
     video.dataset.bound='1';
     video.pause();
     video.currentTime=0;
+    video.addEventListener('loadeddata',()=>{
+      if(!video.dataset.previewReady){
+        video.currentTime=0.01;
+        video.pause();
+        video.dataset.previewReady='1';
+      }
+    });
 
     const play=()=>{
       video.currentTime=0;
       video.play().catch(()=>{});
-      card.classList.add('hover-active');
     };
     const stop=()=>{
       video.pause();
-      video.currentTime=0;
-      card.classList.remove('hover-active');
+      video.currentTime=0.01;
     };
 
     card.addEventListener('mouseenter',play);
@@ -1825,7 +1830,7 @@ function setupStorytellerGuide(types=[]){
       const renderTypes=(types)=>{
         if(!grid) return;
         grid.innerHTML='';
-        types.forEach(t=>grid.append(card(`<div class='type-card' data-type-slug='${t.slug}'><a class='type-card-art-link' href='/type/${t.slug}' aria-label='Open ${t.name} profile'><figure class='type-card-art'><img src='/images/${t.slug}.png' alt='${t.name} personality illustration' loading='lazy'/>${t.slug==='the-alchemist'?"<video class='alchemist-hover-video' muted loop playsinline preload='metadata'><source src='/videos/alchemist-hover.mp4' type='video/mp4'></video>":''}</figure></a><span class='chip'>${t.group}</span><h3>${t.name}</h3><p>${t.shortBlurb}</p><a class='type-card-cta' href='/type/${t.slug}'><span>View full profile</span><span aria-hidden='true'>→</span></a></div>`)));
+        types.forEach(t=>grid.append(card(`<div class='type-card' data-type-slug='${t.slug}'><a class='type-card-art-link' href='/type/${t.slug}' aria-label='Open ${t.name} profile'><figure class='type-card-art'><img src='/images/${t.slug}.png' alt='${t.name} personality illustration' loading='lazy'/>${t.slug==='the-alchemist'?"<video class='alchemist-hover-video' muted loop playsinline preload='metadata' poster='/images/the-alchemist.png'><source src='/videos/alchemist-hover.mp4' type='video/mp4'></video>":''}</figure></a><span class='chip'>${t.group}</span><h3>${t.name}</h3><p>${t.shortBlurb}</p><a class='type-card-cta' href='/type/${t.slug}'><span>View full profile</span><span aria-hidden='true'>→</span></a></div>`)));
         setupAlchemistHoverVideo(grid);
       };
 
