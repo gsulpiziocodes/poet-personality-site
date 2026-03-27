@@ -1214,7 +1214,15 @@ app.get("/types", async (_req, res) => {
       "the-lover": "the-lover-hover.mp4",
       "the-dreamer": "the-dreamer-hover.mp4",
       "the-muse": "the-muse-hover.mp4",
-      "the-devotee": "the-devotee-hover.mp4"
+      "the-devotee": "the-devotee-hover.mp4",
+      "the-confessor": "the-confessor-hover.mp4",
+      "the-witness": "the-witness-hover.mp4",
+      "the-rebel": "the-rebel-hover.mp4",
+      "the-mourner": "the-mourner-hover.mp4",
+      "the-storyteller": "the-storyteller-hover.mp4",
+      "the-minimalist": "the-minimalist-hover.mp4",
+      "the-performer": "the-performer-hover.mp4",
+      "the-weaver": "the-weaver-hover.mp4"
     };
 
     const cards = (contentData.types || [])
