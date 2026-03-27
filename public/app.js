@@ -1608,6 +1608,82 @@ function setupMyPoemsPage(){
   load();
 }
 
+function setupStorytellerGuide(types=[]){
+  const allowed=['/','/analyze','/types'];
+  const isTypeProfile=location.pathname.startsWith('/type/');
+  if(!allowed.includes(location.pathname)&&!isTypeProfile) return;
+  if(sessionStorage.getItem('storyGuideDismissed')==='1') return;
+
+  const tipByType={
+    'The Alchemist':'Start with an ordinary object, then transform it into a symbol of change by the final line.',
+    'The Oracle':'Write in prophetic fragments. Use one clear image per stanza and end with a question that lingers.',
+    'The Architect':'Draft a strict structure first (quatrains or syllable count), then let emotion move inside that frame.',
+    'The Seeker':'Center the poem around a search: what are you trying to understand that still refuses to resolve?',
+    'The Lover':'Use tactile details—skin, breath, distance, warmth—to make intimacy concrete, not abstract.',
+    'The Dreamer':'Blend memory and imagination. Let the scene drift, but anchor each stanza with one grounded detail.',
+    'The Muse':'Lead with your strongest line early, then echo its rhythm subtly through the rest of the poem.',
+    'The Devotee':'Write a devotion poem to a person, place, or ritual. Make loyalty feel active, not passive.',
+    'The Confessor':'Choose one truth you usually avoid and state it plainly in the first 4 lines—no metaphors at first.',
+    'The Witness':'Observe before judging. Let concrete images carry the emotional weight without forcing conclusions.',
+    'The Rebel':'Break one rule on purpose—syntax, punctuation, or line length—to intensify your central emotion.',
+    'The Mourner':'Use restraint. Name what is missing through surrounding details instead of saying loss directly each time.',
+    'The Storyteller':'Build a mini arc: setting, turn, aftermath. Give the reader a before and after in under 20 lines.',
+    'The Minimalist':'Cut every non-essential word. Keep only lines that still carry force when read aloud slowly.',
+    'The Performer':'Write for voice: cadence, breath, emphasis. Test each stanza by reading it out loud and revising by ear.',
+    'The Weaver':'Interlace two timelines or motifs and let them meet in the final stanza with emotional precision.'
+  };
+
+  const typeNames=types.map(t=>t.name).filter(Boolean);
+  const ordered=(typeNames.length?typeNames:Object.keys(tipByType));
+
+  const root=el('aside','story-guide');
+  root.setAttribute('aria-live','polite');
+  root.innerHTML=`
+    <button class='story-guide-close' type='button' aria-label='Close writing helper'>×</button>
+    <figure class='story-guide-art'><img src='/images/the-storyteller.png' alt='The Storyteller guide' loading='lazy'/></figure>
+    <div class='story-guide-panel'>
+      <p class='story-guide-intro'></p>
+      <label class='story-guide-label' for='storyGuideType'>Pick a personality</label>
+      <select id='storyGuideType' class='story-guide-select'>
+        ${ordered.map(name=>`<option value='${escapeHtml(name)}'>${escapeHtml(name)}</option>`).join('')}
+      </select>
+      <div class='story-guide-dialogue'>
+        <p class='story-guide-speaker'>The Storyteller</p>
+        <p class='story-guide-tip'></p>
+      </div>
+    </div>`;
+
+  document.body.append(root);
+  requestAnimationFrame(()=>root.classList.add('in'));
+
+  const intro=root.querySelector('.story-guide-intro');
+  const select=root.querySelector('#storyGuideType');
+  const tip=root.querySelector('.story-guide-tip');
+  const closeBtn=root.querySelector('.story-guide-close');
+  const opening='Need some help?';
+  let i=0;
+  const writer=()=>{
+    if(!intro) return;
+    intro.textContent=opening.slice(0,i);
+    i+=1;
+    if(i<=opening.length) setTimeout(writer,42);
+  };
+  writer();
+
+  const renderTip=()=>{
+    const name=select?.value||'The Storyteller';
+    tip.textContent=tipByType[name]||'Start with one image you trust, then build from there line by line.';
+  };
+  select?.addEventListener('change',renderTip);
+  renderTip();
+
+  closeBtn?.addEventListener('click',()=>{
+    sessionStorage.setItem('storyGuideDismissed','1');
+    root.classList.remove('in');
+    setTimeout(()=>root.remove(),220);
+  });
+}
+
 (async()=>{
   try{
   applyTheme(getPreferredTheme());
@@ -1719,6 +1795,7 @@ function setupMyPoemsPage(){
   setupClickTracking();
   setupEmailCapture();
   setupStickyCta();
+  setupStorytellerGuide(data.types||[]);
   setupThemeToggle();
   await setupGlobalAccountButton();
   }catch(error){
