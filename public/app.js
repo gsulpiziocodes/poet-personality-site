@@ -80,7 +80,7 @@ function buildRadarChart(type){
     <section class='type-radar-card' aria-label='Signature trait map'>
       <div class='type-radar-head'>
         <h3>Signature Trait Map</h3>
-        <p class='muted'>Baseline pattern for ${escapeHtml(type.name)} (0–100)</p>
+        <p class='muted'>Baseline pattern for ${escapeHtml(type.name)} (0-100)</p>
       </div>
       <svg class='type-radar' viewBox='0 0 ${size} ${size}' preserveAspectRatio='xMidYMid meet' role='img' aria-label='Radar chart of ${escapeHtml(type.name)} traits'>
         <g class='radar-rings'>${rings}</g>
@@ -173,7 +173,7 @@ function buildStrengthsShadowSections(type){
       title:`How to grow as ${type.name}`,
       body:[
         `Practice range intentionally: keep your strengths, but write against your default habits at least once per week.`,
-        `Choose one shadow to work on at a time—for example, moving from "${(challenges[0]||'over-control').toLowerCase()}" toward clarity and balance.`,
+        `Choose one shadow to work on at a time-for example, moving from "${(challenges[0]||'over-control').toLowerCase()}" toward clarity and balance.`,
         `Use revision as integration: preserve your voice while improving readability, contrast, and emotional precision.`
       ]
     }
@@ -250,7 +250,7 @@ function buildLoveRelationshipSections(type){
       title:`What is ${type.name} like in romantic relationships?`,
       body:[
         `${type.name} often loves through ${traits.join(', ')}, and typically seeks connection that feels emotionally real rather than performative.`,
-        `In close bonds, this type tends to value autonomy and depth at the same time—space to remain themselves, and enough trust to be fully known.`
+        `In close bonds, this type tends to value autonomy and depth at the same time-space to remain themselves, and enough trust to be fully known.`
       ]
     },
     {
@@ -262,7 +262,7 @@ function buildLoveRelationshipSections(type){
     },
     {
       title:`${type.name} love language`,
-      body:[`A common love-language pattern for this type is ${loveLanguageByType[type.name]||'Intentional presence'}—consistent signals of care that feel sincere, not performative.`]
+      body:[`A common love-language pattern for this type is ${loveLanguageByType[type.name]||'Intentional presence'}-consistent signals of care that feel sincere, not performative.`]
     },
     {
       title:`How to love ${type.name}`,
@@ -279,7 +279,7 @@ function buildLoveRelationshipSections(type){
           ? `Best-fit pairings are typically ${compatible.join(', ')} because they balance this type's emotional style and communication rhythm.`
           : `Compatibility is strongest with partners who can meet this type with consistency, emotional maturity, and reciprocal respect.`
       ],
-      list:compatible.map((name)=>`${name} — ${compatibilityReasonByName[name]||'complements this type with balanced emotional and communication dynamics'}`)
+      list:compatible.map((name)=>`${name} - ${compatibilityReasonByName[name]||'complements this type with balanced emotional and communication dynamics'}`)
     }
   ];
 }
@@ -310,7 +310,7 @@ function buildCoreTraitSections(type){
       title:'How these traits appear in real writing',
       body:[
         `In practice, this type often reveals itself through signals such as ${signals.join(', ')}.`,
-        `The strongest trait expression feels intentional, not accidental—it repeats with variation over time.`
+        `The strongest trait expression feels intentional, not accidental-it repeats with variation over time.`
       ]
     },
     {
@@ -347,7 +347,7 @@ function buildWritingStyleSections(type){
     {
       title:'Voice and line movement',
       body:[
-        `This type typically carries a distinct cadence pattern—how lines breathe, accelerate, pause, and resolve.`,
+        `This type typically carries a distinct cadence pattern-how lines breathe, accelerate, pause, and resolve.`,
         `Readers often recognize the voice before they can name the technique behind it.`
       ]
     },
@@ -363,25 +363,25 @@ function buildWritingStyleSections(type){
 
 function buildFamousPoetSections(type){
   const poetProfiles={
-    'Rumi':{years:'1207–1273',bio:'Persian mystic poet whose ecstatic, spiritual verse explores love, union, and transformation.',works:['Masnavi','Divan-e Shams-e Tabrizi','The Essential Rumi']},
-    'Sylvia Plath':{years:'1932–1963',bio:'American confessional poet known for psychologically intense, image-rich poems and emotional candor.',works:['Ariel','Daddy','Lady Lazarus']},
-    'Seamus Heaney':{years:'1939–2013',bio:'Irish Nobel Prize–winning poet whose work fuses memory, place, history, and moral reflection.',works:['Death of a Naturalist','North','Field Work']},
-    'Emily Dickinson':{years:'1830–1886',bio:'American lyric poet celebrated for compressed form, paradox, and spiritually charged interiority.',works:['Because I could not stop for Death','I heard a Fly buzz—when I died','I’m Nobody! Who are you?']},
-    'T. S. Eliot':{years:'1888–1965',bio:'Modernist poet-critic whose layered allusion and formal control reshaped twentieth-century poetry.',works:['The Waste Land','Four Quartets','The Love Song of J. Alfred Prufrock']},
-    'Elizabeth Bishop':{years:'1911–1979',bio:'American poet admired for exact observation, tonal restraint, and quietly devastating emotional precision.',works:['One Art','The Fish','Questions of Travel']},
-    'Robert Frost':{years:'1874–1963',bio:'American poet of formal clarity and philosophical depth, often using rural scenes to examine human choice.',works:['Stopping by Woods on a Snowy Evening','Mending Wall','The Road Not Taken']},
-    'Walt Whitman':{years:'1819–1892',bio:'American poet of expansive free verse who celebrated selfhood, democracy, and the shared body of humanity.',works:['Leaves of Grass','Song of Myself','Crossing Brooklyn Ferry']},
-    'John Keats':{years:'1795–1821',bio:'English Romantic poet known for sensuous imagery, emotional intensity, and meditations on beauty and mortality.',works:['Ode to a Nightingale','Ode on a Grecian Urn','To Autumn']},
-    'Pablo Neruda':{years:'1904–1973',bio:'Chilean Nobel Prize–winning poet whose work spans intimate love lyrics, surrealism, and political witness.',works:['Twenty Love Poems and a Song of Despair','Residence on Earth','Canto General']},
-    'Sappho':{years:'c. 630–c. 570 BCE',bio:'Archaic Greek lyric poet whose surviving fragments remain foundational for intimate, desire-centered poetry.',works:['Fragment 31','Ode to Aphrodite','If Not, Winter (fragments)']},
-    'Bashō':{years:'1644–1694',bio:'Japanese master of haikai and haiku whose minimalist nature imagery carries philosophical and emotional depth.',works:['The Narrow Road to the Deep North','Old Pond (haiku)','Nozarashi Kiko']},
-    'Mary Oliver':{years:'1935–2019',bio:'American poet known for lucid, contemplative poems rooted in nature, attention, and spiritual tenderness.',works:['American Primitive','Dream Work','Devotions']},
-    'Anne Sexton':{years:'1928–1974',bio:'American confessional poet whose work confronts trauma, gender, and mental health with fierce intimacy.',works:['Live or Die','Transformations','The Awful Rowing Toward God']},
-    'Maya Angelou':{years:'1928–2014',bio:'American poet and memoirist whose voice blends resilience, dignity, and oratorical power.',works:['And Still I Rise','Phenomenal Woman','Just Give Me a Cool Drink of Water ’fore I Diiie']},
-    'Langston Hughes':{years:'1902–1967',bio:'Central Harlem Renaissance poet whose musical, clear, and socially grounded work reshaped American verse.',works:['The Weary Blues','Montage of a Dream Deferred','I, Too']},
-    'Allen Ginsberg':{years:'1926–1997',bio:'Beat poet known for long-breath lines, countercultural urgency, and radical public voice.',works:['Howl','Kaddish','America']},
-    'Audre Lorde':{years:'1934–1992',bio:'Poet and essayist whose writing joins political clarity, erotic power, and uncompromising self-definition.',works:['Coal','The Black Unicorn','Sister Outsider']},
-    'Adrienne Rich':{years:'1929–2012',bio:'American poet-essayist whose work evolved from formal mastery into bold feminist and political inquiry.',works:['Diving into the Wreck','Snapshots of a Daughter-in-Law','An Atlas of the Difficult World']}
+    'Rumi':{years:'1207-1273',bio:'Persian mystic poet whose ecstatic, spiritual verse explores love, union, and transformation.',works:['Masnavi','Divan-e Shams-e Tabrizi','The Essential Rumi']},
+    'Sylvia Plath':{years:'1932-1963',bio:'American confessional poet known for psychologically intense, image-rich poems and emotional candor.',works:['Ariel','Daddy','Lady Lazarus']},
+    'Seamus Heaney':{years:'1939-2013',bio:'Irish Nobel Prize-winning poet whose work fuses memory, place, history, and moral reflection.',works:['Death of a Naturalist','North','Field Work']},
+    'Emily Dickinson':{years:'1830-1886',bio:'American lyric poet celebrated for compressed form, paradox, and spiritually charged interiority.',works:['Because I could not stop for Death','I heard a Fly buzz-when I died','I\'m Nobody! Who are you?']},
+    'T. S. Eliot':{years:'1888-1965',bio:'Modernist poet-critic whose layered allusion and formal control reshaped twentieth-century poetry.',works:['The Waste Land','Four Quartets','The Love Song of J. Alfred Prufrock']},
+    'Elizabeth Bishop':{years:'1911-1979',bio:'American poet admired for exact observation, tonal restraint, and quietly devastating emotional precision.',works:['One Art','The Fish','Questions of Travel']},
+    'Robert Frost':{years:'1874-1963',bio:'American poet of formal clarity and philosophical depth, often using rural scenes to examine human choice.',works:['Stopping by Woods on a Snowy Evening','Mending Wall','The Road Not Taken']},
+    'Walt Whitman':{years:'1819-1892',bio:'American poet of expansive free verse who celebrated selfhood, democracy, and the shared body of humanity.',works:['Leaves of Grass','Song of Myself','Crossing Brooklyn Ferry']},
+    'John Keats':{years:'1795-1821',bio:'English Romantic poet known for sensuous imagery, emotional intensity, and meditations on beauty and mortality.',works:['Ode to a Nightingale','Ode on a Grecian Urn','To Autumn']},
+    'Pablo Neruda':{years:'1904-1973',bio:'Chilean Nobel Prize-winning poet whose work spans intimate love lyrics, surrealism, and political witness.',works:['Twenty Love Poems and a Song of Despair','Residence on Earth','Canto General']},
+    'Sappho':{years:'c. 630-c. 570 BCE',bio:'Archaic Greek lyric poet whose surviving fragments remain foundational for intimate, desire-centered poetry.',works:['Fragment 31','Ode to Aphrodite','If Not, Winter (fragments)']},
+    'Bashō':{years:'1644-1694',bio:'Japanese master of haikai and haiku whose minimalist nature imagery carries philosophical and emotional depth.',works:['The Narrow Road to the Deep North','Old Pond (haiku)','Nozarashi Kiko']},
+    'Mary Oliver':{years:'1935-2019',bio:'American poet known for lucid, contemplative poems rooted in nature, attention, and spiritual tenderness.',works:['American Primitive','Dream Work','Devotions']},
+    'Anne Sexton':{years:'1928-1974',bio:'American confessional poet whose work confronts trauma, gender, and mental health with fierce intimacy.',works:['Live or Die','Transformations','The Awful Rowing Toward God']},
+    'Maya Angelou':{years:'1928-2014',bio:'American poet and memoirist whose voice blends resilience, dignity, and oratorical power.',works:['And Still I Rise','Phenomenal Woman','Just Give Me a Cool Drink of Water \'fore I Diiie']},
+    'Langston Hughes':{years:'1902-1967',bio:'Central Harlem Renaissance poet whose musical, clear, and socially grounded work reshaped American verse.',works:['The Weary Blues','Montage of a Dream Deferred','I, Too']},
+    'Allen Ginsberg':{years:'1926-1997',bio:'Beat poet known for long-breath lines, countercultural urgency, and radical public voice.',works:['Howl','Kaddish','America']},
+    'Audre Lorde':{years:'1934-1992',bio:'Poet and essayist whose writing joins political clarity, erotic power, and uncompromising self-definition.',works:['Coal','The Black Unicorn','Sister Outsider']},
+    'Adrienne Rich':{years:'1929-2012',bio:'American poet-essayist whose work evolved from formal mastery into bold feminist and political inquiry.',works:['Diving into the Wreck','Snapshots of a Daughter-in-Law','An Atlas of the Difficult World']}
   };
 
   const poetMap={
@@ -830,7 +830,7 @@ function setupEmailCapture(){
       const res=await fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,source:'results_capture',page:location.pathname})});
       if(!res.ok) throw new Error('capture_failed');
       localStorage.setItem('poet_personality_email',email);
-      status.textContent='Saved. We’ll send profile refinement prompts and updates.';
+      status.textContent="Saved. We'll send profile refinement prompts and updates.";
       form.reset();
       track('lead_captured',{source:'results_capture'});
     }catch{
@@ -1298,7 +1298,7 @@ async function setupDashboardPage(){
     root.append(card(`<section class='hero'>
       <p class='kicker'>Dashboard</p>
       <h1>Welcome, ${name.replace(/</g,'&lt;')}</h1>
-      <p class='lead'>You’re signed in. Ready to keep building your Poet Personality profile?</p>
+      <p class='lead'>You're signed in. Ready to keep building your Poet Personality profile?</p>
       <div class='cta-row'>
         <a class='btn primary' href='/analyze'>Continue Writing</a>
         <a class='btn secondary' href='/settings'>Account Settings</a>
@@ -1366,7 +1366,7 @@ async function setupSettingsPage(){
           <div class='settings-grid compact'>
             <div><span class='label'>Current plan</span><strong>Free</strong></div>
             <div><span class='label'>Billing status</span><strong>Active</strong></div>
-            <div><span class='label'>Renewal date</span><strong>—</strong></div>
+            <div><span class='label'>Renewal date</span><strong>-</strong></div>
           </div>
           <div class='settings-actions'><button class='btn primary'>Upgrade / Manage Plan</button></div>
         </article>
@@ -1448,7 +1448,7 @@ function setupForgotPasswordPage(){
   root.innerHTML=`<section class='auth-shell auth-card'>
     <p class='kicker'>Account Recovery</p>
     <h1>Forgot Password?</h1>
-    <p class='muted'>Enter your email and we’ll send a secure password reset link.</p>
+    <p class='muted'>Enter your email and we'll send a secure password reset link.</p>
     <form id='forgotForm' class='auth-form'>
       <label class='auth-input'>
         <span class='auth-icon'>✉️</span>
@@ -1460,7 +1460,7 @@ function setupForgotPasswordPage(){
     </form>
     <section id='forgotSent' class='hidden'>
       <div class='status-good'>Password reset email sent.</div>
-      <p class='muted'>If an account exists for <strong id='forgotSentEmail'></strong>, we’ve sent reset instructions. Check inbox and spam.</p>
+      <p class='muted'>If an account exists for <strong id='forgotSentEmail'></strong>, we've sent reset instructions. Check inbox and spam.</p>
       <div class='auth-actions single'>
         <button class='btn secondary auth-pill' id='resendBtn' type='button'>Resend email</button>
       </div>
@@ -1648,22 +1648,22 @@ const TYPE_HOVER_VIDEO_BY_SLUG={
 };
 
 const POET_COACH_BY_SLUG={
-  'the-alchemist':{name:'The Alchemist',first:"Hey — want to start with something real? Give me 4-6 lines about a hard moment that changed you.",tips:['Turn one object into a symbol of transformation.','Move from wound to wisdom by line 6.','Use fire/water/metal imagery to anchor the poem.']},
-  'the-oracle':{name:'The Oracle',first:"Okay, quick exercise: what’s one sign you noticed today that felt weirdly meaningful? Write from that.",tips:['Write in short visionary fragments.','Ask one haunting question in the middle.','End with an image that feels fated.']},
-  'the-architect':{name:'The Architect',first:'Let’s keep it simple: 3 short stanzas. First = scene, second = turn, third = landing.',tips:['Keep one central image in every stanza.','Trim soft filler words after your first draft.','Use line breaks to control emphasis.']},
-  'the-seeker':{name:'The Seeker',first:'Start with a question you genuinely don’t have the answer to yet, then follow it for 8-10 lines.',tips:['Let curiosity drive each stanza.','Use one concrete detail from your room.','End open, not solved.']},
-  'the-lover':{name:'The Lover',first:'Write one small moment of closeness — touch, breath, distance, anything intimate and specific.',tips:['Make emotion physical, not abstract.','Use closeness and distance as tension.','End with a line that aches softly.']},
-  'the-dreamer':{name:'The Dreamer',first:'Give me one dream-like image, then ground it with one real detail from your day.',tips:['Let transitions feel soft and fluid.','Use moon/light/mist imagery with restraint.','Close like waking up slowly.']},
-  'the-muse':{name:'The Muse',first:'Drop your prettiest opening line first — then we’ll build the rest around its rhythm.',tips:['Read aloud and tune by ear.','Repeat one phrase with variation.','Prioritize image and cadence over explanation.']},
-  'the-devotee':{name:'The Devotee',first:'Who or what are you deeply loyal to right now? Write to them like it’s a quiet vow.',tips:['Let sincerity lead the language.','Name one ritual and why it matters.','End with a vow or promise.']},
-  'the-confessor':{name:'The Confessor',first:'Let’s be honest first, poetic second. Write one truth you usually avoid saying out loud.',tips:['First stanza: no metaphor, just truth.','Name body sensations while writing.','Revise for honesty, not polish first.']},
-  'the-witness':{name:'The Witness',first:'Look around for 20 seconds. Now write exactly what you see before trying to interpret it.',tips:['Use sensory detail from the scene.','Trust observation to carry feeling.','Keep diction clear and grounded.']},
-  'the-rebel':{name:'The Rebel',first:'What are you done tolerating? Write it direct — no soft language.',tips:['Use active verbs in each line.','Break one rule on purpose.','Turn anger into clarity.']},
-  'the-mourner':{name:'The Mourner',first:'Write about what’s missing by describing what feels different now in ordinary life.',tips:['Say less and let silence work.','Use gentle domestic details.','End with one line of tenderness.']},
-  'the-storyteller':{name:'The Storyteller',first:'Start in the middle of a moment: where are we, what just happened, and why should I care?',tips:['Build before/after movement.','Carry one object through the narrative.','Final line reveals what changed.']},
-  'the-minimalist':{name:'The Minimalist',first:'Try 6 short lines, super clean. Keep only what actually hits.',tips:['Cut anything non-essential.','One image per line is enough.','Keep ending plain and sharp.']},
-  'the-performer':{name:'The Performer',first:'Write this like you’re saying it out loud to a room. Where does your voice punch?',tips:['Use repetition for momentum.','Read aloud and revise by sound.','End with your strongest spoken line.']},
-  'the-weaver':{name:'The Weaver',first:'Pick two threads (past/present, love/loss) and braid them together in one draft.',tips:['Alternate threads by stanza.','Repeat an image to stitch layers.','Let both threads meet at the end.']}
+  'the-alchemist':{name:'The Alchemist',first:"Hey, I'm The Alchemist. If you want, start with a moment that changed you and we can shape it together.",tips:['Turn one object into a symbol of transformation.','Move from wound to wisdom by line 6.','Use fire, water, or metal imagery to anchor the poem.']},
+  'the-oracle':{name:'The Oracle',first:"Hi, I'm The Oracle. Tell me one sign or strange moment from today, and we'll build a poem from it.",tips:['Write in short visionary fragments.','Ask one haunting question in the middle.','End with an image that feels fated.']},
+  'the-architect':{name:'The Architect',first:"Hey, I'm The Architect. We can keep this simple and clean. Start with a scene and I'll help you structure the rest.",tips:['Keep one central image in every stanza.','Trim soft filler words after your first draft.','Use line breaks to control emphasis.']},
+  'the-seeker':{name:'The Seeker',first:"Hey, I'm The Seeker. What question has been following you lately? Start there and we'll explore it.",tips:['Let curiosity drive each stanza.','Use one concrete detail from your room.','End open, not solved.']},
+  'the-lover':{name:'The Lover',first:"Hi, I'm The Lover. Give me one small moment of closeness, and we'll turn it into something beautiful.",tips:['Make emotion physical, not abstract.','Use closeness and distance as tension.','End with a line that aches softly.']},
+  'the-dreamer':{name:'The Dreamer',first:"Hey, I'm The Dreamer. Start with one image that feels dreamy, then ground it with one real detail.",tips:['Let transitions feel soft and fluid.','Use moon, light, or mist imagery with restraint.','Close like waking up slowly.']},
+  'the-muse':{name:'The Muse',first:"Hi, I'm The Muse. Drop your favorite opening line and we can build the rhythm from there.",tips:['Read aloud and tune by ear.','Repeat one phrase with variation.','Prioritize image and cadence over explanation.']},
+  'the-devotee':{name:'The Devotee',first:"Hey, I'm The Devotee. Who are you writing for right now? Start there and I'll help shape the voice.",tips:['Let sincerity lead the language.','Name one ritual and why it matters.','End with a vow or promise.']},
+  'the-confessor':{name:'The Confessor',first:"Hi, I'm The Confessor. You can say it plain here. Start with one honest line and we'll build from it.",tips:['First stanza: no metaphor, just truth.','Name body sensations while writing.','Revise for honesty, not polish first.']},
+  'the-witness':{name:'The Witness',first:"Hey, I'm The Witness. Look around and tell me exactly what you notice. We can turn that into a poem.",tips:['Use sensory detail from the scene.','Trust observation to carry feeling.','Keep diction clear and grounded.']},
+  'the-rebel':{name:'The Rebel',first:"Hi, I'm The Rebel. What are you done tolerating? Say it direct and we'll sharpen it.",tips:['Use active verbs in each line.','Break one rule on purpose.','Turn anger into clarity.']},
+  'the-mourner':{name:'The Mourner',first:"Hey, I'm The Mourner. If you want, start with what feels missing lately. We'll write it gently.",tips:['Say less and let silence work.','Use gentle domestic details.','End with one line of tenderness.']},
+  'the-storyteller':{name:'The Storyteller',first:"Hey, I'm The Storyteller. Start in the middle of a moment and I'll help you shape the arc.",tips:['Build before and after movement.','Carry one object through the narrative.','Final line reveals what changed.']},
+  'the-minimalist':{name:'The Minimalist',first:"Hi, I'm The Minimalist. Keep it clean. Start with a few short lines and we'll trim what does not hit.",tips:['Cut anything non-essential.','One image per line is enough.','Keep ending plain and sharp.']},
+  'the-performer':{name:'The Performer',first:"Hey, I'm The Performer. Write it like you are saying it out loud to someone right now.",tips:['Use repetition for momentum.','Read aloud and revise by sound.','End with your strongest spoken line.']},
+  'the-weaver':{name:'The Weaver',first:"Hi, I'm The Weaver. Pick two threads from your life and we'll braid them into one piece.",tips:['Alternate threads by stanza.','Repeat an image to stitch layers.','Let both threads meet at the end.']}
 };
 
 function setupPersonalityCoachChat(root,t){
@@ -1688,7 +1688,7 @@ function setupPersonalityCoachChat(root,t){
   const styleLine=()=>{
     if(!styleProfile||!styleProfile.poemCount) return '';
     const words=(styleProfile.signatureWords||[]).slice(0,3).join(', ');
-    return `I’m tuning to your style (${styleProfile.poemCount} poems, ~${styleProfile.avgLineWords||0} words/line${words?`, signature words: ${words}`:''}).`;
+    return `I'm tuning to your style (${styleProfile.poemCount} poems, ~${styleProfile.avgLineWords||0} words/line${words?`, signature words: ${words}`:''}).`;
   };
 
   const makeReply=(userText)=>{
@@ -1833,13 +1833,13 @@ function setupStorytellerGuide(types=[]){
     ],
     'The Oracle':[
       'Write as if you are receiving a message, not forcing one.',
-      'Sit quietly for a minute and note three signs around you—light, sound, movement.',
+      'Sit quietly for a minute and note three signs around you-light, sound, movement.',
       'Use short, clear lines like visions. Let each stanza reveal one piece.',
       'Ask one question in the poem that you cannot fully answer yet.',
       'End with an image that feels fated, like it was always waiting for you.'
     ],
     'The Architect':[
-      'Choose a form first—3 stanzas, 4 lines each—and build inside it.',
+      'Choose a form first-3 stanzas, 4 lines each-and build inside it.',
       'Map your poem before drafting: opening image, turn, final resolution.',
       'Take one messy feeling and give it clean structure.',
       'Let every line earn its place; if it does not hold weight, cut it.',
@@ -1877,13 +1877,13 @@ function setupStorytellerGuide(types=[]){
       'Write to someone or something you are deeply loyal to.',
       'Treat the poem like an offering: sincere, intentional, and specific.',
       'Name a daily ritual and show why it matters emotionally.',
-      'Use gratitude and ache in the same poem—they can coexist.',
+      'Use gratitude and ache in the same poem-they can coexist.',
       'End with a vow, prayer, or promise that feels true.'
     ],
     'The Confessor':[
       'Start with a truth you usually avoid saying out loud.',
       'Write in first person and keep the first stanza brutally plain.',
-      'Notice what your body does as you write—tight chest, shaking hand—and include it.',
+      'Notice what your body does as you write-tight chest, shaking hand-and include it.',
       'Do not justify yourself too quickly; let the raw line stand.',
       'Finish with one line that feels like relief after honesty.'
     ],
@@ -1897,7 +1897,7 @@ function setupStorytellerGuide(types=[]){
     'The Rebel':[
       'Write about what you refuse to accept right now.',
       'Break one craft rule on purpose to match your emotion.',
-      'Use sharp verbs and direct language—no softening.',
+      'Use sharp verbs and direct language-no softening.',
       'Turn anger into clarity, not just noise.',
       'End with a line that sounds like a decision.'
     ],
@@ -1910,7 +1910,7 @@ function setupStorytellerGuide(types=[]){
     ],
     'The Storyteller':[
       'Start with a scene: where are we, who is there, what just happened?',
-      'Give the poem a clear movement—before, turning point, after.',
+      'Give the poem a clear movement-before, turning point, after.',
       'Let one object travel through the poem as a thread.',
       'Use simple narrative language, then lift one moment into poetry.',
       'Close with the line that reveals what the story was really about.'
@@ -1918,7 +1918,7 @@ function setupStorytellerGuide(types=[]){
     'The Minimalist':[
       'Write a short draft, then cut it in half.',
       'Keep only the lines that still hold power when read quietly.',
-      'Use clean images from your immediate environment—one per line if possible.',
+      'Use clean images from your immediate environment-one per line if possible.',
       'Avoid explanation; let silence do some of the work.',
       'End with a final line that is plain but unforgettable.'
     ],
@@ -1927,10 +1927,10 @@ function setupStorytellerGuide(types=[]){
       'Stand up and speak your draft while you revise.',
       'Use repetition and contrast to build momentum.',
       'Imagine a live audience and mark where you want pause or punch.',
-      'End with your strongest spoken line—the one that lands in the room.'
+      'End with your strongest spoken line-the one that lands in the room.'
     ],
     'The Weaver':[
-      'Choose two threads—past/present, love/loss, self/world—and braid them.',
+      'Choose two threads-past/present, love/loss, self/world-and braid them.',
       'Let each stanza switch perspective while staying emotionally connected.',
       'Take notes from your surroundings and place them into both threads.',
       'Use recurring words or images to stitch the poem together.',
@@ -2012,10 +2012,17 @@ function setupStorytellerGuide(types=[]){
       .catch(()=>{});
   }
 
-  const addMsg=(who,text)=>{
+  const addMsg=(who,text,opts={})=>{
     if(!chatLog) return;
-    const row=el('div',`story-guide-msg ${who}`);
+    const row=el('div',`story-guide-msg ${who}${opts.clickable?' clickable':''}`);
     row.innerHTML=`<p>${escapeHtml(text)}</p>`;
+    if(opts.clickable&&typeof opts.onClick==='function'){
+      row.setAttribute('role','button');
+      row.setAttribute('tabindex','0');
+      row.title='Click to use this starter';
+      row.addEventListener('click',opts.onClick);
+      row.addEventListener('keydown',(e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); opts.onClick(); }});
+    }
     chatLog.append(row);
     chatLog.scrollTop=chatLog.scrollHeight;
   };
@@ -2056,9 +2063,17 @@ function setupStorytellerGuide(types=[]){
     if(reset&&chatLog){
       chatLog.innerHTML='';
       turn=0;
-      addMsg('bot',coach.first||'Share your first lines and I will help.');
+      addMsg('bot',coach.first||'Share your first lines and I will help.',{
+        clickable:true,
+        onClick:()=>{
+          if(chatInput){
+            chatInput.value=coach.first||'';
+            chatInput.focus();
+          }
+        }
+      });
       if(styleProfile?.poemCount){
-        addMsg('bot',`I’m tuning to your voice from ${styleProfile.poemCount} saved poems (~${styleProfile.avgLineWords||0} words per line).`);
+        addMsg('bot',`I'm tuning to your voice from ${styleProfile.poemCount} saved poems (~${styleProfile.avgLineWords||0} words per line).`);
       }
     }
     return coach;
@@ -2070,7 +2085,7 @@ function setupStorytellerGuide(types=[]){
     const tips=(coach.tips&&coach.tips.length)?coach.tips:['Add one concrete image.','Tighten your emotional turn.','Read aloud and refine rhythm.'];
     const tip=tips[turn%tips.length];
     const rhythm=styleProfile?.avgLineWords?`Try ~${Math.max(4,Math.min(12,Math.round(styleProfile.avgLineWords)))} words per line in your next pass.`:'';
-    const open=words<10?'Nice start — add a few more lines and I can help shape it.':`This is good. I can hear your voice coming through.`;
+    const open=words<10?'Nice start. Keep going with whatever feels natural and I will help shape it.':`This is good. I can hear your voice coming through.`;
     turn+=1;
     return [open, rhythm, `Next move: ${tip}`, (turn%2?'What line feels truest right now?':'Want a line-by-line tightening pass?')].filter(Boolean).join(' ');
   };
@@ -2105,14 +2120,14 @@ function setupStorytellerGuide(types=[]){
 
   if(path==='/'){
     document.getElementById('hero')?.append(
-      card(`<section class='hero hero-with-image'><div class='hero-copy'><p class='kicker'>Poetry Personality Analysis</p><h1>Discover the personality in your poetry.</h1><p class='lead'>Paste your poems and get a clear personality profile inspired by poetic style, tone, and emotional patterns.</p><p>Thoughtful insights in seconds—beautifully organized, easy to explore.</p><div class='cta-row'><a class='btn primary' href='/analyze'>Analyze Your Poems</a><a class='btn secondary' href='/results-demo'>View Sample Result</a></div></div><figure class='hero-image'><video class='hero-image-video' muted loop playsinline preload='metadata' poster='/images/landing-page.png'><source src='/videos/landing-page-hover.mp4' type='video/mp4'></video></figure></section>`,'')
+      card(`<section class='hero hero-with-image'><div class='hero-copy'><p class='kicker'>Poetry Personality Analysis</p><h1>Discover the personality in your poetry.</h1><p class='lead'>Paste your poems and get a clear personality profile inspired by poetic style, tone, and emotional patterns.</p><p>Thoughtful insights in seconds-beautifully organized, easy to explore.</p><div class='cta-row'><a class='btn primary' href='/analyze'>Analyze Your Poems</a><a class='btn secondary' href='/results-demo'>View Sample Result</a></div></div><figure class='hero-image'><video class='hero-image-video' muted loop playsinline preload='metadata' poster='/images/landing-page.png'><source src='/videos/landing-page-hover.mp4' type='video/mp4'></video></figure></section>`,'')
     );
     setupLandingHeroHoverVideo(document);
 
     const proof=document.getElementById('proof');
     const proofMoments=[
       {kicker:'Signal',title:'Pattern-based analysis',body:'Across your submitted poems, recurring structure, tone, and imagery reveal your deeper poetic signature.'},
-      {kicker:'Archetypes',title:'16 original poetry personalities',body:'A crafted typology designed for poets—distinct energies, not generic labels.'},
+      {kicker:'Archetypes',title:'16 original poetry personalities',body:'A crafted typology designed for poets-distinct energies, not generic labels.'},
       {kicker:'Depth',title:'Confidence grows over time',body:'Each new submission refines your profile, moving from impression toward identity.'}
     ];
     proof?.classList.add('proof-moment-grid');

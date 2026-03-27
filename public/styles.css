@@ -247,6 +247,8 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .story-guide-msg{max-width:92%;padding:7px 9px;border-radius:10px;border:1px solid var(--line-soft);background:#fff}
 .story-guide-msg.user{align-self:flex-end;background:color-mix(in oklab,var(--surface-soft) 84%, var(--paper));border-color:var(--line)}
 .story-guide-msg p{margin:0;font-size:.86rem;line-height:1.45;color:color-mix(in oklab,var(--ink) 90%, transparent)}
+.story-guide-msg.clickable{cursor:pointer;border-style:dashed}
+.story-guide-msg.clickable:hover{border-color:var(--accent-soft);background:color-mix(in oklab,var(--surface-soft) 90%, var(--paper))}
 .story-guide-chatform{display:grid;grid-template-columns:1fr auto;gap:6px}
 .story-guide-chatform input{border:1px solid var(--line-soft);border-radius:9px;padding:8px 9px;background:var(--surface);color:var(--ink);font-size:.86rem}
 .story-guide-chatform .btn{padding:8px 10px;min-height:auto;border-radius:9px}
