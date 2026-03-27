@@ -862,6 +862,10 @@ function setupPoemUploader(targetId='funnel',types=[]){
       <h3>Reveal your poet personality</h3>
       <button class='btn primary' id='analyzePoemsBtn' type='button'>Analyze</button>
     </div>
+    <div class='analysis-email-row'>
+      <input id='analysisEmail' type='email' autocomplete='email' placeholder='Enter your email to receive results' />
+      <p id='analysisEmailError' class='inline-error hidden'>Please enter a valid email before analyzing.</p>
+    </div>
     <div id='analysisResult' class='analysis-result muted'>Write a few poems, then run analysis for an identity-level reading.</div>
   </section>`, 'poems-wrapper');
   target.append(box);
@@ -871,12 +875,18 @@ function setupPoemUploader(targetId='funnel',types=[]){
   const addBtn=box.querySelector('#newPoemBtn');
   const analyzeBtn=box.querySelector('#analyzePoemsBtn');
   const analysisResult=box.querySelector('#analysisResult');
+  const analysisEmail=box.querySelector('#analysisEmail');
+  const analysisEmailError=box.querySelector('#analysisEmailError');
   const status=box.querySelector('#poemSaveStatus');
 
   let poems=[];
   let selected=-1;
   let saveTimer=null;
   let isSaving=false;
+
+  const isValidEmail=(email)=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email||'').trim());
+  const rememberedEmail=localStorage.getItem('poet_personality_email')||'';
+  if(analysisEmail&&rememberedEmail) analysisEmail.value=rememberedEmail;
 
   const syncStatus=(text)=>{status.textContent=text||'';};
 
@@ -1071,18 +1081,40 @@ function setupPoemUploader(targetId='funnel',types=[]){
   addBtn.addEventListener('click',()=>addPoem({title:'',text:''}));
   analyzeBtn.addEventListener('click',async ()=>{
     const payload=poems.map((p)=>({title:(p.title||'').trim(),text:(p.text||'').trim()})).filter((p)=>p.text);
+    const email=String(analysisEmail?.value||'').trim().toLowerCase();
+
+    analysisEmailError?.classList.add('hidden');
+    if(!isValidEmail(email)){
+      analysisEmailError?.classList.remove('hidden');
+      analysisEmail?.focus();
+      return;
+    }
+
     if(!payload.length){analysisResult.classList.add('muted');analysisResult.textContent='Add poem text first, then analyze.';return;}
     analyzeBtn.disabled=true;
     analysisResult.classList.add('muted');
     analysisResult.innerHTML=`<div class='analysis-loading'><span class='pulse-dot'></span><span>Analyzing voice, themes, and poetic identity…</span></div>`;
     try{
-      const res=await fetch('/api/poems/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({collectionToken:getCollectionToken(),poems:payload})});
+      const res=await fetch('/api/poems/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({collectionToken:getCollectionToken(),poems:payload,email})});
       const data=await res.json();
-      if(!res.ok||!data.ok) throw new Error('analysis_failed');
+      if(!res.ok||!data.ok){
+        if(data?.error==='invalid_email'){
+          analysisEmailError?.classList.remove('hidden');
+          analysisEmail?.focus();
+          throw new Error('invalid_email');
+        }
+        throw new Error('analysis_failed');
+      }
+      localStorage.setItem('poet_personality_email',email);
       renderAnalysis(data);
-    }catch{
-      analysisResult.classList.add('muted');
-      analysisResult.textContent='Could not analyze right now. Please try again.';
+      if(data?.emailSent===true){
+        syncStatus('Results emailed.');
+      }
+    }catch(error){
+      if(error?.message!=='invalid_email'){
+        analysisResult.classList.add('muted');
+        analysisResult.textContent='Could not analyze right now. Please try again.';
+      }
     }finally{analyzeBtn.disabled=false;}
   });
 

@@ -617,6 +617,34 @@ async function sendSignupConfirmationEmail({ email, name, origin }) {
   return { sent: true };
 }
 
+async function sendAnalysisResultEmail({ email, analysis, poemCount, origin }) {
+  if (!resend || !leadsFromEmail) return { sent: false, reason: "email_not_configured" };
+
+  const appOrigin = String(origin || "").trim();
+  const typeUrl = analysis?.personalitySlug && appOrigin ? `${appOrigin}/type/${analysis.personalitySlug}` : appOrigin || "#";
+
+  await resend.emails.send({
+    from: leadsFromEmail,
+    to: email,
+    subject: `Your Poet Personality result: ${analysis?.personalityTitle || "Archetype"}`,
+    html: `
+      <div style="font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.55;color:#201a15;max-width:600px;margin:0 auto;padding:20px;">
+        <p style="margin:0 0 8px;color:#6f6254;font-size:13px;text-transform:uppercase;letter-spacing:.06em;">Poet Personality Analysis</p>
+        <h2 style="margin:0 0 10px;">${analysis?.personalityTitle || "Your result"}</h2>
+        <p style="margin:0 0 12px;">${analysis?.summary || "Your poetic identity is emerging."}</p>
+        <p style="margin:0 0 14px;color:#6f6254;font-size:14px;">Based on ${poemCount || 0} submitted poem${poemCount === 1 ? "" : "s"}.</p>
+        <div style="background:#faf6ef;border:1px solid #e9dece;border-radius:12px;padding:12px 14px;margin:0 0 16px;">
+          <p style="margin:0;"><strong>Why this fits:</strong> ${analysis?.commentary || ""}</p>
+        </div>
+        <p style="margin:0 0 16px;"><a href="${typeUrl}" style="display:inline-block;background:#7a4416;color:#fff;text-decoration:none;padding:10px 14px;border-radius:10px;font-weight:600;">Open your full profile</a></p>
+        <p style="margin:0;color:#6f6254;font-size:14px;">Keep writing and re-run your analysis anytime to increase confidence in your profile.</p>
+      </div>
+    `
+  });
+
+  return { sent: true };
+}
+
 function csvEscape(value) {
   const s = String(value ?? "");
   if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
@@ -842,7 +870,9 @@ app.post("/api/poems/analyze", rateLimit({ keyPrefix: "poems", windowMs: 60_000,
   try {
     let poems = Array.isArray(req.body?.poems) ? req.body.poems : [];
     const token = String(req.body?.collectionToken || "").trim();
+    const email = normalizeEmail(req.body?.email);
 
+    if (!email || !email.includes("@")) return res.status(400).json({ ok: false, error: "invalid_email" });
     if (!poems.length && token) poems = await getPoemsByCollectionToken(token);
 
     const valid = poems
@@ -852,7 +882,26 @@ app.post("/api/poems/analyze", rateLimit({ keyPrefix: "poems", windowMs: 60_000,
     if (!valid.length) return res.status(400).json({ ok: false, error: "no_poems_to_analyze" });
 
     const analysis = analyzePoemCorpus(valid);
-    return res.json({ ok: true, analysis, poemCount: valid.length });
+
+    let emailSent = false;
+    let emailReason = "not_attempted";
+    try {
+      const origin = `${req.protocol}://${req.get("host")}`;
+      const sent = await sendAnalysisResultEmail({ email, analysis, poemCount: valid.length, origin });
+      emailSent = !!sent?.sent;
+      emailReason = sent?.reason || "ok";
+    } catch (error) {
+      emailReason = "send_failed";
+      await saveEvent({
+        ts: new Date().toISOString(),
+        name: "analysis_email_failed",
+        page: "/analyze",
+        meta: { email, error: error.message },
+        ua: req.headers["user-agent"] || ""
+      });
+    }
+
+    return res.json({ ok: true, analysis, poemCount: valid.length, emailSent, emailReason });
   } catch (error) {
     return res.status(500).json({ ok: false, error: "analysis_failed", details: error.message });
   }

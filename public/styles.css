@@ -117,6 +117,10 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .subtle-status{padding-left:6px;min-height:20px;font-size:.82rem;opacity:.7}
 .analysis-zone{margin-top:14px;padding:16px 6px 4px}
 .analysis-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.analysis-email-row{margin-top:10px}
+#analysisEmail{width:100%;max-width:460px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.96rem;background:var(--surface);color:var(--ink)}
+#analysisEmail:focus{outline:none;border-color:var(--accent-soft);box-shadow:0 0 0 3px color-mix(in oklab,var(--accent-soft) 22%, transparent)}
+#analysisEmailError{margin-top:6px}
 .analysis-result{margin-top:10px;line-height:1.6}
 .analysis-loading{display:flex;align-items:center;gap:10px;color:var(--muted)}
 .pulse-dot{width:8px;height:8px;border-radius:999px;background:#9a6a36;animation:pulse 1.4s infinite}
@@ -240,6 +244,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 [data-theme='dark'] .thread-row.active{background:#3a3046}
 [data-theme='dark'] .compose-btn{background:#3a3046;color:var(--ink)}
 [data-theme='dark'] .analysis-grid>div,[data-theme='dark'] .settings-grid.compact>div,[data-theme='dark'] .toggle-row{background:#2a2333;border-color:var(--line)}
+[data-theme='dark'] #analysisEmail{background:#2a2333;border-color:var(--line);color:var(--ink)}
 [data-theme='dark'] .card,[data-theme='dark'] .hero,[data-theme='dark'] .funnel-step{color:var(--ink)}
 [data-theme='dark'] .lead{color:#e6dbf7}
 [data-theme='dark'] .muted,[data-theme='dark'] .footer-note{color:#c7bad8}
