@@ -862,10 +862,7 @@ function setupPoemUploader(targetId='funnel',types=[]){
       <h3>Reveal your poet personality</h3>
       <button class='btn primary' id='analyzePoemsBtn' type='button'>Analyze</button>
     </div>
-    <div class='analysis-email-row'>
-      <input id='analysisEmail' type='email' autocomplete='email' placeholder='Enter your email to receive results' />
-      <p id='analysisEmailError' class='inline-error hidden'>Please enter a valid email before analyzing.</p>
-    </div>
+    <input id='analysisEmail' type='email' autocomplete='email' hidden />
     <div id='analysisResult' class='analysis-result muted'>Write a few poems, then run analysis for an identity-level reading.</div>
   </section>`, 'poems-wrapper');
   target.append(box);
@@ -876,7 +873,6 @@ function setupPoemUploader(targetId='funnel',types=[]){
   const analyzeBtn=box.querySelector('#analyzePoemsBtn');
   const analysisResult=box.querySelector('#analysisResult');
   const analysisEmail=box.querySelector('#analysisEmail');
-  const analysisEmailError=box.querySelector('#analysisEmailError');
   const status=box.querySelector('#poemSaveStatus');
 
   let poems=[];
@@ -1081,12 +1077,18 @@ function setupPoemUploader(targetId='funnel',types=[]){
   addBtn.addEventListener('click',()=>addPoem({title:'',text:''}));
   analyzeBtn.addEventListener('click',async ()=>{
     const payload=poems.map((p)=>({title:(p.title||'').trim(),text:(p.text||'').trim()})).filter((p)=>p.text);
-    const email=String(analysisEmail?.value||'').trim().toLowerCase();
 
-    analysisEmailError?.classList.add('hidden');
+    let email=String(analysisEmail?.value||'').trim().toLowerCase();
     if(!isValidEmail(email)){
-      analysisEmailError?.classList.remove('hidden');
-      analysisEmail?.focus();
+      const enteredEmail=window.prompt('Enter your email to receive your results:', email||rememberedEmail||'');
+      if(enteredEmail===null) return;
+      email=String(enteredEmail||'').trim().toLowerCase();
+      if(analysisEmail) analysisEmail.value=email;
+    }
+
+    if(!isValidEmail(email)){
+      analysisResult.classList.add('muted');
+      analysisResult.textContent='Please enter a valid email to analyze your poems.';
       return;
     }
 
@@ -1099,8 +1101,8 @@ function setupPoemUploader(targetId='funnel',types=[]){
       const data=await res.json();
       if(!res.ok||!data.ok){
         if(data?.error==='invalid_email'){
-          analysisEmailError?.classList.remove('hidden');
-          analysisEmail?.focus();
+          analysisResult.classList.add('muted');
+          analysisResult.textContent='Please enter a valid email to analyze your poems.';
           throw new Error('invalid_email');
         }
         throw new Error('analysis_failed');
