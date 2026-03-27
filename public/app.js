@@ -1733,7 +1733,7 @@ function setupStorytellerGuide(types=[]){
   const allowed=['/','/analyze','/types'];
   const isTypeProfile=location.pathname.startsWith('/type/');
   if(!allowed.includes(location.pathname)&&!isTypeProfile) return;
-  if(sessionStorage.getItem('storyGuideDismissed')==='1') return;
+  // Show guide on each page load (do not persist dismiss across refresh).
 
   const tipDeckByType={
     'The Alchemist':[
@@ -1948,7 +1948,6 @@ function setupStorytellerGuide(types=[]){
   renderTip(false);
 
   closeBtn?.addEventListener('click',()=>{
-    sessionStorage.setItem('storyGuideDismissed','1');
     root.classList.remove('in');
     setTimeout(()=>root.remove(),220);
   });
