@@ -1659,6 +1659,24 @@ function setupTypeHoverVideos(scope=document){
   });
 }
 
+function setupLandingHeroHoverVideo(scope=document){
+  const video=scope.querySelector('.hero-image-video');
+  if(!video||video.dataset.bound==='1') return;
+  video.dataset.bound='1';
+  video.pause();
+  video.currentTime=0;
+
+  const holder=video.closest('.hero-image')||video;
+  const play=()=>{ video.currentTime=0; video.play().catch(()=>{}); };
+  const stop=()=>{ video.pause(); video.currentTime=0.01; };
+
+  holder.addEventListener('mouseenter',play);
+  holder.addEventListener('mouseleave',stop);
+  holder.addEventListener('focusin',play);
+  holder.addEventListener('focusout',stop);
+  video.addEventListener('loadeddata',stop);
+}
+
 function setupMyPoemsPage(){
   const root=document.getElementById('myPoems');
   if(!root) return;
@@ -1927,8 +1945,9 @@ function setupStorytellerGuide(types=[]){
 
   if(path==='/'){
     document.getElementById('hero')?.append(
-      card(`<section class='hero hero-with-image'><div class='hero-copy'><p class='kicker'>Poetry Personality Analysis</p><h1>Discover the personality in your poetry.</h1><p class='lead'>Paste your poems and get a clear personality profile inspired by poetic style, tone, and emotional patterns.</p><p>Thoughtful insights in seconds—beautifully organized, easy to explore.</p><div class='cta-row'><a class='btn primary' href='/analyze'>Analyze Your Poems</a><a class='btn secondary' href='/results-demo'>View Sample Result</a></div></div><figure class='hero-image'><img src='/images/landing-page.png' alt='Poet Personality landing page visual' loading='eager'/></figure></section>`,'')
+      card(`<section class='hero hero-with-image'><div class='hero-copy'><p class='kicker'>Poetry Personality Analysis</p><h1>Discover the personality in your poetry.</h1><p class='lead'>Paste your poems and get a clear personality profile inspired by poetic style, tone, and emotional patterns.</p><p>Thoughtful insights in seconds—beautifully organized, easy to explore.</p><div class='cta-row'><a class='btn primary' href='/analyze'>Analyze Your Poems</a><a class='btn secondary' href='/results-demo'>View Sample Result</a></div></div><figure class='hero-image'><video class='hero-image-video' muted loop playsinline preload='metadata' poster='/images/landing-page.png'><source src='/videos/landing-page-hover.mp4' type='video/mp4'></video></figure></section>`,'')
     );
+    setupLandingHeroHoverVideo(document);
 
     const proof=document.getElementById('proof');
     const proofMoments=[
