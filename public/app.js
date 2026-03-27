@@ -1697,7 +1697,7 @@ function setupStorytellerGuide(types=[]){
   if(!allowed.includes(location.pathname)&&!isTypeProfile) return;
   if(sessionStorage.getItem('storyGuideDismissed')==='1') return;
 
-  const tipByType={
+  const baseTipByType={
     'The Alchemist':'Start with an ordinary object, then transform it into a symbol of change by the final line.',
     'The Oracle':'Write in prophetic fragments. Use one clear image per stanza and end with a question that lingers.',
     'The Architect':'Draft a strict structure first (quatrains or syllable count), then let emotion move inside that frame.',
@@ -1715,6 +1715,14 @@ function setupStorytellerGuide(types=[]){
     'The Performer':'Write for voice: cadence, breath, emphasis. Test each stanza by reading it out loud and revising by ear.',
     'The Weaver':'Interlace two timelines or motifs and let them meet in the final stanza with emotional precision.'
   };
+
+  const tipDeckByType=Object.fromEntries(Object.entries(baseTipByType).map(([name,seed])=>[name,[
+    seed,
+    `Try a 10-minute sprint in ${name} mode: no editing, just momentum.` ,
+    `Start with this line stem: "Tonight, I..." then steer it toward ${name.toLowerCase()} energy.`,
+    `Limit yourself to 12 lines, and make line 12 the emotional turn.`,
+    `Read the draft out loud once, then cut 20% of words to sharpen impact.`
+  ]]));
 
   const orderedFallback=[
     'The Alchemist','The Oracle','The Architect','The Seeker',
@@ -1769,6 +1777,7 @@ function setupStorytellerGuide(types=[]){
   const intro=root.querySelector('.story-guide-intro');
   const select=root.querySelector('#storyGuideType');
   const tip=root.querySelector('.story-guide-tip');
+  const dialogue=root.querySelector('.story-guide-dialogue');
   const artVideo=root.querySelector('.story-guide-art-video');
   const closeBtn=root.querySelector('.story-guide-close');
   const opening='Need some help?';
@@ -1784,9 +1793,21 @@ function setupStorytellerGuide(types=[]){
     artVideo.addEventListener('loadeddata',stopVideo);
   }
 
-  const renderTip=()=>{
+  let tipIndex=0;
+  const getDeck=(name)=>tipDeckByType[name]||[
+    'Start with one image you trust, then build from there line by line.',
+    'Write for 10 minutes without editing.',
+    'End with an unexpected emotional turn.',
+    'Read it aloud and trim what feels vague.',
+    'Keep the final line simple and true.'
+  ];
+
+  const renderTip=(advance=false)=>{
     const name=select?.value||'The Storyteller';
-    tip.textContent=tipByType[name]||'Start with one image you trust, then build from there line by line.';
+    const deck=getDeck(name);
+    tipIndex=advance?(tipIndex+1)%deck.length:0;
+    tip.textContent=deck[tipIndex];
+
     const slug=slugByName[name]||'the-storyteller';
     const videoFile=TYPE_HOVER_VIDEO_BY_SLUG[slug]||'the-storyteller-hover.mp4';
     if(artVideo){
@@ -1795,8 +1816,10 @@ function setupStorytellerGuide(types=[]){
       artVideo.load();
     }
   };
-  select?.addEventListener('change',renderTip);
-  renderTip();
+
+  dialogue?.addEventListener('click',()=>renderTip(true));
+  select?.addEventListener('change',()=>renderTip(false));
+  renderTip(false);
 
   closeBtn?.addEventListener('click',()=>{
     sessionStorage.setItem('storyGuideDismissed','1');

@@ -230,7 +230,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .story-guide-intro{margin:0 20px 10px 0;font-family:'Cormorant Garamond',serif;font-size:1.46rem;line-height:1.02;color:var(--ink);min-height:1.55rem}
 .story-guide-label{display:block;margin:0 0 6px;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--muted)}
 .story-guide-select{width:100%;margin:0 0 9px;padding:9px 10px;border:1px solid var(--line-soft);border-radius:10px;background:var(--surface);color:var(--ink);font-size:.93rem}
-.story-guide-dialogue{border:1px solid color-mix(in oklab,var(--line-soft) 90%, var(--surface));border-radius:12px;padding:10px 11px;background:color-mix(in oklab,var(--surface-soft) 86%, var(--paper))}
+.story-guide-dialogue{border:1px solid color-mix(in oklab,var(--line-soft) 90%, var(--surface));border-radius:12px;padding:10px 11px;background:color-mix(in oklab,var(--surface-soft) 86%, var(--paper));cursor:pointer}
 .story-guide-speaker{margin:0 0 5px;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:color-mix(in oklab,var(--accent-soft) 80%, var(--ink))}
 .story-guide-tip{margin:0;font-size:.92rem;line-height:1.5;color:color-mix(in oklab,var(--ink) 88%, transparent)}
 .story-guide-art{margin:0;align-self:flex-end;z-index:1}
