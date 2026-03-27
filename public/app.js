@@ -633,7 +633,6 @@ function renderTypeProfileTabs(root,t,siblings,allTypes=[]){
 
   renderBody(tabs[0]);
   root.append(shell);
-  setupPersonalityCoachChat(root,t);
 }
 
 function getPreferredTheme(){
@@ -1981,7 +1980,11 @@ function setupStorytellerGuide(types=[]){
       </select>
       <div class='story-guide-dialogue'>
         <p class='story-guide-speaker'>The Storyteller</p>
-        <p class='story-guide-tip'></p>
+        <div class='story-guide-chatlog' id='storyGuideChatLog'></div>
+        <form class='story-guide-chatform' id='storyGuideChatForm'>
+          <input id='storyGuideChatInput' type='text' placeholder='Share a line, draft, or question…' autocomplete='off'/>
+          <button type='submit' class='btn secondary'>Send</button>
+        </form>
       </div>
     </div>
     <figure class='story-guide-art'><video class='story-guide-art-video' muted loop playsinline preload='metadata' poster='/images/the-storyteller.png'><source src='/videos/the-storyteller-hover.mp4' type='video/mp4'></video></figure>`;
@@ -1991,12 +1994,48 @@ function setupStorytellerGuide(types=[]){
 
   const intro=root.querySelector('.story-guide-intro');
   const select=root.querySelector('#storyGuideType');
-  const tip=root.querySelector('.story-guide-tip');
-  const dialogue=root.querySelector('.story-guide-dialogue');
+  const chatLog=root.querySelector('#storyGuideChatLog');
+  const chatForm=root.querySelector('#storyGuideChatForm');
+  const chatInput=root.querySelector('#storyGuideChatInput');
+  const speaker=root.querySelector('.story-guide-speaker');
   const artVideo=root.querySelector('.story-guide-art-video');
   const closeBtn=root.querySelector('.story-guide-close');
   const opening='Need some help?';
   if(intro) intro.textContent=opening;
+
+  let styleProfile=null;
+  const token=getCollectionToken();
+  if(token){
+    fetch(`/api/style-profile?token=${encodeURIComponent(token)}`)
+      .then((r)=>r.json())
+      .then((data)=>{ if(data?.ok&&data?.profile?.poemCount>0) styleProfile=data.profile; })
+      .catch(()=>{});
+  }
+
+  const addMsg=(who,text)=>{
+    if(!chatLog) return;
+    const row=el('div',`story-guide-msg ${who}`);
+    row.innerHTML=`<p>${escapeHtml(text)}</p>`;
+    chatLog.append(row);
+    chatLog.scrollTop=chatLog.scrollHeight;
+  };
+
+  const getCoach=(name)=>{
+    const slug=slugByName[name]||'the-storyteller';
+    return {
+      slug,
+      coach: POET_COACH_BY_SLUG[slug]||{name,first:'Share your first lines and I will help you shape the next draft.',tips:(tipDeckByType[name]||[]).slice(0,3)}
+    };
+  };
+
+  const updateCoachMedia=(slug)=>{
+    const videoFile=TYPE_HOVER_VIDEO_BY_SLUG[slug]||'the-storyteller-hover.mp4';
+    if(artVideo){
+      artVideo.poster=`/images/${slug}.png`;
+      artVideo.innerHTML=`<source src='/videos/${videoFile}' type='video/mp4'>`;
+      artVideo.load();
+    }
+  };
 
   if(artVideo){
     const playVideo=()=>{ artVideo.currentTime=0; artVideo.play().catch(()=>{}); };
@@ -2008,33 +2047,46 @@ function setupStorytellerGuide(types=[]){
     artVideo.addEventListener('loadeddata',stopVideo);
   }
 
-  let tipIndex=0;
-  const getDeck=(name)=>tipDeckByType[name]||[
-    'Start with one image you trust, then build from there line by line.',
-    'Write for 10 minutes without editing.',
-    'End with an unexpected emotional turn.',
-    'Read it aloud and trim what feels vague.',
-    'Keep the final line simple and true.'
-  ];
-
-  const renderTip=(advance=false)=>{
+  let turn=0;
+  const renderCoach=(reset=true)=>{
     const name=select?.value||'The Storyteller';
-    const deck=getDeck(name);
-    tipIndex=advance?(tipIndex+1)%deck.length:0;
-    tip.textContent=deck[tipIndex];
-
-    const slug=slugByName[name]||'the-storyteller';
-    const videoFile=TYPE_HOVER_VIDEO_BY_SLUG[slug]||'the-storyteller-hover.mp4';
-    if(artVideo){
-      artVideo.poster=`/images/${slug}.png`;
-      artVideo.innerHTML=`<source src='/videos/${videoFile}' type='video/mp4'>`;
-      artVideo.load();
+    const {slug,coach}=getCoach(name);
+    if(speaker) speaker.textContent=coach.name;
+    updateCoachMedia(slug);
+    if(reset&&chatLog){
+      chatLog.innerHTML='';
+      turn=0;
+      addMsg('bot',coach.first||'Share your first lines and I will help.');
+      if(styleProfile?.poemCount){
+        addMsg('bot',`I’m tuning to your voice from ${styleProfile.poemCount} saved poems (~${styleProfile.avgLineWords||0} words per line).`);
+      }
     }
+    return coach;
   };
 
-  dialogue?.addEventListener('click',()=>renderTip(true));
-  select?.addEventListener('change',()=>renderTip(false));
-  renderTip(false);
+  const makeReply=(coach,userText)=>{
+    const text=String(userText||'').trim();
+    const words=text.split(/\s+/).filter(Boolean).length;
+    const tips=(coach.tips&&coach.tips.length)?coach.tips:['Add one concrete image.','Tighten your emotional turn.','Read aloud and refine rhythm.'];
+    const tip=tips[turn%tips.length];
+    const rhythm=styleProfile?.avgLineWords?`Try ~${Math.max(4,Math.min(12,Math.round(styleProfile.avgLineWords)))} words per line in your next pass.`:'';
+    const open=words<10?'Nice start—give me 4-6 more lines so I can shape the arc.':`Strong draft. I can hear ${coach.name.toLowerCase()} energy.`;
+    turn+=1;
+    return [open, rhythm, `Next move: ${tip}`, (turn%2?'What line feels truest right now?':'Want a line-by-line tightening pass?')].filter(Boolean).join(' ');
+  };
+
+  select?.addEventListener('change',()=>renderCoach(true));
+  renderCoach(true);
+
+  chatForm?.addEventListener('submit',(e)=>{
+    e.preventDefault();
+    const text=String(chatInput?.value||'').trim();
+    if(!text) return;
+    const coach=renderCoach(false);
+    addMsg('user',text);
+    if(chatInput) chatInput.value='';
+    setTimeout(()=>addMsg('bot',makeReply(coach,text)),220);
+  });
 
   closeBtn?.addEventListener('click',()=>{
     root.classList.remove('in');
