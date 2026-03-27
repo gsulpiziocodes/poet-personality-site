@@ -1608,10 +1608,20 @@ function setupResetPasswordPage(){
   init().catch(()=>invalid.classList.remove('hidden'));
 }
 
-function setupAlchemistHoverVideo(scope=document){
-  const cards=[...scope.querySelectorAll('.type-card[data-type-slug="the-alchemist"] .type-card-art')];
+const TYPE_HOVER_VIDEO_BY_SLUG={
+  'the-alchemist':'alchemist-hover.mp4',
+  'the-oracle':'the-oracle-hover.mp4',
+  'the-architect':'the-architect-hover.mp4',
+  'the-seeker':'the-seeker-hover.mp4',
+  'the-lover':'the-lover-hover.mp4',
+  'the-dreamer':'the-dreamer-hover.mp4',
+  'the-muse':'the-muse-hover.mp4'
+};
+
+function setupTypeHoverVideos(scope=document){
+  const cards=[...scope.querySelectorAll('.type-card .type-card-art')];
   cards.forEach((card)=>{
-    const video=card.querySelector('video.alchemist-hover-video');
+    const video=card.querySelector('video.type-hover-video');
     if(!video||video.dataset.bound==='1') return;
     video.dataset.bound='1';
     video.pause();
@@ -1825,13 +1835,17 @@ function setupStorytellerGuide(types=[]){
     if(grid?.querySelector('.type-card')){
       // Make sure cards are visible even if reveal scripts fail.
       grid.classList.add('in');
-      setupAlchemistHoverVideo(grid);
+      setupTypeHoverVideos(grid);
     }else{
       const renderTypes=(types)=>{
         if(!grid) return;
         grid.innerHTML='';
-        types.forEach(t=>grid.append(card(`<div class='type-card' data-type-slug='${t.slug}'><a class='type-card-art-link' href='/type/${t.slug}' aria-label='Open ${t.name} profile'><figure class='type-card-art'><img src='/images/${t.slug}.png' alt='${t.name} personality illustration' loading='lazy'/>${t.slug==='the-alchemist'?"<video class='alchemist-hover-video' muted loop playsinline preload='metadata' poster='/images/the-alchemist.png'><source src='/videos/alchemist-hover.mp4' type='video/mp4'></video>":''}</figure></a><span class='chip'>${t.group}</span><h3>${t.name}</h3><p>${t.shortBlurb}</p><a class='type-card-cta' href='/type/${t.slug}'><span>View full profile</span><span aria-hidden='true'>→</span></a></div>`)));
-        setupAlchemistHoverVideo(grid);
+        types.forEach(t=>{
+          const videoFile=TYPE_HOVER_VIDEO_BY_SLUG[t.slug];
+          const hoverVideo=videoFile?`<video class='type-hover-video' muted loop playsinline preload='metadata' poster='/images/${t.slug}.png'><source src='/videos/${videoFile}' type='video/mp4'></video>`:'';
+          grid.append(card(`<div class='type-card ${videoFile?'has-hover-video':''}' data-type-slug='${t.slug}'><a class='type-card-art-link' href='/type/${t.slug}' aria-label='Open ${t.name} profile'><figure class='type-card-art'><img src='/images/${t.slug}.png' alt='${t.name} personality illustration' loading='lazy'/>${hoverVideo}</figure></a><span class='chip'>${t.group}</span><h3>${t.name}</h3><p>${t.shortBlurb}</p><a class='type-card-cta' href='/type/${t.slug}'><span>View full profile</span><span aria-hidden='true'>→</span></a></div>`));
+        });
+        setupTypeHoverVideos(grid);
       };
 
       const types=Array.isArray(data?.types)?data.types:[];

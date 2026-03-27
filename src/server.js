@@ -1206,11 +1206,24 @@ app.get("/types", async (_req, res) => {
   try {
     const templatePath = path.join(publicDir, "types.html");
     const template = await fs.readFile(templatePath, "utf8");
+    const hoverVideoBySlug = {
+      "the-alchemist": "alchemist-hover.mp4",
+      "the-oracle": "the-oracle-hover.mp4",
+      "the-architect": "the-architect-hover.mp4",
+      "the-seeker": "the-seeker-hover.mp4",
+      "the-lover": "the-lover-hover.mp4",
+      "the-dreamer": "the-dreamer-hover.mp4",
+      "the-muse": "the-muse-hover.mp4"
+    };
+
     const cards = (contentData.types || [])
-      .map(
-        (t) =>
-          `<div class='card'><div class='type-card' data-type-slug='${t.slug}'><a class='type-card-art-link' href='/type/${t.slug}' aria-label='Open ${t.name} profile'><figure class='type-card-art'><img src='/images/${t.slug}.png' alt='${t.name} personality illustration' loading='lazy'/>${t.slug === "the-alchemist" ? "<video class='alchemist-hover-video' muted loop playsinline preload='metadata' poster='/images/the-alchemist.png'><source src='/videos/alchemist-hover.mp4' type='video/mp4'></video>" : ""}</figure></a><span class='chip'>${t.group}</span><h3>${t.name}</h3><p>${t.shortBlurb}</p><a class='type-card-cta' href='/type/${t.slug}'><span>View full profile</span><span aria-hidden='true'>→</span></a></div></div>`
-      )
+      .map((t) => {
+        const videoFile = hoverVideoBySlug[t.slug];
+        const hoverVideo = videoFile
+          ? `<video class='type-hover-video' muted loop playsinline preload='metadata' poster='/images/${t.slug}.png'><source src='/videos/${videoFile}' type='video/mp4'></video>`
+          : "";
+        return `<div class='card'><div class='type-card ${videoFile ? "has-hover-video" : ""}' data-type-slug='${t.slug}'><a class='type-card-art-link' href='/type/${t.slug}' aria-label='Open ${t.name} profile'><figure class='type-card-art'><img src='/images/${t.slug}.png' alt='${t.name} personality illustration' loading='lazy'/>${hoverVideo}</figure></a><span class='chip'>${t.group}</span><h3>${t.name}</h3><p>${t.shortBlurb}</p><a class='type-card-cta' href='/type/${t.slug}'><span>View full profile</span><span aria-hidden='true'>→</span></a></div></div>`;
+      })
       .join("");
 
     const html = template.replace("<div id='typesGrid' class='grid reveal'></div>", `<div id='typesGrid' class='grid reveal'>${cards}</div>`);
