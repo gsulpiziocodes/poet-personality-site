@@ -503,6 +503,10 @@ function renderTypeProfileTabs(root,t,siblings,allTypes=[]){
   ];
 
   const typeImageSrc=`/images/${t.slug}.png`;
+  const hoverVideoFile=TYPE_HOVER_VIDEO_BY_SLUG[t.slug]||'';
+  const typeHeroMedia=hoverVideoFile
+    ? `<img src='${escapeHtml(typeImageSrc)}' alt='${escapeHtml(t.name)} personality illustration' loading='lazy'/><video class='type-hover-video' muted loop playsinline preload='metadata' poster='${escapeHtml(typeImageSrc)}'><source src='/videos/${escapeHtml(hoverVideoFile)}' type='video/mp4'></video>`
+    : `<img src='${escapeHtml(typeImageSrc)}' alt='${escapeHtml(t.name)} personality illustration' loading='lazy'/>`;
   const currentIndex=Math.max(0,allTypes.findIndex((x)=>x.slug===t.slug));
   const prevType=currentIndex>0?allTypes[currentIndex-1]:null;
   const nextType=currentIndex<allTypes.length-1?allTypes[currentIndex+1]:null;
@@ -526,7 +530,7 @@ function renderTypeProfileTabs(root,t,siblings,allTypes=[]){
             <h1>${escapeHtml(t.name)}</h1>
             <p class='lead'>${escapeHtml(t.subtitle)}</p>
           </div>
-          <figure class='type-hero-art' data-type='${escapeHtml(t.slug)}'><img src='${escapeHtml(typeImageSrc)}' alt='${escapeHtml(t.name)} personality illustration' loading='lazy'/></figure>
+          <figure class='type-hero-art ${hoverVideoFile?'has-hover-video':''}' data-type='${escapeHtml(t.slug)}'>${typeHeroMedia}</figure>
         </div>
         <article id='typeTabContent' class='type-panel-content'></article>
         <nav class='type-prev-next' aria-label='Personality navigation'>
@@ -542,6 +546,20 @@ function renderTypeProfileTabs(root,t,siblings,allTypes=[]){
   const navAside=shell.querySelector('.type-tabs-nav');
   const navOpenBtn=shell.querySelector('.type-mobile-sections-toggle');
   const navCloseBtn=shell.querySelector('.type-tabs-close');
+  const heroArt=shell.querySelector('.type-hero-art');
+  const heroVideo=shell.querySelector('.type-hero-art .type-hover-video');
+
+  if(heroArt&&heroVideo){
+    heroVideo.pause();
+    heroVideo.currentTime=0;
+    heroVideo.addEventListener('loadeddata',()=>{ heroVideo.currentTime=0.01; heroVideo.pause(); });
+    const play=()=>{ heroVideo.currentTime=0; heroVideo.play().catch(()=>{}); };
+    const stop=()=>{ heroVideo.pause(); heroVideo.currentTime=0.01; };
+    heroArt.addEventListener('mouseenter',play);
+    heroArt.addEventListener('mouseleave',stop);
+    heroArt.addEventListener('focusin',play);
+    heroArt.addEventListener('focusout',stop);
+  }
 
   const closeMobileSections=()=>navAside?.classList.remove('open');
   const openMobileSections=()=>navAside?.classList.add('open');
