@@ -1697,32 +1697,120 @@ function setupStorytellerGuide(types=[]){
   if(!allowed.includes(location.pathname)&&!isTypeProfile) return;
   if(sessionStorage.getItem('storyGuideDismissed')==='1') return;
 
-  const baseTipByType={
-    'The Alchemist':'Start with an ordinary object, then transform it into a symbol of change by the final line.',
-    'The Oracle':'Write in prophetic fragments. Use one clear image per stanza and end with a question that lingers.',
-    'The Architect':'Draft a strict structure first (quatrains or syllable count), then let emotion move inside that frame.',
-    'The Seeker':'Center the poem around a search: what are you trying to understand that still refuses to resolve?',
-    'The Lover':'Use tactile details—skin, breath, distance, warmth—to make intimacy concrete, not abstract.',
-    'The Dreamer':'Blend memory and imagination. Let the scene drift, but anchor each stanza with one grounded detail.',
-    'The Muse':'Lead with your strongest line early, then echo its rhythm subtly through the rest of the poem.',
-    'The Devotee':'Write a devotion poem to a person, place, or ritual. Make loyalty feel active, not passive.',
-    'The Confessor':'Choose one truth you usually avoid and state it plainly in the first 4 lines—no metaphors at first.',
-    'The Witness':'Observe before judging. Let concrete images carry the emotional weight without forcing conclusions.',
-    'The Rebel':'Break one rule on purpose—syntax, punctuation, or line length—to intensify your central emotion.',
-    'The Mourner':'Use restraint. Name what is missing through surrounding details instead of saying loss directly each time.',
-    'The Storyteller':'Build a mini arc: setting, turn, aftermath. Give the reader a before and after in under 20 lines.',
-    'The Minimalist':'Cut every non-essential word. Keep only lines that still carry force when read aloud slowly.',
-    'The Performer':'Write for voice: cadence, breath, emphasis. Test each stanza by reading it out loud and revising by ear.',
-    'The Weaver':'Interlace two timelines or motifs and let them meet in the final stanza with emotional precision.'
+  const tipDeckByType={
+    'The Alchemist':[
+      'Think of a hard moment that changed you. Write it as if it were turning metal into gold.',
+      'Pick one ordinary object in the room and make it stand for your transformation.',
+      'Start in darkness, then let one image slowly become light by the last lines.',
+      'Write about a wound, but spend more time on what grew from it.',
+      'Use words like ash, flame, salt, or iron to give the poem a ritual feeling.'
+    ],
+    'The Oracle':[
+      'Write as if you are receiving a message, not forcing one.',
+      'Sit quietly for a minute and note three signs around you—light, sound, movement.',
+      'Use short, clear lines like visions. Let each stanza reveal one piece.',
+      'Ask one question in the poem that you cannot fully answer yet.',
+      'End with an image that feels fated, like it was always waiting for you.'
+    ],
+    'The Architect':[
+      'Choose a form first—3 stanzas, 4 lines each—and build inside it.',
+      'Map your poem before drafting: opening image, turn, final resolution.',
+      'Take one messy feeling and give it clean structure.',
+      'Let every line earn its place; if it does not hold weight, cut it.',
+      'Read it once for rhythm, once for logic, and once for emotional precision.'
+    ],
+    'The Seeker':[
+      'Begin with something you are still trying to understand.',
+      'Write the poem like a walk: observation, question, deeper question, insight.',
+      'Notice what in your surroundings feels symbolic right now and bring it in.',
+      'Let uncertainty stay alive; you do not need to solve everything.',
+      'End with a line that opens a door instead of closing one.'
+    ],
+    'The Lover':[
+      'Write about closeness through detail: skin, breath, distance, warmth.',
+      'Think of one memory of tenderness and build the poem around that scene.',
+      'Use touch, scent, and sound to make emotion physical.',
+      'Let longing speak directly in one line without hiding behind metaphor.',
+      'End on a gentle line that still aches a little.'
+    ],
+    'The Dreamer':[
+      'Start with a dream image and follow where it drifts.',
+      'Blend memory and imagination, but anchor each stanza with one concrete detail.',
+      'Look around you and pick one strange object to thread through the poem.',
+      'Use soft transitions, as if the poem is moving through mist.',
+      'Let the final line feel like waking up slowly.'
+    ],
+    'The Muse':[
+      'Begin with your most musical line and trust your ear.',
+      'Write with color and texture first, explanation second.',
+      'Notice what beauty exists in your current surroundings and name it freshly.',
+      'Repeat one key phrase with variation to create lyrical echo.',
+      'Read it aloud and adjust until it sounds effortless.'
+    ],
+    'The Devotee':[
+      'Write to someone or something you are deeply loyal to.',
+      'Treat the poem like an offering: sincere, intentional, and specific.',
+      'Name a daily ritual and show why it matters emotionally.',
+      'Use gratitude and ache in the same poem—they can coexist.',
+      'End with a vow, prayer, or promise that feels true.'
+    ],
+    'The Confessor':[
+      'Start with a truth you usually avoid saying out loud.',
+      'Write in first person and keep the first stanza brutally plain.',
+      'Notice what your body does as you write—tight chest, shaking hand—and include it.',
+      'Do not justify yourself too quickly; let the raw line stand.',
+      'Finish with one line that feels like relief after honesty.'
+    ],
+    'The Witness':[
+      'Describe one real scene from today before adding interpretation.',
+      'Take note of small details in your surroundings: shoes, steam, streetlight, hands.',
+      'Let the facts carry emotion; trust the image.',
+      'Keep the tone grounded, observant, and clear.',
+      'End with the detail that still lingers in your mind.'
+    ],
+    'The Rebel':[
+      'Write about what you refuse to accept right now.',
+      'Break one craft rule on purpose to match your emotion.',
+      'Use sharp verbs and direct language—no softening.',
+      'Turn anger into clarity, not just noise.',
+      'End with a line that sounds like a decision.'
+    ],
+    'The Mourner':[
+      'Think of what is missing, then describe the shape it left behind.',
+      'Use quiet images from your surroundings to hold grief gently.',
+      'Write slowly and leave space between thoughts.',
+      'Say less than you feel; restraint will deepen the poem.',
+      'End with a small gesture of tenderness toward yourself or the lost thing.'
+    ],
+    'The Storyteller':[
+      'Start with a scene: where are we, who is there, what just happened?',
+      'Give the poem a clear movement—before, turning point, after.',
+      'Let one object travel through the poem as a thread.',
+      'Use simple narrative language, then lift one moment into poetry.',
+      'Close with the line that reveals what the story was really about.'
+    ],
+    'The Minimalist':[
+      'Write a short draft, then cut it in half.',
+      'Keep only the lines that still hold power when read quietly.',
+      'Use clean images from your immediate environment—one per line if possible.',
+      'Avoid explanation; let silence do some of the work.',
+      'End with a final line that is plain but unforgettable.'
+    ],
+    'The Performer':[
+      'Write for the ear first: rhythm, breath, emphasis.',
+      'Stand up and speak your draft while you revise.',
+      'Use repetition and contrast to build momentum.',
+      'Imagine a live audience and mark where you want pause or punch.',
+      'End with your strongest spoken line—the one that lands in the room.'
+    ],
+    'The Weaver':[
+      'Choose two threads—past/present, love/loss, self/world—and braid them.',
+      'Let each stanza switch perspective while staying emotionally connected.',
+      'Take notes from your surroundings and place them into both threads.',
+      'Use recurring words or images to stitch the poem together.',
+      'End where both threads meet and reveal a deeper pattern.'
+    ]
   };
-
-  const tipDeckByType=Object.fromEntries(Object.entries(baseTipByType).map(([name,seed])=>[name,[
-    seed,
-    `Try a 10-minute sprint in ${name} mode: no editing, just momentum.` ,
-    `Start with this line stem: "Tonight, I..." then steer it toward ${name.toLowerCase()} energy.`,
-    `Limit yourself to 12 lines, and make line 12 the emotional turn.`,
-    `Read the draft out loud once, then cut 20% of words to sharpen impact.`
-  ]]));
 
   const orderedFallback=[
     'The Alchemist','The Oracle','The Architect','The Seeker',
