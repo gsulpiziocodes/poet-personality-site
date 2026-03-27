@@ -2048,8 +2048,8 @@ function setupStorytellerGuide(types=[]){
       return { slug, coach: base };
     }
 
-    const introLine=`Hi, I am ${rich.name}. ${rich.subtitle||base.first}`;
-    const first=`${introLine} ${rich.overview||''}`.trim();
+    const introLine=`Hi, I am ${rich.name}. ${rich.subtitle||''}`.trim();
+    const first=(introLine||base.first||`Hi, I am ${rich.name}.`).trim();
     const dynamicTips=[
       rich.detects[0]?`Your style usually leans toward ${rich.detects[0]}. Try opening there.`:'',
       rich.strengths[0]?`Lead with your strength: ${rich.strengths[0]}.`:'',
