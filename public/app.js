@@ -1689,14 +1689,7 @@ function setupStorytellerGuide(types=[]){
   const art=root.querySelector('.story-guide-art img');
   const closeBtn=root.querySelector('.story-guide-close');
   const opening='Need some help?';
-  let i=0;
-  const writer=()=>{
-    if(!intro) return;
-    intro.textContent=opening.slice(0,i);
-    i+=1;
-    if(i<=opening.length) setTimeout(writer,42);
-  };
-  writer();
+  if(intro) intro.textContent=opening;
 
   const renderTip=()=>{
     const name=select?.value||'The Storyteller';
