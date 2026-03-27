@@ -2048,8 +2048,26 @@ function setupStorytellerGuide(types=[]){
       return { slug, coach: base };
     }
 
-    const introLine=`Hi, I am ${rich.name}. ${rich.subtitle||''}`.trim();
-    const first=(introLine||base.first||`Hi, I am ${rich.name}.`).trim();
+    const vibeOpeners={
+      'the-alchemist':`Hey, ${rich.name} here.`,
+      'the-oracle':`Hey, ${rich.name} here.`,
+      'the-architect':`Yo, ${rich.name} here.`,
+      'the-seeker':`Hey, ${rich.name} here.`,
+      'the-lover':`Hey, ${rich.name} here.`,
+      'the-dreamer':`Hey, ${rich.name} here.`,
+      'the-muse':`Hey, ${rich.name} here.`,
+      'the-devotee':`Hey, ${rich.name} here.`,
+      'the-confessor':`Hey, ${rich.name} here.`,
+      'the-witness':`Hey, ${rich.name} here.`,
+      'the-rebel':`Yo, ${rich.name} here.`,
+      'the-mourner':`Hey, ${rich.name} here.`,
+      'the-storyteller':`Hey, ${rich.name} here.`,
+      'the-minimalist':`Yo, ${rich.name} here.`,
+      'the-performer':`Yo, ${rich.name} here.`,
+      'the-weaver':`Hey, ${rich.name} here.`
+    };
+    const introLine=`${vibeOpeners[slug]||`Hey, ${rich.name} here.`} ${rich.subtitle||''}`.trim();
+    const first=(introLine||base.first||`Hey, ${rich.name} here.`).trim();
     const dynamicTips=[
       rich.detects[0]?`Your style usually leans toward ${rich.detects[0]}. Try opening there.`:'',
       rich.strengths[0]?`Lead with your strength: ${rich.strengths[0]}.`:'',
@@ -2124,7 +2142,7 @@ function setupStorytellerGuide(types=[]){
     const looksLikePoem = /\n/.test(text) || words>=12;
 
     if(smallTalk && !looksLikePoem){
-      return `Hey, good to meet you. I am ${coach.name}. Want to just chat first, or do you want a quick prompt to start writing?`;
+      return `Hey hey, good to meet you. I’m ${coach.name}. Wanna vibe for a sec, or want me to toss you a quick writing prompt?`;
     }
 
     if(asksWhatToDo && !looksLikePoem){
