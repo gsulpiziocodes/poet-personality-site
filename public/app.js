@@ -633,6 +633,7 @@ function renderTypeProfileTabs(root,t,siblings,allTypes=[]){
 
   renderBody(tabs[0]);
   root.append(shell);
+  setupPersonalityCoachChat(root,t);
 }
 
 function getPreferredTheme(){
@@ -1646,6 +1647,72 @@ const TYPE_HOVER_VIDEO_BY_SLUG={
   'the-performer':'the-performer-hover.mp4',
   'the-weaver':'the-weaver-hover.mp4'
 };
+
+const POET_COACH_BY_SLUG={
+  'the-alchemist':{name:'The Alchemist',first:"Let's begin with change. Write 6 lines about something in your life that broke and became useful.",tips:['Turn one object into a symbol of transformation.','Move from wound to wisdom by line 6.','Use fire/water/metal imagery to anchor the poem.']},
+  'the-oracle':{name:'The Oracle',first:"Start with a sign you noticed today. Give it meaning in 8 lines.",tips:['Write in short visionary fragments.','Ask one haunting question in the middle.','End with an image that feels fated.']},
+  'the-architect':{name:'The Architect',first:'Let’s structure this: 3 stanzas, 4 lines each. Scene, turn, resolution.',tips:['Keep one central image in every stanza.','Trim soft filler words after your first draft.','Use line breaks to control emphasis.']},
+  'the-seeker':{name:'The Seeker',first:'Write from a real question you cannot answer yet. 8-12 lines.',tips:['Let curiosity drive each stanza.','Use one concrete detail from your room.','End open, not solved.']},
+  'the-lover':{name:'The Lover',first:'Write a memory of tenderness using touch, scent, or sound.',tips:['Make emotion physical, not abstract.','Use closeness and distance as tension.','End with a line that aches softly.']},
+  'the-dreamer':{name:'The Dreamer',first:'Start with a dream image, then anchor each stanza with one real detail.',tips:['Let transitions feel soft and fluid.','Use moon/light/mist imagery with restraint.','Close like waking up slowly.']},
+  'the-muse':{name:'The Muse',first:'Give me one beautiful opening line, then echo its rhythm through 8 lines.',tips:['Read aloud and tune by ear.','Repeat one phrase with variation.','Prioritize image and cadence over explanation.']},
+  'the-devotee':{name:'The Devotee',first:'Write a small offering poem to someone/something you are loyal to.',tips:['Let sincerity lead the language.','Name one ritual and why it matters.','End with a vow or promise.']},
+  'the-confessor':{name:'The Confessor',first:'Start with one truth you avoid saying out loud. Keep it plain.',tips:['First stanza: no metaphor, just truth.','Name body sensations while writing.','Revise for honesty, not polish first.']},
+  'the-witness':{name:'The Witness',first:'Describe what is actually around you right now before interpretation.',tips:['Use sensory detail from the scene.','Trust observation to carry feeling.','Keep diction clear and grounded.']},
+  'the-rebel':{name:'The Rebel',first:'Write what you refuse in 10 lines. Be direct and intentional.',tips:['Use active verbs in each line.','Break one rule on purpose.','Turn anger into clarity.']},
+  'the-mourner':{name:'The Mourner',first:'Write about what is missing by describing the space it left.',tips:['Say less and let silence work.','Use gentle domestic details.','End with one line of tenderness.']},
+  'the-storyteller':{name:'The Storyteller',first:'Open in-scene: where, who, what just happened. Then give us a turn.',tips:['Build before/after movement.','Carry one object through the narrative.','Final line reveals what changed.']},
+  'the-minimalist':{name:'The Minimalist',first:'Write 6 short lines, max 6 words each.',tips:['Cut anything non-essential.','One image per line is enough.','Keep ending plain and sharp.']},
+  'the-performer':{name:'The Performer',first:'Write this for voice. Mark where breath should hit.',tips:['Use repetition for momentum.','Read aloud and revise by sound.','End with your strongest spoken line.']},
+  'the-weaver':{name:'The Weaver',first:'Choose two threads (past/present, self/world) and braid them.',tips:['Alternate threads by stanza.','Repeat an image to stitch layers.','Let both threads meet at the end.']}
+};
+
+function setupPersonalityCoachChat(root,t){
+  if(!root||!t?.slug) return;
+  const coach=POET_COACH_BY_SLUG[t.slug]||{name:t.name,first:'Share your first 6-10 lines and I will coach your next draft.',tips:['Add concrete detail.','Clarify emotional turn.','Read aloud and refine rhythm.']};
+  const host=el('section','poet-chat card reveal in');
+  host.innerHTML=`<div class='poet-chat-head'><p class='kicker'>Poet Guide</p><h3>Chat with ${escapeHtml(coach.name)}</h3></div><div class='poet-chat-log' id='poetChatLog'></div><form class='poet-chat-form' id='poetChatForm'><input id='poetChatInput' type='text' placeholder='Share a line, draft, or question…' autocomplete='off'/><button class='btn primary' type='submit'>Send</button></form>`;
+
+  const log=host.querySelector('#poetChatLog');
+  const form=host.querySelector('#poetChatForm');
+  const input=host.querySelector('#poetChatInput');
+  let turn=0;
+
+  const addMsg=(who,text)=>{
+    const row=el('div',`poet-chat-msg ${who}`);
+    row.innerHTML=`<p>${escapeHtml(text)}</p>`;
+    log.append(row);
+    log.scrollTop=log.scrollHeight;
+  };
+
+  const makeReply=(userText)=>{
+    const text=String(userText||'').trim();
+    const words=text.split(/\s+/).filter(Boolean).length;
+    const tip=coach.tips[turn%coach.tips.length];
+    const open=words<8
+      ? `Good start. Give me 4-6 more lines so we can build momentum.`
+      : `Strong material. I can hear the ${coach.name.toLowerCase()} energy.`;
+    const follow=words<20
+      ? `Try this now: ${tip}`
+      : `Revision pass: ${tip}`;
+    const q=turn%2===0?'What line feels most honest to you right now?':'Want me to help tighten rhythm line-by-line?';
+    turn+=1;
+    return `${open} ${follow} ${q}`;
+  };
+
+  addMsg('bot',coach.first);
+
+  form?.addEventListener('submit',(e)=>{
+    e.preventDefault();
+    const text=String(input?.value||'').trim();
+    if(!text) return;
+    addMsg('user',text);
+    if(input) input.value='';
+    setTimeout(()=>addMsg('bot',makeReply(text)),220);
+  });
+
+  root.append(host);
+}
 
 function setupTypeHoverVideos(scope=document){
   const cards=[...scope.querySelectorAll('.type-card .type-card-art')];

@@ -219,6 +219,15 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .type-pull-quote{margin-top:18px;padding:12px 14px;border-left:3px solid var(--accent-soft);background:color-mix(in oklab,var(--surface-soft) 82%, transparent);border-radius:10px}
 .type-panel-inner .quote{margin-top:16px}
 .type-panel-inner .footer-note a{color:var(--accent)}
+
+.poet-chat{margin-top:14px;padding:14px}
+.poet-chat-head h3{margin:2px 0 8px}
+.poet-chat-log{max-height:320px;overflow:auto;display:flex;flex-direction:column;gap:8px;padding-right:4px}
+.poet-chat-msg{max-width:90%;padding:9px 11px;border-radius:12px;border:1px solid var(--line-soft);background:color-mix(in oklab,var(--surface) 92%, var(--paper))}
+.poet-chat-msg.user{align-self:flex-end;background:color-mix(in oklab,var(--surface-soft) 85%, var(--paper));border-color:var(--line)}
+.poet-chat-msg p{margin:0;line-height:1.5}
+.poet-chat-form{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px}
+.poet-chat-form input{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface);color:var(--ink)}
 @media(max-width:900px){.poems-shell{grid-template-columns:1fr}.poems-sidebar{min-height:unset;border-right:0;border-bottom:1px solid #efe5d6}#editorText{min-height:320px}.analysis-grid{grid-template-columns:1fr}.settings-shell{grid-template-columns:1fr}.settings-sidebar{position:static;overflow:auto;flex-direction:row}.settings-grid,.settings-grid.compact{grid-template-columns:1fr}.type-tabs-wrap{grid-template-columns:1fr;gap:12px}.type-tabs-card{position:sticky;top:76px;flex-direction:row;overflow:auto;white-space:nowrap;padding:8px;z-index:30}.type-tab-btn{flex:0 0 auto;border:1px solid var(--line-soft);background:var(--surface)}.type-tab-btn.active{border-color:var(--line);background:var(--surface-soft)}.type-tabs-panel{border-radius:16px}.type-panel-hero,.type-panel-content{padding:16px}.type-panel-hero-split{grid-template-columns:1fr}.type-hero-art{aspect-ratio:3/4;max-width:280px;margin:4px auto 0}.overview-radar-row{margin:12px 0 14px}.type-prev-next{padding:0 16px 16px}}
 .funnel-steps{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}.funnel-step{padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink)}
 .sticky-cta{position:fixed;left:12px;right:12px;bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,253,249,.96);box-shadow:0 10px 22px rgba(40,23,9,.16);backdrop-filter:blur(4px)}
@@ -279,7 +288,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 [data-theme='dark'] .story-guide-tip{color:#2f2420}
 [data-theme='dark'] .poem-pre{background:#2a2333;border-color:var(--line);color:var(--ink)}
 @media(min-width:920px){.two-col{grid-template-columns:1fr 1fr}.wrap{padding:0 20px}.funnel-steps{grid-template-columns:repeat(3,1fr)}#proof{margin-top:38px;margin-bottom:14px}#how,#funnel{margin-top:30px;padding-top:10px}}
-@media(max-width:640px){.wrap{margin:14px auto 110px}.hero{padding:20px 16px}.card{padding:14px}.lead{font-size:1rem}nav a{padding:6px 10px;font-size:.92rem}.sticky-cta{flex-direction:column;align-items:stretch}.proof-card{min-height:132px;padding:14px 14px 13px}.proof-title{font-size:1.32rem}.proof-body{font-size:.92rem;line-height:1.52}.story-guide{left:12px;right:12px;bottom:126px;align-items:flex-end;gap:7px}.story-guide-panel{width:min(100%,360px);padding:10px}.story-guide-art img,.story-guide-art video{width:min(210px,52vw);max-height:180px}.story-guide-intro{font-size:1.18rem;min-height:1.3rem}.story-guide-tip{font-size:.88rem;line-height:1.46}}
+@media(max-width:640px){.wrap{margin:14px auto 110px}.hero{padding:20px 16px}.card{padding:14px}.lead{font-size:1rem}nav a{padding:6px 10px;font-size:.92rem}.sticky-cta{flex-direction:column;align-items:stretch}.proof-card{min-height:132px;padding:14px 14px 13px}.proof-title{font-size:1.32rem}.proof-body{font-size:.92rem;line-height:1.52}.story-guide{left:12px;right:12px;bottom:126px;align-items:flex-end;gap:7px}.story-guide-panel{width:min(100%,360px);padding:10px}.story-guide-art img,.story-guide-art video{width:min(210px,52vw);max-height:180px}.story-guide-intro{font-size:1.18rem;min-height:1.3rem}.story-guide-tip{font-size:.88rem;line-height:1.46}.poet-chat-form{grid-template-columns:1fr}.poet-chat-msg{max-width:100%}}
 @media(max-width:900px){.hero-with-image{grid-template-columns:1fr}.hero-image{width:100%;max-width:100%;margin:4px auto 0}.hero-image img,.hero-image video{width:100%;height:auto;max-height:340px;object-fit:cover;display:block}.analysis-hero-with-image{grid-template-columns:1fr}.analysis-hero-art{max-width:260px;margin:4px auto 0}.type-hero-art img,.type-hero-art video{transform:none!important;max-width:100%;height:auto}}
 
 /* 2026 mobile/tablet/desktop nav + hero polish */
