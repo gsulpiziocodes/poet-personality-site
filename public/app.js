@@ -1992,12 +1992,8 @@ function setupStorytellerGuide(types=[]){
       </select>
       <div class='story-guide-dialogue'>
         <p class='story-guide-speaker'>The Storyteller</p>
-        <div class='story-guide-chatlog' id='storyGuideChatLog'></div>
-        <div class='story-guide-starters' id='storyGuideStarters'></div>
-        <form class='story-guide-chatform' id='storyGuideChatForm'>
-          <input id='storyGuideChatInput' type='text' placeholder='Share a line, draft, or question…' autocomplete='off'/>
-          <button type='submit' class='btn secondary'>Send</button>
-        </form>
+        <p class='story-guide-tip' id='storyGuideTip'></p>
+        <button type='button' class='story-guide-next-btn' id='storyGuideNextBtn'>Next tip</button>
       </div>
     </div>
     <figure class='story-guide-art'><video class='story-guide-art-video' muted loop playsinline preload='metadata' poster='/images/the-storyteller.png'><source src='/videos/the-storyteller-hover.mp4' type='video/mp4'></video></figure>`;
@@ -2007,39 +2003,13 @@ function setupStorytellerGuide(types=[]){
 
   const intro=root.querySelector('.story-guide-intro');
   const select=root.querySelector('#storyGuideType');
-  const chatLog=root.querySelector('#storyGuideChatLog');
-  const startersWrap=root.querySelector('#storyGuideStarters');
-  const chatForm=root.querySelector('#storyGuideChatForm');
-  const chatInput=root.querySelector('#storyGuideChatInput');
+  const tipEl=root.querySelector('#storyGuideTip');
+  const nextBtn=root.querySelector('#storyGuideNextBtn');
   const speaker=root.querySelector('.story-guide-speaker');
   const artVideo=root.querySelector('.story-guide-art-video');
   const closeBtn=root.querySelector('.story-guide-close');
   const opening='Need some help?';
   if(intro) intro.textContent=opening;
-
-  let styleProfile=null;
-  const token=getCollectionToken();
-  if(token){
-    fetch(`/api/style-profile?token=${encodeURIComponent(token)}`)
-      .then((r)=>r.json())
-      .then((data)=>{ if(data?.ok&&data?.profile?.poemCount>0) styleProfile=data.profile; })
-      .catch(()=>{});
-  }
-
-  const addMsg=(who,text,opts={})=>{
-    if(!chatLog) return;
-    const row=el('div',`story-guide-msg ${who}${opts.clickable?' clickable':''}`);
-    row.innerHTML=`<p>${escapeHtml(text)}</p>`;
-    if(opts.clickable&&typeof opts.onClick==='function'){
-      row.setAttribute('role','button');
-      row.setAttribute('tabindex','0');
-      row.title='Click to use this starter';
-      row.addEventListener('click',opts.onClick);
-      row.addEventListener('keydown',(e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); opts.onClick(); }});
-    }
-    chatLog.append(row);
-    chatLog.scrollTop=chatLog.scrollHeight;
-  };
 
   const getCoach=(name)=>{
     const slug=slugByName[name]||'the-storyteller';
@@ -2050,32 +2020,12 @@ function setupStorytellerGuide(types=[]){
       return { slug, coach: base };
     }
 
-    const vibeOpeners={
-      'the-alchemist':`Hey, ${rich.name} here.`,
-      'the-oracle':`Hey, ${rich.name} here.`,
-      'the-architect':`Yo, ${rich.name} here.`,
-      'the-seeker':`Hey, ${rich.name} here.`,
-      'the-lover':`Hey, ${rich.name} here.`,
-      'the-dreamer':`Hey, ${rich.name} here.`,
-      'the-muse':`Hey, ${rich.name} here.`,
-      'the-devotee':`Hey, ${rich.name} here.`,
-      'the-confessor':`Hey, ${rich.name} here.`,
-      'the-witness':`Hey, ${rich.name} here.`,
-      'the-rebel':`Yo, ${rich.name} here.`,
-      'the-mourner':`Hey, ${rich.name} here.`,
-      'the-storyteller':`Hey, ${rich.name} here.`,
-      'the-minimalist':`Yo, ${rich.name} here.`,
-      'the-performer':`Yo, ${rich.name} here.`,
-      'the-weaver':`Hey, ${rich.name} here.`
-    };
-    const introLine=`${vibeOpeners[slug]||`Hey, ${rich.name} here.`} ${rich.subtitle||''}`.trim();
-    const first=(introLine||base.first||`Hey, ${rich.name} here.`).trim();
+    const first=`Hi, I am ${rich.name}. ${rich.subtitle||''}`.trim();
     const dynamicTips=[
-      rich.detects[0]?`Your style usually leans toward ${rich.detects[0]}. Try opening there.`:'',
-      rich.strengths[0]?`Lead with your strength: ${rich.strengths[0]}.`:'',
-      rich.challenges[0]?`Watch for this while drafting: ${rich.challenges[0]}.`:'',
+      rich.detects[0]?`Try opening with ${rich.detects[0]}.`:'',
+      rich.strengths[0]?`Lean into your natural strength: ${rich.strengths[0]}.`:'',
+      rich.challenges[0]?`Quick watchout: ${rich.challenges[0]}.`:'',
       rich.writingIntro||'',
-      rich.loveIntro||'',
       rich.idealTagline?`North star: ${rich.idealTagline}`:''
     ].filter(Boolean);
 
@@ -2109,85 +2059,30 @@ function setupStorytellerGuide(types=[]){
     artVideo.addEventListener('loadeddata',stopVideo);
   }
 
-  const renderStarters=(coach)=>{
-    if(!startersWrap) return;
-    const options=(coach.tips||[]).slice(0,4);
-    startersWrap.innerHTML=options.map((tip,idx)=>`<button type='button' class='story-guide-starter-btn' data-tip='${idx}'>${escapeHtml(tip)}</button>`).join('');
-    startersWrap.querySelectorAll('.story-guide-starter-btn').forEach((btn)=>{
-      btn.addEventListener('click',()=>{
-        const i=Number(btn.getAttribute('data-tip')||0);
-        const picked=options[i]||options[0]||'';
-        if(!picked) return;
-        addMsg('bot',`Starter idea: ${picked}`);
-        if(chatInput){ chatInput.value=picked; chatInput.focus(); }
-      });
-    });
-  };
-
-  let turn=0;
+  let tipIndex=0;
   const renderCoach=(reset=true)=>{
     const name=select?.value||'The Storyteller';
     const {slug,coach}=getCoach(name);
     if(speaker) speaker.textContent=coach.name;
     updateCoachMedia(slug);
-    renderStarters(coach);
-    if(reset&&chatLog){
-      chatLog.innerHTML='';
-      turn=0;
-      addMsg('bot',coach.first||'Share your first lines and I will help.',{
-        clickable:true,
-        onClick:()=>{
-          if(chatInput){
-            chatInput.value=coach.first||'';
-            chatInput.focus();
-          }
-        }
-      });
-      if(styleProfile?.poemCount){
-        addMsg('bot',`I'm tuning to your voice from ${styleProfile.poemCount} saved poems (~${styleProfile.avgLineWords||0} words per line).`);
-      }
-    }
+
+    if(reset) tipIndex=0;
+    const tips=(coach.tips&&coach.tips.length)?coach.tips:['Start with one honest image from your day.'];
+    const currentTip=tips[tipIndex%tips.length];
+    if(tipEl) tipEl.textContent=currentTip;
     return coach;
   };
 
-  const makeReply=(coach,userText)=>{
-    const text=String(userText||'').trim();
-    const lower=text.toLowerCase();
-    const words=text.split(/\s+/).filter(Boolean).length;
-
-    const smallTalk= /^(hi|hello|hey|yo|sup|what'?s up|how are you|good morning|good afternoon|good evening)\b/.test(lower);
-    const asksWhatToDo = /what should i write|how do i start|help me start|where do i start|what now/.test(lower);
-    const looksLikePoem = /\n/.test(text) || words>=12;
-
-    if(smallTalk && !looksLikePoem){
-      return `Hey hey, good to meet you. I’m ${coach.name}. Wanna vibe for a sec, or want me to toss you a quick writing prompt?`;
-    }
-
-    if(asksWhatToDo && !looksLikePoem){
-      const firstTip=(coach.tips&&coach.tips[0])?coach.tips[0]:'Start with one honest image from your day.';
-      return `Great question. Easiest way in is this: ${firstTip} If you want, I can give you a softer prompt or a more intense one.`;
-    }
-
-    const tips=(coach.tips&&coach.tips.length)?coach.tips:['Add one concrete image.','Tighten your emotional turn.','Read aloud and refine rhythm.'];
-    const tip=tips[turn%tips.length];
-    const rhythm=styleProfile?.avgLineWords?`Try around ${Math.max(4,Math.min(12,Math.round(styleProfile.avgLineWords)))} words per line in your next pass.`:'';
-    const open=words<10?'Nice start. Keep going with whatever feels natural and I will help shape it.':`This is good. I can hear your voice coming through.`;
-    turn+=1;
-    return [open, rhythm, `Next move: ${tip}`, (turn%2?'What line feels truest right now?':'Want a line by line tightening pass?')].filter(Boolean).join(' ');
+  const nextTip=()=>{
+    const coach=renderCoach(false);
+    const tips=(coach.tips&&coach.tips.length)?coach.tips:['Start with one honest image from your day.'];
+    tipIndex=(tipIndex+1)%tips.length;
+    if(tipEl) tipEl.textContent=tips[tipIndex];
   };
 
   select?.addEventListener('change',()=>renderCoach(true));
+  nextBtn?.addEventListener('click',nextTip);
   renderCoach(true);
-
-  chatForm?.addEventListener('submit',(e)=>{
-    e.preventDefault();
-    const text=String(chatInput?.value||'').trim();
-    if(!text) return;
-    const coach=renderCoach(false);
-    addMsg('user',text);
-    if(chatInput) chatInput.value='';
-    setTimeout(()=>addMsg('bot',makeReply(coach,text)),220);
-  });
 
   closeBtn?.addEventListener('click',()=>{
     root.classList.remove('in');
