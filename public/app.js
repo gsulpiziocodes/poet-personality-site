@@ -923,7 +923,7 @@ function setupPoemUploader(targetId='funnel',types=[]){
           <label class='email-capture-label' for='emailCaptureInput'>Email</label>
           <input id='emailCaptureInput' type='email' autocomplete='email' placeholder='you@email.com' value='${String(initialValue||'').replace(/'/g,"&#39;")}' />
           <p class='email-capture-error' aria-live='polite'></p>
-          <button type='submit' class='btn primary email-capture-cta'>Send my results</button>
+          <button type='submit' class='btn primary email-capture-cta'>Email me my results</button>
         </form>
         <button type='button' class='email-capture-dismiss'>Not now</button>
       </div>`;
