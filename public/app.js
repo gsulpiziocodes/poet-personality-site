@@ -912,6 +912,60 @@ function setupPoemUploader(targetId='funnel',types=[]){
   const rememberedEmail=localStorage.getItem('poet_personality_email')||'';
   if(analysisEmail&&rememberedEmail) analysisEmail.value=rememberedEmail;
 
+  const requestEmailCapture=(initialValue='')=>new Promise((resolve)=>{
+    const overlay=el('div','email-capture-overlay');
+    overlay.innerHTML=`
+      <div class='email-capture-modal' role='dialog' aria-modal='true' aria-labelledby='emailCaptureTitle'>
+        <p class='email-capture-kicker'>Poet Personality</p>
+        <h3 id='emailCaptureTitle'>Want your results sent to your inbox?</h3>
+        <p class='email-capture-copy'>Enter your email to save and view your poet personality.</p>
+        <form class='email-capture-form' novalidate>
+          <label class='email-capture-label' for='emailCaptureInput'>Email</label>
+          <input id='emailCaptureInput' type='email' autocomplete='email' placeholder='you@email.com' value='${String(initialValue||'').replace(/'/g,"&#39;")}' />
+          <p class='email-capture-error' aria-live='polite'></p>
+          <button type='submit' class='btn primary email-capture-cta'>Send my results</button>
+        </form>
+        <button type='button' class='email-capture-dismiss'>Not now</button>
+      </div>`;
+
+    const form=overlay.querySelector('.email-capture-form');
+    const input=overlay.querySelector('#emailCaptureInput');
+    const error=overlay.querySelector('.email-capture-error');
+    const dismiss=overlay.querySelector('.email-capture-dismiss');
+
+    let closed=false;
+    const onEsc=(ev)=>{if(ev.key==='Escape') close(null);};
+
+    const close=(value)=>{
+      if(closed) return;
+      closed=true;
+      document.removeEventListener('keydown',onEsc);
+      overlay.classList.remove('in');
+      setTimeout(()=>overlay.remove(),120);
+      resolve(value);
+    };
+
+    dismiss.addEventListener('click',()=>close(null));
+    overlay.addEventListener('click',(ev)=>{if(ev.target===overlay) close(null);});
+    document.addEventListener('keydown',onEsc);
+
+    form.addEventListener('submit',(ev)=>{
+      ev.preventDefault();
+      const value=String(input.value||'').trim().toLowerCase();
+      if(!isValidEmail(value)){
+        error.textContent='Please enter a valid email so we can send your results.';
+        input.focus();
+        return;
+      }
+      close(value);
+    });
+
+    document.body.append(overlay);
+    requestAnimationFrame(()=>overlay.classList.add('in'));
+    requestAnimationFrame(()=>input.focus());
+    requestAnimationFrame(()=>input.setSelectionRange(input.value.length,input.value.length));
+  });
+
   const syncStatus=(text)=>{status.textContent=text||'';};
 
   const queueSave=()=>{
@@ -1108,7 +1162,7 @@ function setupPoemUploader(targetId='funnel',types=[]){
 
     let email=String(analysisEmail?.value||'').trim().toLowerCase();
     if(!isValidEmail(email)){
-      const enteredEmail=window.prompt('Enter your email to receive your results:', email||rememberedEmail||'');
+      const enteredEmail=await requestEmailCapture(email||rememberedEmail||'');
       if(enteredEmail===null) return;
       email=String(enteredEmail||'').trim().toLowerCase();
       if(analysisEmail) analysisEmail.value=email;
