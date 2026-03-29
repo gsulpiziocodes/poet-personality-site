@@ -1996,8 +1996,10 @@ function setupStorytellerGuide(types=[]){
     </div>
     <figure class='story-guide-art'><video class='story-guide-art-video' muted loop playsinline preload='metadata' poster='/images/the-storyteller.png'><source src='/videos/the-storyteller-hover.mp4' type='video/mp4'></video></figure>`;
 
-  document.body.append(root);
-  requestAnimationFrame(()=>root.classList.add('in'));
+  setTimeout(()=>{
+    document.body.append(root);
+    requestAnimationFrame(()=>root.classList.add('in'));
+  },3000);
 
   const intro=root.querySelector('.story-guide-intro');
   const select=root.querySelector('#storyGuideType');
