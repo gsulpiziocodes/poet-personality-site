@@ -401,3 +401,45 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
   #how .card,#funnel .card{padding:20px 20px 18px}
 }
 
+/* 2026 mobile UX full pass */
+@media (max-width:700px){
+  .wrap{padding:0 14px 118px}
+  .card{padding:13px 12px;border-radius:14px}
+  .btn{min-height:46px;padding:11px 14px}
+
+  /* Header/nav */
+  .site-top{padding:8px 0}
+  .site-top .brand{font-size:1.5rem}
+
+  /* Analyze editor */
+  .poems-shell{border-radius:14px}
+  .poems-sidebar-top{padding:10px 10px 8px}
+  .thread-row{padding:10px}
+  .thread-title{font-size:.94rem}
+  .thread-preview{font-size:.82rem}
+  .poems-main{padding:10px}
+  .editor-head{grid-template-columns:1fr auto;gap:8px}
+  #editorTitle{font-size:.98rem;padding:10px}
+  #editorText{font-size:1rem;line-height:1.68;min-height:360px;padding:12px}
+  .analysis-zone{padding:12px 2px 0}
+  .analysis-top h3{font-size:1.08rem}
+
+  /* Result readability */
+  .analysis-hero{padding:12px}
+  .analysis-hero h2{font-size:1.4rem;line-height:1.14}
+  .analysis-hero .lead{font-size:.98rem;line-height:1.58}
+  .analysis-grid>div{padding:11px}
+
+  /* Helper popup */
+  .story-guide{bottom:112px}
+  .story-guide-panel{width:min(100%,350px);padding:10px 10px 9px;border-radius:18px}
+  .story-guide-panel::after{right:34px}
+  .story-guide-select{font-size:.87rem;padding:8px 9px}
+  .story-guide-next-btn{font-size:.78rem;padding:7px 10px}
+
+  /* Type grid cards */
+  #typesGrid .card{padding:11px}
+  .type-card h3{font-size:1.08rem}
+  .type-card p{font-size:.92rem;line-height:1.5}
+}
+
