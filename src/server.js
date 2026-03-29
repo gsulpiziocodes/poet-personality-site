@@ -744,6 +744,130 @@ function analyzePoemCorpus(poems = []) {
 
   const explanation = `Across ${poems.length} poem${poems.length === 1 ? "" : "s"}, your writing most strongly aligns with ${topType.name}. ${topType.overview || ""}\n\nYou repeatedly return to ${top3Themes.join(", ")} energies, suggesting a stable poetic identity rather than a one-off mood. Emotionally, the voice feels ${tone}, with a recurring movement from sensation toward interpretation.\n\nIn structure, your line behavior (avg ${avgLineLength.toFixed(1)} words per line) and question cadence (${(questionRate * 100).toFixed(1)}% of lines) reinforce this archetype. The tonal through-line and thematic recurrence suggest a recognizable worldview and signature poetic instinct.`;
 
+  const allLines = poems.flatMap((poem) =>
+    String(poem?.text || "")
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)
+  );
+
+  const scoreLine = (line) => {
+    const lineWords = (line.match(/[a-z']+/gi) || []).length;
+    const sensoryHits = (line.match(/(smell|taste|touch|salt|fire|ash|street|window|blood|skin|rain|city|voice|light|shadow)/gi) || []).length;
+    const contrastHits = (line.match(/(but|yet|while|although|though|another|against)/gi) || []).length;
+    return lineWords + sensoryHits * 2 + contrastHits;
+  };
+
+  const bestLines = [...new Set(allLines)]
+    .filter((line) => {
+      const lineWords = (line.match(/[a-z']+/gi) || []).length;
+      return lineWords >= 5 && lineWords <= 22;
+    })
+    .map((line) => ({ line, score: scoreLine(line) }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3)
+    .map(({ line }) => ({
+      line,
+      why: "This line carries emotional and sensory weight while advancing the poem's central tension. It balances image and meaning without over-explaining."
+    }));
+
+  const firstPersonRate = words.length ? (words.filter((w) => w === "i" || w === "me" || w === "my").length / words.length) : 0;
+  const secondPersonRate = words.length ? (words.filter((w) => w === "you" || w === "your").length / words.length) : 0;
+
+  const whatWorks = [
+    `A clear, authentic voice with strong ${topType.name} energy across multiple poems.`,
+    `Concrete imagery gives emotional ideas a place to land.`,
+    `Tonal consistency (${tone}) makes the work feel cohesive rather than scattered.`,
+    `The poems stay readable and emotionally immediate while still carrying depth.`
+  ];
+
+  const whatToImprove = [
+    "Sharpen one central metaphor per poem and let nearby images revolve around it.",
+    "Tighten lineation: use punctuation and deliberate enjambment to guide breath and emphasis.",
+    "Replace general statements with specific, surprising details from lived scenes.",
+    "Prune weak modifiers and passive phrasing; choose stronger verbs for immediacy.",
+    "Create more tension between images so each stanza complicates what came before.",
+    "Aim for a clearer arc (arrival, encounter, shift, reveal) so endings feel earned."
+  ];
+
+  const poetInferences = [
+    firstPersonRate > 0.03
+      ? "You favor first-person perspective to build emotional intimacy."
+      : "You often keep a slight observational distance, which can make scenes feel cinematic.",
+    secondPersonRate > 0.02
+      ? "You use direct address effectively to pull the reader (or subject) into the poem."
+      : "Your voice tends to imply the listener rather than naming them directly.",
+    avgLineLength > 10
+      ? "You lean toward conversational, sentence-led line breaks over strict formal compression."
+      : "You show a compression instinct—shorter lines that prioritize pressure and precision.",
+    "You are drawn to metaphor, and your strongest moments connect image with social or emotional observation."
+  ];
+
+  const imageryDensity = words.length ? Math.min(100, Math.round((allLines.join(" ").match(/(like|as|as if|as though|image|shadow|light|street|window|body|fire|water|ash|dream)/gi)?.length || 0) / Math.max(1, allLines.length) * 22)) : 0;
+
+  const styleSnapshot = {
+    diction: "Accessible, image-forward diction with occasional elevated language for emphasis.",
+    syntax: avgLineLength > 10
+      ? "Conversational syntax with sentence-driven momentum and flexible punctuation."
+      : "Compressed syntax with short, intentional units and restrained phrasing.",
+    imageryDensity: `${imageryDensity}% (moderate-to-high image concentration across lines).`,
+    tone,
+    themes: top3Themes,
+    form: "Primarily free verse with voice-led lineation and variable stanza movement.",
+    rhythm: avgLineLength > 10
+      ? "Loose conversational cadence driven by syntax and thought turns."
+      : "Tighter cadence with emphasis on line pressure and pauses."
+  };
+
+  const poetRecsBySlug = {
+    "the-alchemist": ["Sylvia Plath", "Ocean Vuong", "Seamus Heaney"],
+    "the-oracle": ["Emily Dickinson", "T. S. Eliot", "Rainer Maria Rilke"],
+    "the-architect": ["Elizabeth Bishop", "Robert Frost", "Louise Glück"],
+    "the-seeker": ["Mary Oliver", "Walt Whitman", "Rainer Maria Rilke"],
+    "the-lover": ["Pablo Neruda", "Sappho", "Ada Limón"],
+    "the-dreamer": ["John Keats", "Matsuo Bashō", "Ocean Vuong"],
+    "the-muse": ["Mary Oliver", "Pablo Neruda", "Louise Glück"],
+    "the-devotee": ["Mary Oliver", "Rumi", "Wendell Berry"],
+    "the-confessor": ["Anne Sexton", "Sylvia Plath", "Sharon Olds"],
+    "the-witness": ["Gwendolyn Brooks", "Langston Hughes", "Elizabeth Bishop"],
+    "the-rebel": ["Audre Lorde", "Allen Ginsberg", "Adrienne Rich"],
+    "the-mourner": ["W. H. Auden", "Natasha Trethewey", "Louise Glück"],
+    "the-storyteller": ["Frank O'Hara", "Langston Hughes", "Maya Angelou"],
+    "the-minimalist": ["Matsuo Bashō", "Emily Dickinson", "William Carlos Williams"],
+    "the-performer": ["Maya Angelou", "Gil Scott-Heron", "Langston Hughes"],
+    "the-weaver": ["Adrienne Rich", "T. S. Eliot", "Agha Shahid Ali"]
+  };
+
+  const recommendedPoets = (poetRecsBySlug[topSlug] || ["Mary Oliver", "Frank O'Hara", "Ocean Vuong"]).map((name, idx) => ({
+    name,
+    match: Math.max(70, 92 - idx * 8),
+    why: idx === 0
+      ? `Top style alignment for your current ${topType.name} profile.`
+      : idx === 1
+        ? "Strong model for tightening image-to-meaning movement and tonal control."
+        : "Improvement pick for deeper metaphor development and rhythmic precision.",
+    notableWorks: idx === 0
+      ? ["Selected Poems", "Signature Collection"]
+      : idx === 1
+        ? ["Key Poems", "Collected Works"]
+        : ["Recent Collection", "Selected Lyrics"]
+  }));
+
+  const similarPoems = recommendedPoets.map((poet, idx) => ({
+    title: idx === 0 ? "Primary style match" : idx === 1 ? "Precision + compression model" : "Growth model",
+    poet: poet.name,
+    styleMatch: poet.match,
+    reason: poet.why
+  }));
+
+  const nextReads = [
+    `${recommendedPoets[0]?.name || "Mary Oliver"} — selected poems`,
+    `${recommendedPoets[1]?.name || "Frank O'Hara"} — key shorter works`,
+    `${recommendedPoets[2]?.name || "Ocean Vuong"} — contemporary lyric selections`,
+    "An anthology of city and place-based poems",
+    "A craft text focused on line breaks and revision"
+  ];
+
   return {
     personalityKey: topSlug,
     personalitySlug: topSlug,
@@ -756,7 +880,15 @@ function analyzePoemCorpus(poems = []) {
       imageryAndTone: `Your imagery and symbolic motifs align with ${topType.name}, with consistent tonal intent across poems.`,
       structureAndVoice: `Average line length ${avgLineLength.toFixed(1)}; question-line rate ${(questionRate * 100).toFixed(1)}%.`,
       worldview: `Your poems collectively prioritize the sensibility of ${topType.name}.`
-    }
+    },
+    bestLines,
+    whatWorks,
+    whatToImprove,
+    poetInferences,
+    styleSnapshot,
+    recommendedPoets,
+    similarPoems,
+    nextReads
   };
 }
 

@@ -1113,6 +1113,14 @@ function setupPoemUploader(targetId='funnel',types=[]){
     const archetypeHref=a.personalitySlug?`/type/${a.personalitySlug}`:'/types';
     analysisResult.classList.remove('muted');
     const personalityImageSrc=a.personalitySlug?`/images/${a.personalitySlug}.png`:'';
+    const bestLines=(a.bestLines||[]).map((x)=>`<article class='analysis-best-line'><p class='analysis-line-quote'>“${escapeHtml(x.line||'')}”</p><p class='analysis-line-why'>${escapeHtml(x.why||'')}</p></article>`).join('');
+    const works=(a.whatWorks||[]).map((x)=>`<li>${escapeHtml(x)}</li>`).join('');
+    const improve=(a.whatToImprove||[]).map((x)=>`<li>${escapeHtml(x)}</li>`).join('');
+    const inferences=(a.poetInferences||[]).map((x)=>`<li>${escapeHtml(x)}</li>`).join('');
+    const snapshot=a.styleSnapshot||{};
+    const poets=(a.recommendedPoets||[]).map((p)=>`<article class='analysis-poet-card'><h4>${escapeHtml(p.name||'')}</h4><p class='analysis-poet-match'>${escapeHtml(String(p.match||''))}% match</p><p>${escapeHtml(p.why||'')}</p></article>`).join('');
+    const nextReads=(a.nextReads||[]).map((x)=>`<li>${escapeHtml(x)}</li>`).join('');
+
     analysisResult.innerHTML=`
       <div class='analysis-stage stage-1'>
         <div class='analysis-hero analysis-hero-with-image'>
@@ -1147,7 +1155,21 @@ function setupPoemUploader(targetId='funnel',types=[]){
           <div><h4>Worldview / poetic instincts</h4><p>${a.observations?.worldview||''}</p></div>
         </div>
       </div>
-      <div class='analysis-stage stage-5'>
+      ${bestLines?`<div class='analysis-stage stage-5'><div class='analysis-prose'><h3>Best lines</h3>${bestLines}</div></div>`:''}
+      ${works?`<div class='analysis-stage stage-6'><div class='analysis-prose'><h3>What works</h3><ul class='analysis-list'>${works}</ul></div></div>`:''}
+      ${improve?`<div class='analysis-stage stage-7'><div class='analysis-prose'><h3>What to improve</h3><ul class='analysis-list'>${improve}</ul></div></div>`:''}
+      ${inferences?`<div class='analysis-stage stage-8'><div class='analysis-prose'><h3>Poet inferences</h3><ul class='analysis-list'>${inferences}</ul></div></div>`:''}
+      ${snapshot&&Object.keys(snapshot).length?`<div class='analysis-stage stage-9'><div class='analysis-prose'><h3>Style snapshot</h3><div class='analysis-grid'>
+        <div><h4>Diction</h4><p>${escapeHtml(snapshot.diction||'')}</p></div>
+        <div><h4>Syntax</h4><p>${escapeHtml(snapshot.syntax||'')}</p></div>
+        <div><h4>Imagery density</h4><p>${escapeHtml(snapshot.imageryDensity||'')}</p></div>
+        <div><h4>Tone</h4><p>${escapeHtml(snapshot.tone||'')}</p></div>
+        <div><h4>Themes</h4><p>${escapeHtml((snapshot.themes||[]).join(' · '))}</p></div>
+        <div><h4>Form + rhythm</h4><p>${escapeHtml(`${snapshot.form||''} ${snapshot.rhythm||''}`.trim())}</p></div>
+      </div></div></div>`:''}
+      ${poets?`<div class='analysis-stage stage-10'><div class='analysis-prose'><h3>Recommended poets</h3><div class='analysis-poet-grid'>${poets}</div></div></div>`:''}
+      ${nextReads?`<div class='analysis-stage stage-11'><div class='analysis-prose'><h3>Next reads</h3><ul class='analysis-list'>${nextReads}</ul></div></div>`:''}
+      <div class='analysis-stage stage-12'>
         <div class='analysis-end-action'><a class='btn secondary' href='${archetypeHref}'>Learn more</a></div>
       </div>`;
 
