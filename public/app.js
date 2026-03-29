@@ -744,6 +744,16 @@ function ensureResponsiveHeader(){
 function setupTopNav(){
   const currentPath=location.pathname;
   const activeHref=currentPath.startsWith('/type/')?'/types':currentPath;
+
+  document.querySelectorAll('.site-top .brand').forEach((brand)=>{
+    brand.setAttribute('role','link');
+    brand.setAttribute('tabindex','0');
+    brand.setAttribute('aria-label','Go to home page');
+    const goHome=()=>{ if(location.pathname!=='/') location.href='/'; };
+    brand.addEventListener('click',goHome);
+    brand.addEventListener('keydown',(e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); goHome(); }});
+  });
+
   document.querySelectorAll('.site-top nav a[href^="/"], #mobileNav a[href^="/"]').forEach((a)=>{
     const hrefRaw=a.getAttribute('href')||'';
     const href=hrefRaw==='/'?'/':hrefRaw.replace(/\/+$/,'');
