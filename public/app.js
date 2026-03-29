@@ -1993,7 +1993,7 @@ function setupStorytellerGuide(types=[]){
       <div class='story-guide-dialogue'>
         <p class='story-guide-speaker'>The Storyteller</p>
         <p class='story-guide-tip' id='storyGuideTip'></p>
-        <button type='button' class='story-guide-next-btn' id='storyGuideNextBtn'>Next tip</button>
+        <button type='button' class='story-guide-next-btn' id='storyGuideNextBtn'>Another idea</button>
       </div>
     </div>
     <figure class='story-guide-art'><video class='story-guide-art-video' muted loop playsinline preload='metadata' poster='/images/the-storyteller.png'><source src='/videos/the-storyteller-hover.mp4' type='video/mp4'></video></figure>`;
