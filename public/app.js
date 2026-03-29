@@ -1818,9 +1818,7 @@ function setupMyPoemsPage(){
 }
 
 function setupStorytellerGuide(types=[]){
-  const allowed=['/','/analyze','/types'];
-  const isTypeProfile=location.pathname.startsWith('/type/');
-  if(!allowed.includes(location.pathname)&&!isTypeProfile) return;
+  if(location.pathname!=='/analyze') return;
   // Show guide on each page load (do not persist dismiss across refresh).
 
   const tipDeckByType={
