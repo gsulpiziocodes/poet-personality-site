@@ -907,6 +907,7 @@ function setupPoemUploader(targetId='funnel',types=[]){
   const analyzeBtn=box.querySelector('#analyzePoemsBtn');
   const deepPoemSelect=box.querySelector('#deepPoemSelect');
   const deepAnalyzeSingleBtn=box.querySelector('#deepAnalyzeSingleBtn');
+  const analysisActionsRow=box.querySelector('.analysis-actions-under-summary');
   const analysisResult=box.querySelector('#analysisResult');
   const analysisEmail=box.querySelector('#analysisEmail');
   const status=box.querySelector('#poemSaveStatus');
@@ -1124,8 +1125,26 @@ function setupPoemUploader(targetId='funnel',types=[]){
     deepPoemSelect.value=preferred;
   };
 
+  const syncSelectionModeUI=()=>{
+    const value=String(deepPoemSelect?.value||'summary');
+    const poemSelected=value!=='summary';
+
+    if(analysisActionsRow) analysisActionsRow.style.display=poemSelected?'none':'grid';
+
+    if(deepAnalyzeSingleBtn){
+      deepAnalyzeSingleBtn.textContent=poemSelected?'Analyze Poem':'Deep Analyze Poem';
+      deepAnalyzeSingleBtn.classList.toggle('is-gold',poemSelected);
+      deepAnalyzeSingleBtn.classList.toggle('is-tertiary',!poemSelected);
+    }
+
+    if(poemSelected){
+      analysisResult.classList.add('muted');
+      analysisResult.textContent='Selected poem ready. Click “Analyze Poem” to run analysis.';
+    }
+  };
+
   const renderList=()=>{
-    if(!poems.length){list.innerHTML=`<div class='thread-empty muted'>No poems yet.</div>`;syncDeepPoemOptions();return;}
+    if(!poems.length){list.innerHTML=`<div class='thread-empty muted'>No poems yet.</div>`;syncDeepPoemOptions();syncSelectionModeUI();return;}
     list.innerHTML=poems.map((poem,idx)=>{
       const title=(poem.title||`Untitled poem ${idx+1}`).trim();
       const preview=(poem.text||'').replace(/\s+/g,' ').trim().slice(0,90)||'No content yet';
@@ -1139,6 +1158,7 @@ function setupPoemUploader(targetId='funnel',types=[]){
     }).join('');
     list.querySelectorAll('.thread-row').forEach((btn)=>btn.addEventListener('click',()=>{selected=Number(btn.dataset.idx);renderList();renderEditor();}));
     syncDeepPoemOptions();
+    syncSelectionModeUI();
   };
 
   const addPoem=(poem={})=>{
@@ -1355,12 +1375,18 @@ function setupPoemUploader(targetId='funnel',types=[]){
 
   analyzeBtn.addEventListener('click',()=>runAnalysis({deep:false}));
   deepPoemSelect?.addEventListener('change',()=>{
-    const idx=Number(deepPoemSelect.value);
+    const value=String(deepPoemSelect.value||'summary');
+    if(value==='summary'){
+      syncSelectionModeUI();
+      return;
+    }
+    const idx=Number(value);
     if(Number.isInteger(idx)){
       selected=idx;
       renderList();
       renderEditor();
     }
+    syncSelectionModeUI();
   });
 
   deepAnalyzeSingleBtn?.addEventListener('click',()=>{
@@ -1371,7 +1397,7 @@ function setupPoemUploader(targetId='funnel',types=[]){
     }
     const idx=Number(value);
     if(!Number.isInteger(idx)) return;
-    runAnalysis({deep:true,poemIndex:idx});
+    runAnalysis({deep:false,poemIndex:idx});
   });
 
   const cachedAnalysis=getAnalysisCache();
