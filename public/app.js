@@ -1224,8 +1224,8 @@ function setupPoemUploader(targetId='funnel',types=[]){
         <div class='analysis-stage stage-1 in'>
           <div class='analysis-hero'>
             <p class='kicker'>Poet Summary</p>
-            <h2>${chosenTitle||a.personalityTitle}</h2>
-            <p class='lead'>${a.summary}</p>
+            <h2>${a.personalityTitle}</h2>
+            ${chosenTitle?`<p class='lead'>“${escapeHtml(chosenTitle)}” aligns with <strong>${escapeHtml(a.personalityTitle)}</strong>.</p>`:`<p class='lead'>${a.summary}</p>`}
           </div>
         </div>
         ${deepDive?`<div class='analysis-stage stage-2 in'><div class='analysis-prose'><h3>Deep analysis summary</h3><p>${escapeHtml(deepDive.patternSummary||'')}</p><div class='analysis-grid'>
@@ -1243,8 +1243,8 @@ function setupPoemUploader(targetId='funnel',types=[]){
         <div class='analysis-hero analysis-hero-with-image'>
           <div>
             <p class='kicker'>${chosenTitle?'Selected Poem':'Matched Archetype'}</p>
-            <h2>${chosenTitle||a.personalityTitle}</h2>
-            <p class='lead'>${a.summary}</p>
+            <h2>${a.personalityTitle}</h2>
+            ${chosenTitle?`<p class='lead'>“${escapeHtml(chosenTitle)}” aligns with <strong>${escapeHtml(a.personalityTitle)}</strong>.</p>`:`<p class='lead'>${a.summary}</p>`}
           </div>
           ${personalityImageSrc?`<figure class='analysis-hero-art'><img src='${personalityImageSrc}' alt='${a.personalityTitle} personality illustration' loading='lazy'/></figure>`:''}
         </div>
