@@ -1161,8 +1161,16 @@ function setupPoemUploader(targetId='funnel',types=[]){
         </div>
       </div>
       ${bestLines?`<div class='analysis-stage stage-5'><div class='analysis-prose'><h3>Best lines</h3>${bestLines}</div></div>`:''}
-      ${works?`<div class='analysis-stage stage-6'><div class='analysis-prose'><h3>What works</h3><ul class='analysis-list'>${works}</ul></div></div>`:''}
-      ${improve?`<div class='analysis-stage stage-7'><div class='analysis-prose'><h3>What to improve</h3><ul class='analysis-list'>${improve}</ul></div></div>`:''}
+      ${(works||improve)?`<div class='analysis-stage stage-6'><div class='analysis-prose'><h3>Craft T‑Chart</h3><div class='analysis-tchart'>
+        <section class='analysis-tchart-col is-good'>
+          <h4>What works</h4>
+          <ul class='analysis-list'>${works||''}</ul>
+        </section>
+        <section class='analysis-tchart-col is-risk'>
+          <h4>What doesn’t (yet)</h4>
+          <ul class='analysis-list'>${improve||''}</ul>
+        </section>
+      </div></div></div>`:''}
       ${inferences?`<div class='analysis-stage stage-8'><div class='analysis-prose'><h3>Poet inferences</h3><ul class='analysis-list'>${inferences}</ul></div></div>`:''}
       ${snapshot&&Object.keys(snapshot).length?`<div class='analysis-stage stage-9'><div class='analysis-prose'><h3>Style snapshot</h3><div class='analysis-grid'>
         <div><h4>Diction</h4><p>${escapeHtml(snapshot.diction||'')}</p></div>
