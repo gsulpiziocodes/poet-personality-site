@@ -110,7 +110,13 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .editor-head input,#editorText{width:100%;border:0;border-radius:10px;padding:10px 12px;background:var(--input-bg);color:var(--input-text)}
 .poems-main{padding:18px;background:#fffefb}
 .editor-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.editor-head-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .editor-head input{font-size:1.1rem;font-weight:600}
+.poem-grade-result{margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.grade-hero h3{margin:0 0 6px}
+.grade-hero h3 span{color:var(--accent-soft)}
+.grading-sources{margin-top:10px;padding:8px 10px;border:1px solid #efe3d2;border-radius:10px;background:#fcf8f1}
+.grading-sources summary{cursor:pointer;font-weight:600}
 #editorText{min-height:500px;resize:vertical;margin-top:10px;line-height:1.65}
 .poems-empty{display:grid;place-items:center;min-height:520px;text-align:center}
 .thread-empty{padding:12px}

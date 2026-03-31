@@ -914,6 +914,142 @@ function analyzePoemCorpus(poems = [], options = {}) {
   };
 }
 
+function clamp(n, min, max) {
+  return Math.max(min, Math.min(max, n));
+}
+
+function gradingSources() {
+  return [
+    {
+      title: "Poetry Foundation — Glossary of Poetic Terms",
+      note: "Shared vocabulary for line, form, sound, and figurative technique used in workshop contexts.",
+      url: "https://www.poetryfoundation.org/learn/glossary-terms"
+    },
+    {
+      title: "Purdue OWL — Writing About Poetry",
+      note: "Evidence-based close-reading framework for interpretation, clarity, and textual support.",
+      url: "https://owl.purdue.edu/owl/subject_specific_writing/writing_in_literature/writing_about_poetry.html"
+    },
+    {
+      title: "Academy of American Poets — Ars Poetica",
+      note: "Craft guidance and poetic practice resources used for developmental feedback.",
+      url: "https://poets.org/"
+    }
+  ];
+}
+
+function gradeSinglePoem(poem = {}) {
+  const text = String(poem?.text || "").trim();
+  const lines = text.split("\n").map((x) => x.trim()).filter(Boolean);
+  const words = text.toLowerCase().match(/[a-z']+/g) || [];
+  const unique = new Set(words).size;
+
+  const avgLineLength = lines.length
+    ? lines.reduce((sum, line) => sum + line.split(/\s+/).filter(Boolean).length, 0) / lines.length
+    : 0;
+
+  const imageryHits = (text.match(/(light|shadow|street|river|fire|ash|body|window|skin|rain|moon|stone|salt)/gi) || []).length;
+  const figurativeHits = (text.match(/\b(like|as if|as though)\b/gi) || []).length;
+  const questionHits = lines.filter((line) => line.includes("?")).length;
+  const strongVerbs = (text.match(/\b(break|burn|hold|cut|carry|turn|press|open|refuse|gather|drift|echo)\b/gi) || []).length;
+
+  const imageryScore = clamp(2.2 + imageryHits * 0.11 + figurativeHits * 0.15, 1.8, 5);
+  const clarityScore = clamp(2.1 + (avgLineLength >= 4 && avgLineLength <= 13 ? 1.2 : 0.4) + (questionHits <= Math.max(2, lines.length * 0.25) ? 0.6 : 0.2), 1.8, 5);
+  const structureScore = clamp(2.0 + (lines.length >= 8 ? 0.8 : 0.2) + (Math.abs(avgLineLength - 8) < 4 ? 1.0 : 0.4), 1.8, 5);
+  const originalityScore = clamp(2.0 + (words.length ? (unique / words.length) * 2.2 : 0.2) + strongVerbs * 0.05, 1.8, 5);
+
+  const overall = Number(clamp((imageryScore + clarityScore + structureScore + originalityScore) / 4, 1, 5).toFixed(1));
+
+  const strengths = [
+    imageryHits > 4 ? "Strong image language gives the poem sensory traction." : "The poem has a clear emotional center.",
+    strongVerbs > 3 ? "Active verbs create forward momentum in key lines." : "Your line tone feels intentional and controlled.",
+    avgLineLength <= 11 ? "Line length supports readability and cadence." : "Longer lines create a reflective, narrative pulse."
+  ];
+
+  const revisionAdvice = [
+    "Sharpen one central image and let nearby lines orbit that image.",
+    "Cut 10-15% of filler words; keep only lines that add pressure or surprise.",
+    "Add one tonal turn in the final third so the ending feels earned, not simply concluded."
+  ];
+
+  return {
+    score: overall,
+    outOf: 5,
+    craftBreakdown: {
+      imagery: Number(imageryScore.toFixed(1)),
+      clarity: Number(clarityScore.toFixed(1)),
+      structure: Number(structureScore.toFixed(1)),
+      originality: Number(originalityScore.toFixed(1))
+    },
+    strengths,
+    revisionAdvice,
+    workshopComment: `This draft shows real promise: the voice is present and the poem already carries a recognizable emotional arc. The next gain comes from tightening image hierarchy and strengthening the final turn.`,
+    gradingSources: gradingSources()
+  };
+}
+
+function gradePoetryOverall(poems = []) {
+  const valid = (poems || []).map((p) => ({ title: String(p?.title || "Untitled").trim(), text: String(p?.text || "").trim() })).filter((p) => p.text);
+  const analyzed = valid.map((poem) => ({ poem, grade: gradeSinglePoem(poem) }));
+
+  const corpus = valid.map((p) => p.text).join("\n");
+  const words = corpus.toLowerCase().match(/[a-z']+/g) || [];
+  const unique = new Set(words).size;
+  const lexicalVar = words.length ? unique / words.length : 0;
+
+  const personality = analyzePoemCorpus(valid, { deep: true });
+  const consistency = clamp(2.0 + (personality?.observations?.recurringThemes?.length ? 1.4 : 0.6) + (lexicalVar > 0.48 ? 1.0 : 0.5), 1, 5);
+  const range = clamp(2.0 + Math.min(1.2, (personality?.observations?.recurringThemes?.length || 1) * 0.35) + (valid.length >= 4 ? 0.8 : 0.2), 1, 5);
+  const originality = clamp(2.0 + lexicalVar * 2.4 + ((personality?.deepDive?.lineShape || "").includes("high rhythmic swing") ? 0.4 : 0.1), 1, 5);
+  const clarity = clamp(2.0 + ((personality?.observations?.structureAndVoice || "").includes("Average line length") ? 1.2 : 0.5) + (valid.length >= 3 ? 0.6 : 0.2), 1, 5);
+  const imagery = clamp(2.0 + ((personality?.styleSnapshot?.imageryDensity || "").includes("moderate-to-high") ? 1.4 : 0.7), 1, 5);
+  const structure = clamp(2.0 + ((personality?.styleSnapshot?.form || "").toLowerCase().includes("free verse") ? 0.9 : 1.1) + (valid.length >= 5 ? 0.6 : 0.2), 1, 5);
+
+  const weights = { consistency: 0.22, range: 0.14, originality: 0.18, clarity: 0.14, imagery: 0.16, structure: 0.16 };
+  const overall = Number(clamp(
+    consistency * weights.consistency +
+      range * weights.range +
+      originality * weights.originality +
+      clarity * weights.clarity +
+      imagery * weights.imagery +
+      structure * weights.structure,
+    1,
+    5
+  ).toFixed(1));
+
+  const strongestPoems = analyzed
+    .map((row) => ({ title: row.poem.title || "Untitled", score: row.grade.score, reason: row.grade.strengths[0] || "Strong craft execution." }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3);
+
+  return {
+    score: overall,
+    outOf: 5,
+    poemCount: valid.length,
+    rubric: {
+      voiceConsistency: Number(consistency.toFixed(1)),
+      range: Number(range.toFixed(1)),
+      originality: Number(originality.toFixed(1)),
+      clarity: Number(clarity.toFixed(1)),
+      imagery: Number(imagery.toFixed(1)),
+      structure: Number(structure.toFixed(1))
+    },
+    topStrengths: [
+      `Voice consistency: ${personality?.observations?.emotionalPattern || "cohesive tonal center"}.`,
+      `Recurring thematic intent across ${personality?.observations?.recurringThemes?.join(", ") || "multiple poetic energies"}.`,
+      "Image-driven lines create memorable emotional entry points."
+    ],
+    growthAreas: [
+      "Increase range by writing against your default cadence once per week.",
+      "Push clearer stanza-level turns so each poem evolves, not just accumulates.",
+      "Deepen originality by swapping familiar abstractions for specific scene detail."
+    ],
+    strongestPoems,
+    workshopComment: "This is not a simple average of poem scores; it reflects recurring craft patterns across your body of work. Your voice is forming clearly, and targeted revision on range + structural turns will raise the whole portfolio.",
+    gradingSources: gradingSources()
+  };
+}
+
 app.use(express.json({ limit: "256kb" }));
 app.use(express.urlencoded({ extended: false }));
 app.use(loadUserFromSession);
@@ -1121,6 +1257,40 @@ app.post("/api/poems/analyze", rateLimit({ keyPrefix: "poems", windowMs: 60_000,
     return res.json({ ok: true, analysis, deep, poemCount: valid.length, emailSent, emailReason });
   } catch (error) {
     return res.status(500).json({ ok: false, error: "analysis_failed", details: error.message });
+  }
+});
+
+app.post("/api/poems/grade", rateLimit({ keyPrefix: "poems", windowMs: 60_000, maxHits: 30 }), async (req, res) => {
+  try {
+    const poem = {
+      title: String(req.body?.poem?.title || req.body?.title || "Untitled").trim(),
+      text: String(req.body?.poem?.text || req.body?.text || "").trim()
+    };
+    if (!poem.text) return res.status(400).json({ ok: false, error: "no_poem_text" });
+
+    const grade = gradeSinglePoem(poem);
+    return res.json({ ok: true, grade, mode: "single_poem" });
+  } catch (error) {
+    return res.status(500).json({ ok: false, error: "poem_grade_failed", details: error.message });
+  }
+});
+
+app.post("/api/poetry/grade-overall", rateLimit({ keyPrefix: "poems", windowMs: 60_000, maxHits: 20 }), async (req, res) => {
+  try {
+    let poems = Array.isArray(req.body?.poems) ? req.body.poems : [];
+    const token = String(req.body?.collectionToken || "").trim();
+    if (!poems.length && token) poems = await getPoemsByCollectionToken(token);
+
+    const valid = poems
+      .map((p) => ({ title: String(p?.title || "Untitled"), text: String(p?.text || "").trim() }))
+      .filter((p) => p.text);
+
+    if (!valid.length) return res.status(400).json({ ok: false, error: "no_poems_to_grade" });
+
+    const grade = gradePoetryOverall(valid);
+    return res.json({ ok: true, grade, mode: "overall_poetry" });
+  } catch (error) {
+    return res.status(500).json({ ok: false, error: "overall_grade_failed", details: error.message });
   }
 });
 

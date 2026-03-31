@@ -1028,12 +1028,55 @@ function setupPoemUploader(targetId='funnel',types=[]){
     const poem=poems[selected];
     editor.innerHTML=`<div class='editor-head'>
       <input id='editorTitle' maxlength='160' value="${String(poem.title||'').replace(/"/g,'&quot;')}" placeholder='Poem title' />
-      <button type='button' class='btn secondary' id='deletePoemBtn'>Delete</button>
+      <div class='editor-head-actions'>
+        <button type='button' class='btn secondary' id='gradePoemBtn'>Grade My Poem</button>
+        <button type='button' class='btn secondary' id='deletePoemBtn'>Delete</button>
+      </div>
     </div>
-    <textarea id='editorText' maxlength='10000' placeholder='Write or paste your poem...'>${poem.text||''}</textarea>`;
+    <textarea id='editorText' maxlength='10000' placeholder='Write or paste your poem...'>${poem.text||''}</textarea>
+    <section id='singlePoemGradeResult' class='poem-grade-result muted'>Poem-specific grading appears here after you click “Grade My Poem.”</section>`;
+
+    const renderSinglePoemGrade=(grade)=>{
+      const mount=editor.querySelector('#singlePoemGradeResult');
+      if(!mount||!grade) return;
+      mount.classList.remove('muted');
+      const rubric=grade.craftBreakdown||{};
+      const strengths=(grade.strengths||[]).map((x)=>`<li>${escapeHtml(x)}</li>`).join('');
+      const advice=(grade.revisionAdvice||[]).map((x)=>`<li>${escapeHtml(x)}</li>`).join('');
+      const sources=(grade.gradingSources||[]).map((s)=>`<li><strong>${escapeHtml(s.title||'Source')}</strong> — ${escapeHtml(s.note||'')} ${s.url?`<a href='${escapeHtml(s.url)}' target='_blank' rel='noreferrer'>View</a>`:''}</li>`).join('');
+      mount.innerHTML=`
+        <div class='grade-hero'><p class='kicker'>Poetry Grading</p><h3>Grade My Poem: <span>${escapeHtml(String(grade.score||'0.0'))}/5</span></h3><p>${escapeHtml(grade.workshopComment||'')}</p></div>
+        <div class='analysis-grid'>
+          <div><h4>Imagery</h4><p>${escapeHtml(String(rubric.imagery||'-'))}/5</p></div>
+          <div><h4>Clarity</h4><p>${escapeHtml(String(rubric.clarity||'-'))}/5</p></div>
+          <div><h4>Structure</h4><p>${escapeHtml(String(rubric.structure||'-'))}/5</p></div>
+          <div><h4>Originality</h4><p>${escapeHtml(String(rubric.originality||'-'))}/5</p></div>
+        </div>
+        <div class='analysis-tchart'>
+          <section class='analysis-tchart-col is-good'><h4>Strengths</h4><ul class='analysis-list'>${strengths}</ul></section>
+          <section class='analysis-tchart-col is-risk'><h4>Revision advice</h4><ul class='analysis-list'>${advice}</ul></section>
+        </div>
+        <details class='grading-sources'><summary>How this is graded</summary><ul class='analysis-list'>${sources}</ul></details>`;
+    };
 
     editor.querySelector('#editorTitle').addEventListener('input',(e)=>{poems[selected].title=e.target.value;queueSave();});
     editor.querySelector('#editorText').addEventListener('input',(e)=>{poems[selected].text=e.target.value;queueSave();});
+    editor.querySelector('#gradePoemBtn').addEventListener('click',async ()=>{
+      const poemNow=poems[selected];
+      const text=String(poemNow?.text||'').trim();
+      const mount=editor.querySelector('#singlePoemGradeResult');
+      if(!text){ if(mount){mount.classList.add('muted');mount.textContent='Add poem text first, then grade this poem.';} return; }
+      if(mount){mount.classList.add('muted');mount.innerHTML=`<div class='analysis-loading'><span class='pulse-dot'></span><span>Scoring this draft with craft feedback…</span></div>`;}
+      try{
+        const res=await fetch('/api/poems/grade',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({poem:{title:(poemNow.title||'').trim(),text}})});
+        const data=await res.json();
+        if(!res.ok||!data?.ok) throw new Error('grade_failed');
+        renderSinglePoemGrade(data.grade);
+      }catch{
+        if(mount){mount.classList.add('muted');mount.textContent='Could not grade this poem right now. Try again.';}
+      }
+    });
+
     editor.querySelector('#deletePoemBtn').addEventListener('click',async ()=>{
       const poemToDelete=poems[selected];
       if(!poemToDelete) return;
@@ -1499,7 +1542,67 @@ async function setupDashboardPage(){
         <a class='btn primary' href='/analyze'>Continue Writing</a>
         <a class='btn secondary' href='/settings'>Account Settings</a>
       </div>
+    </section>
+    <section class='card grade-overall-card'>
+      <div class='analysis-top'>
+        <h3>Poetry Grading — Overall</h3>
+        <button class='btn secondary' id='gradeOverallBtn' type='button'>Grade My Poetry Overall</button>
+      </div>
+      <p class='muted'>A body-of-work score based on recurring strengths, weaknesses, voice consistency, range, originality, clarity, structure, imagery, and overall craft.</p>
+      <div id='overallGradeResult' class='muted'>Run your overall grade to see portfolio-level feedback.</div>
     </section>`,''));
+
+    const overallBtn=root.querySelector('#gradeOverallBtn');
+    const overallResult=root.querySelector('#overallGradeResult');
+
+    const renderOverallGrade=(grade)=>{
+      if(!overallResult||!grade) return;
+      const top=(grade.topStrengths||[]).map((x)=>`<li>${escapeHtml(x)}</li>`).join('');
+      const growth=(grade.growthAreas||[]).map((x)=>`<li>${escapeHtml(x)}</li>`).join('');
+      const strongest=(grade.strongestPoems||[]).map((x)=>`<li><strong>${escapeHtml(x.title||'Untitled')}</strong> — ${escapeHtml(String(x.score||'-'))}/5 · ${escapeHtml(x.reason||'')}</li>`).join('');
+      const sources=(grade.gradingSources||[]).map((s)=>`<li><strong>${escapeHtml(s.title||'Source')}</strong> — ${escapeHtml(s.note||'')} ${s.url?`<a href='${escapeHtml(s.url)}' target='_blank' rel='noreferrer'>View</a>`:''}</li>`).join('');
+      const r=grade.rubric||{};
+      overallResult.classList.remove('muted');
+      overallResult.innerHTML=`
+        <div class='grade-hero'><p class='kicker'>Portfolio Grade</p><h3>Overall poetry score: <span>${escapeHtml(String(grade.score||'0.0'))}/5</span></h3><p>${escapeHtml(grade.workshopComment||'')}</p></div>
+        <div class='analysis-grid'>
+          <div><h4>Voice consistency</h4><p>${escapeHtml(String(r.voiceConsistency||'-'))}/5</p></div>
+          <div><h4>Range</h4><p>${escapeHtml(String(r.range||'-'))}/5</p></div>
+          <div><h4>Originality</h4><p>${escapeHtml(String(r.originality||'-'))}/5</p></div>
+          <div><h4>Clarity</h4><p>${escapeHtml(String(r.clarity||'-'))}/5</p></div>
+          <div><h4>Imagery</h4><p>${escapeHtml(String(r.imagery||'-'))}/5</p></div>
+          <div><h4>Structure</h4><p>${escapeHtml(String(r.structure||'-'))}/5</p></div>
+        </div>
+        <div class='analysis-tchart'>
+          <section class='analysis-tchart-col is-good'><h4>Top strengths</h4><ul class='analysis-list'>${top}</ul></section>
+          <section class='analysis-tchart-col is-risk'><h4>Growth areas</h4><ul class='analysis-list'>${growth}</ul></section>
+        </div>
+        <section class='analysis-prose'><h4>Strongest poems</h4><ul class='analysis-list'>${strongest}</ul></section>
+        <details class='grading-sources'><summary>How this is graded</summary><ul class='analysis-list'>${sources}</ul></details>`;
+    };
+
+    overallBtn?.addEventListener('click',async ()=>{
+      const token=getCollectionToken()||(Array.isArray(data?.user?.collection_tokens)?data.user.collection_tokens[0]:null);
+      if(!token){
+        overallResult.classList.add('muted');
+        overallResult.textContent='No saved poem collection found yet. Save poems in Analyze first, then run overall grading.';
+        return;
+      }
+      overallBtn.disabled=true;
+      overallResult.classList.add('muted');
+      overallResult.innerHTML=`<div class='analysis-loading'><span class='pulse-dot'></span><span>Evaluating your body of work…</span></div>`;
+      try{
+        const res=await fetch('/api/poetry/grade-overall',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({collectionToken:token})});
+        const data=await res.json();
+        if(!res.ok||!data?.ok) throw new Error('overall_grade_failed');
+        renderOverallGrade(data.grade);
+      }catch{
+        overallResult.classList.add('muted');
+        overallResult.textContent='Could not grade your poetry overall right now. Add/save poems and try again.';
+      }finally{
+        overallBtn.disabled=false;
+      }
+    });
   }catch{
     location.href='/account';
   }
