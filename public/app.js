@@ -893,6 +893,10 @@ function setupPoemUploader(targetId='funnel',types=[]){
         <button class='btn secondary' id='deepAnalyzePoemsBtn' type='button'>Deep Analysis</button>
       </div>
     </div>
+    <div class='analysis-poem-deep-row'>
+      <select id='deepPoemSelect' aria-label='Choose poem for deep analysis'></select>
+      <button class='btn secondary' id='deepAnalyzeSingleBtn' type='button'>Deep Analyze Selected Poem</button>
+    </div>
     <input id='analysisEmail' type='email' autocomplete='email' hidden />
     <div id='analysisResult' class='analysis-result muted'>Write a few poems, then run analysis for an identity-level reading.</div>
   </section>`, 'poems-wrapper');
@@ -903,6 +907,8 @@ function setupPoemUploader(targetId='funnel',types=[]){
   const addBtn=box.querySelector('#newPoemBtn');
   const analyzeBtn=box.querySelector('#analyzePoemsBtn');
   const deepAnalyzeBtn=box.querySelector('#deepAnalyzePoemsBtn');
+  const deepPoemSelect=box.querySelector('#deepPoemSelect');
+  const deepAnalyzeSingleBtn=box.querySelector('#deepAnalyzeSingleBtn');
   const analysisResult=box.querySelector('#analysisResult');
   const analysisEmail=box.querySelector('#analysisEmail');
   const status=box.querySelector('#poemSaveStatus');
@@ -1059,8 +1065,26 @@ function setupPoemUploader(targetId='funnel',types=[]){
     });
   };
 
+  const syncDeepPoemOptions=()=>{
+    if(!deepPoemSelect) return;
+    if(!poems.length){
+      deepPoemSelect.innerHTML="<option value=''>No poems available</option>";
+      deepPoemSelect.disabled=true;
+      if(deepAnalyzeSingleBtn) deepAnalyzeSingleBtn.disabled=true;
+      return;
+    }
+    deepPoemSelect.disabled=false;
+    if(deepAnalyzeSingleBtn) deepAnalyzeSingleBtn.disabled=false;
+    deepPoemSelect.innerHTML=poems.map((poem,idx)=>{
+      const title=(poem.title||`Untitled poem ${idx+1}`).trim();
+      return `<option value='${idx}'>${escapeHtml(title)}</option>`;
+    }).join('');
+    const preferred=selected>=0?String(selected):'0';
+    deepPoemSelect.value=preferred;
+  };
+
   const renderList=()=>{
-    if(!poems.length){list.innerHTML=`<div class='thread-empty muted'>No poems yet.</div>`;return;}
+    if(!poems.length){list.innerHTML=`<div class='thread-empty muted'>No poems yet.</div>`;syncDeepPoemOptions();return;}
     list.innerHTML=poems.map((poem,idx)=>{
       const title=(poem.title||`Untitled poem ${idx+1}`).trim();
       const preview=(poem.text||'').replace(/\s+/g,' ').trim().slice(0,90)||'No content yet';
@@ -1073,6 +1097,7 @@ function setupPoemUploader(targetId='funnel',types=[]){
       </button>`;
     }).join('');
     list.querySelectorAll('.thread-row').forEach((btn)=>btn.addEventListener('click',()=>{selected=Number(btn.dataset.idx);renderList();renderEditor();}));
+    syncDeepPoemOptions();
   };
 
   const addPoem=(poem={})=>{
@@ -1206,8 +1231,18 @@ function setupPoemUploader(targetId='funnel',types=[]){
 
   addBtn.addEventListener('click',()=>addPoem({title:'',text:''}));
 
-  const runAnalysis=async ({deep=false}={})=>{
-    const payload=poems.map((p)=>({title:(p.title||'').trim(),text:(p.text||'').trim()})).filter((p)=>p.text);
+  const runAnalysis=async ({deep=false,poemIndex=null}={})=>{
+    const allPayload=poems.map((p)=>({title:(p.title||'').trim(),text:(p.text||'').trim()})).filter((p)=>p.text);
+    const singleMode=Number.isInteger(poemIndex);
+    const payload=singleMode
+      ? (()=>{
+          const p=poems[poemIndex];
+          if(!p) return [];
+          const text=(p.text||'').trim();
+          if(!text) return [];
+          return [{title:(p.title||'').trim(),text}];
+        })()
+      : allPayload;
 
     let email=String(analysisEmail?.value||'').trim().toLowerCase();
     if(!isValidEmail(email)){
@@ -1223,11 +1258,12 @@ function setupPoemUploader(targetId='funnel',types=[]){
       return;
     }
 
-    if(!payload.length){analysisResult.classList.add('muted');analysisResult.textContent='Add poem text first, then analyze.';return;}
+    if(!payload.length){analysisResult.classList.add('muted');analysisResult.textContent=singleMode?'Add text to the selected poem first.':'Add poem text first, then analyze.';return;}
     analyzeBtn.disabled=true;
     if(deepAnalyzeBtn) deepAnalyzeBtn.disabled=true;
+    if(deepAnalyzeSingleBtn) deepAnalyzeSingleBtn.disabled=true;
     analysisResult.classList.add('muted');
-    analysisResult.innerHTML=`<div class='analysis-loading'><span class='pulse-dot'></span><span>${deep?'Running deep analysis on voice, craft, and structure…':'Analyzing voice, themes, and poetic identity…'}</span></div>`;
+    analysisResult.innerHTML=`<div class='analysis-loading'><span class='pulse-dot'></span><span>${singleMode?'Running deep analysis for selected poem…':deep?'Running deep analysis on voice, craft, and structure…':'Analyzing voice, themes, and poetic identity…'}</span></div>`;
     try{
       const res=await fetch('/api/poems/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({collectionToken:getCollectionToken(),poems:payload,email,deep})});
       const data=await res.json();
@@ -1252,11 +1288,26 @@ function setupPoemUploader(targetId='funnel',types=[]){
     }finally{
       analyzeBtn.disabled=false;
       if(deepAnalyzeBtn) deepAnalyzeBtn.disabled=false;
+      if(deepAnalyzeSingleBtn) deepAnalyzeSingleBtn.disabled=false;
     }
   };
 
   analyzeBtn.addEventListener('click',()=>runAnalysis({deep:false}));
   deepAnalyzeBtn?.addEventListener('click',()=>runAnalysis({deep:true}));
+  deepPoemSelect?.addEventListener('change',()=>{
+    const idx=Number(deepPoemSelect.value);
+    if(Number.isInteger(idx)){
+      selected=idx;
+      renderList();
+      renderEditor();
+    }
+  });
+
+  deepAnalyzeSingleBtn?.addEventListener('click',()=>{
+    const idx=Number(deepPoemSelect?.value);
+    if(!Number.isInteger(idx)) return;
+    runAnalysis({deep:true,poemIndex:idx});
+  });
 
   const cachedAnalysis=getAnalysisCache();
   if(cachedAnalysis?.payload && (!cachedAnalysis.token || cachedAnalysis.token===token)){

@@ -118,6 +118,8 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .analysis-zone{margin-top:14px;padding:16px 6px 4px}
 .analysis-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .analysis-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.analysis-poem-deep-row{margin-top:10px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
+.analysis-poem-deep-row select{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface);color:var(--ink)}
 .analysis-email-row{margin-top:10px}
 #analysisEmail{width:100%;max-width:460px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.96rem;background:var(--surface);color:var(--ink)}
 #analysisEmail:focus{outline:none;border-color:var(--accent-soft);box-shadow:0 0 0 3px color-mix(in oklab,var(--accent-soft) 22%, transparent)}
@@ -459,6 +461,8 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
   .analysis-zone{padding:12px 2px 0}
   .analysis-top{align-items:flex-start;flex-direction:column;gap:8px}
   .analysis-actions{width:100%;display:grid;grid-template-columns:1fr;gap:8px}
+  .analysis-poem-deep-row{grid-template-columns:1fr;gap:8px}
+  .analysis-poem-deep-row .btn{width:100%}
   .analysis-top .btn{width:100%}
   .analysis-top h3{font-size:1.08rem}
 
