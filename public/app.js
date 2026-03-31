@@ -895,7 +895,6 @@ function setupPoemUploader(targetId='funnel',types=[]){
     </div>
     <div class='analysis-actions analysis-actions-under-summary'>
       <button class='btn secondary analysis-action-btn is-secondary' id='analyzePoemsBtn' type='button'>Analyze</button>
-      <button class='btn primary analysis-action-btn is-gold' id='deepAnalyzePoemsBtn' type='button'>Deep Analysis</button>
     </div>
     <input id='analysisEmail' type='email' autocomplete='email' hidden />
     <div id='analysisResult' class='analysis-result muted'>Write a few poems, then run analysis for an identity-level reading.</div>
@@ -906,7 +905,6 @@ function setupPoemUploader(targetId='funnel',types=[]){
   const editor=box.querySelector('#poemEditorPane');
   const addBtn=box.querySelector('#newPoemBtn');
   const analyzeBtn=box.querySelector('#analyzePoemsBtn');
-  const deepAnalyzeBtn=box.querySelector('#deepAnalyzePoemsBtn');
   const deepPoemSelect=box.querySelector('#deepPoemSelect');
   const deepAnalyzeSingleBtn=box.querySelector('#deepAnalyzeSingleBtn');
   const analysisResult=box.querySelector('#analysisResult');
@@ -1280,15 +1278,15 @@ function setupPoemUploader(targetId='funnel',types=[]){
       ${deepMode&&nextReads?`<div class='analysis-stage stage-12'><div class='analysis-prose'><h3>Next reads</h3><ul class='analysis-list'>${nextReads}</ul></div></div>`:''}
       <div class='analysis-stage stage-13'>
         <div class='analysis-end-action'>
-          ${!deepMode?`<button class='btn secondary' id='promoteDeepAnalysisBtn' type='button'>Want deeper feedback? Run Deep Analysis</button>`:''}
+          ${!deepMode?`<button class='btn primary analysis-action-btn is-gold' id='runDeepAnalysisBtn' type='button'>Deep Analysis</button>`:''}
           <a class='btn secondary' href='${archetypeHref}'>Learn more</a>
         </div>
       </div>`;
 
     const stages=[...analysisResult.querySelectorAll('.analysis-stage')];
     stages.forEach((node,idx)=>setTimeout(()=>node.classList.add('in'),140*idx+120));
-    const promoteBtn=analysisResult.querySelector('#promoteDeepAnalysisBtn');
-    promoteBtn?.addEventListener('click',()=>runAnalysis({deep:true}));
+    const deepBtn=analysisResult.querySelector('#runDeepAnalysisBtn');
+    deepBtn?.addEventListener('click',()=>runAnalysis({deep:true}));
     setAnalysisCache(payload,deepMode?'deep':'short');
   };
 
@@ -1323,7 +1321,6 @@ function setupPoemUploader(targetId='funnel',types=[]){
 
     if(!payload.length){analysisResult.classList.add('muted');analysisResult.textContent=singleMode?'Add text to the selected poem first.':'Add poem text first, then analyze.';return;}
     analyzeBtn.disabled=true;
-    if(deepAnalyzeBtn) deepAnalyzeBtn.disabled=true;
     if(deepAnalyzeSingleBtn) deepAnalyzeSingleBtn.disabled=true;
     analysisResult.classList.add('muted');
     analysisResult.innerHTML=`<div class='analysis-loading'><span class='pulse-dot'></span><span>${summaryOnly?'Building deep poet summary…':singleMode?'Running deep analysis for selected poem…':deep?'Running deep analysis on voice, craft, and structure…':'Analyzing voice, themes, and poetic identity…'}</span></div>`;
@@ -1350,13 +1347,11 @@ function setupPoemUploader(targetId='funnel',types=[]){
       }
     }finally{
       analyzeBtn.disabled=false;
-      if(deepAnalyzeBtn) deepAnalyzeBtn.disabled=false;
       if(deepAnalyzeSingleBtn) deepAnalyzeSingleBtn.disabled=false;
     }
   };
 
   analyzeBtn.addEventListener('click',()=>runAnalysis({deep:false}));
-  deepAnalyzeBtn?.addEventListener('click',()=>runAnalysis({deep:true}));
   deepPoemSelect?.addEventListener('change',()=>{
     const idx=Number(deepPoemSelect.value);
     if(Number.isInteger(idx)){
