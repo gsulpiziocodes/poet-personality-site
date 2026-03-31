@@ -1357,7 +1357,9 @@ function setupPoemUploader(targetId='funnel',types=[]){
     if(deepAnalyzeSingleBtn) deepAnalyzeSingleBtn.disabled=true;
     analysisResult.classList.add('muted');
     analysisResult.setAttribute('aria-busy','true');
-    analysisResult.innerHTML=`<div class='analysis-loading'><span class='pulse-dot'></span><span>${summaryOnly?'Building deep poet summary…':singleMode?'Running deep analysis for selected poem…':deep?'Running deep analysis on voice, craft, and structure…':'Analyzing voice, themes, and poetic identity…'}</span></div>`;
+    const loadingLabel=summaryOnly?'Building deep poet summary…':singleMode?'Running deep analysis for selected poem…':deep?'Running deep analysis on voice, craft, and structure…':'Analyzing voice, themes, and poetic identity…';
+    const isDeepLoad=summaryOnly||singleMode||deep;
+    analysisResult.innerHTML=`<div class='analysis-loading ${isDeepLoad?'deep-load':''}'><span class='pulse-dot'></span><span>${loadingLabel}</span>${isDeepLoad?"<div class='analysis-loading-bar' role='progressbar' aria-label='Deep analysis loading'><span class='analysis-loading-bar-fill'></span></div>":''}</div>`;
     try{
       const res=await fetch('/api/poems/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({collectionToken:getCollectionToken(),poems:payload,email,deep})});
       const data=await res.json();

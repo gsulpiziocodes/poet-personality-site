@@ -163,9 +163,13 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .email-capture-dismiss:hover{text-decoration:underline;color:var(--ink)}
 
 .analysis-result{margin-top:10px;line-height:1.6}
-.analysis-loading{display:flex;align-items:center;gap:10px;color:var(--muted)}
+.analysis-loading{display:flex;align-items:center;gap:10px;color:var(--muted);flex-wrap:wrap}
+.analysis-loading.deep-load{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:8px 10px}
+.analysis-loading-bar{grid-column:1/-1;height:8px;border-radius:999px;background:#eadfce;border:1px solid #dcc8ae;overflow:hidden}
+.analysis-loading-bar-fill{display:block;height:100%;width:38%;border-radius:999px;background:linear-gradient(90deg,#c38951,#9f6132);animation:analysisLoadSlide 1.4s ease-in-out infinite}
 .pulse-dot{width:8px;height:8px;border-radius:999px;background:#9a6a36;animation:pulse 1.4s infinite}
 @keyframes pulse{0%{opacity:.25;transform:scale(.9)}50%{opacity:1;transform:scale(1.15)}100%{opacity:.25;transform:scale(.9)}}
+@keyframes analysisLoadSlide{0%{transform:translateX(-120%)}50%{transform:translateX(90%)}100%{transform:translateX(240%)}}
 .analysis-stage{opacity:0;transform:translateY(8px);transition:opacity .35s ease,transform .35s ease}
 .analysis-stage.in{opacity:1;transform:none}
 .analysis-hero{padding:18px;border-radius:16px;border:1px solid #e7d6bd;background:linear-gradient(180deg,#fbf5ea,#f4e7d2)}
