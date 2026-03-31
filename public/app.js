@@ -889,13 +889,13 @@ function setupPoemUploader(targetId='funnel',types=[]){
     <div class='analysis-top'>
       <h3>Reveal your poet personality</h3>
       <div class='analysis-actions'>
-        <button class='btn primary' id='analyzePoemsBtn' type='button'>Analyze</button>
-        <button class='btn secondary' id='deepAnalyzePoemsBtn' type='button'>Deep Analysis</button>
+        <button class='btn primary analysis-action-btn is-primary' id='analyzePoemsBtn' type='button'>Analyze</button>
+        <button class='btn secondary analysis-action-btn is-secondary' id='deepAnalyzePoemsBtn' type='button'>Deep Analysis</button>
       </div>
     </div>
     <div class='analysis-poem-deep-row'>
-      <select id='deepPoemSelect' aria-label='Choose poem for deep analysis'></select>
-      <button class='btn secondary' id='deepAnalyzeSingleBtn' type='button'>Deep Analyze Selection</button>
+      <select id='deepPoemSelect' class='analysis-select' aria-label='Choose poem for deep analysis'></select>
+      <button class='btn secondary analysis-action-btn is-tertiary' id='deepAnalyzeSingleBtn' type='button'>Deep Analyze Poem</button>
     </div>
     <input id='analysisEmail' type='email' autocomplete='email' hidden />
     <div id='analysisResult' class='analysis-result muted'>Write a few poems, then run analysis for an identity-level reading.</div>
