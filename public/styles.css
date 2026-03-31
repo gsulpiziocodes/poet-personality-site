@@ -303,11 +303,11 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .story-guide-intro{margin:0 20px 10px 0;font-family:'Cormorant Garamond',serif;font-size:1.46rem;line-height:1.02;color:var(--ink);min-height:1.55rem}
 .story-guide-label{display:block;margin:0 0 6px;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--muted)}
 .story-guide-select{width:100%;margin:0 0 9px;padding:9px 10px;border:1px solid var(--line-soft);border-radius:10px;background:var(--surface);color:var(--ink);font-size:.93rem}
-.story-guide-dialogue{border:1px solid color-mix(in oklab,var(--line-soft) 90%, var(--surface));border-radius:12px;padding:10px 11px;background:color-mix(in oklab,var(--surface-soft) 86%, var(--paper))}
+.story-guide-dialogue{border:1px solid color-mix(in oklab,var(--line-soft) 90%, var(--surface));border-radius:12px;padding:10px 11px;background:color-mix(in oklab,var(--surface-soft) 86%, var(--paper));cursor:pointer;transition:border-color .16s ease,background .16s ease,transform .16s ease}
+.story-guide-dialogue:hover{border-color:var(--accent-soft);background:color-mix(in oklab,var(--surface-soft) 92%, var(--paper));transform:translateY(-1px)}
+.story-guide-dialogue:focus-visible{outline:none;box-shadow:0 0 0 3px color-mix(in oklab,var(--accent-soft) 28%, transparent)}
 .story-guide-speaker{margin:0 0 5px;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:color-mix(in oklab,var(--accent-soft) 80%, var(--ink))}
-.story-guide-tip{margin:0 0 8px;font-size:.92rem;line-height:1.5;color:color-mix(in oklab,var(--ink) 88%, transparent)}
-.story-guide-next-btn{border:1px solid var(--line-soft);background:var(--surface);color:var(--ink);border-radius:999px;padding:7px 11px;font-size:.8rem;cursor:pointer;line-height:1.2}
-.story-guide-next-btn:hover{border-color:var(--accent-soft);background:color-mix(in oklab,var(--surface-soft) 88%, var(--paper))}
+.story-guide-tip{margin:0;font-size:.92rem;line-height:1.5;color:color-mix(in oklab,var(--ink) 88%, transparent)}
 .story-guide-art{margin:0;align-self:flex-end;z-index:1}
 .story-guide-art img,.story-guide-art video{display:block;width:min(240px,46vw);height:auto;max-height:280px;object-fit:contain;filter:drop-shadow(0 12px 18px rgba(20,14,10,.2))}
 
@@ -352,7 +352,6 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 [data-theme='dark'] .story-guide-close{background:#332b3e;border-color:#554a66;color:#dbcdf2}
 [data-theme='dark'] .story-guide-select{background:#fff;border-color:#d8cfbf;color:#231915}
 [data-theme='dark'] .story-guide-dialogue{background:#faf7f1;border-color:#ddd3c4}
-[data-theme='dark'] .story-guide-next-btn{background:#fff;border-color:#d8cfbf;color:#231915}
 [data-theme='dark'] .story-guide-tip{color:#2f2420}
 [data-theme='dark'] .poem-pre{background:#2a2333;border-color:var(--line);color:var(--ink)}
 @media(min-width:920px){.two-col{grid-template-columns:1fr 1fr}.wrap{padding:0 20px}.funnel-steps{grid-template-columns:repeat(3,1fr)}#proof{margin-top:38px;margin-bottom:14px}#how,#funnel{margin-top:30px;padding-top:10px}}
@@ -509,7 +508,6 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
   .story-guide-panel{width:min(100%,350px);padding:10px 10px 9px;border-radius:18px}
   .story-guide-panel::after{right:34px}
   .story-guide-select{font-size:.87rem;padding:8px 9px}
-  .story-guide-next-btn{font-size:.78rem;padding:7px 10px}
   .story-guide-art img,.story-guide-art video{width:min(190px,50vw);max-height:164px}
 
   /* Type grid cards */

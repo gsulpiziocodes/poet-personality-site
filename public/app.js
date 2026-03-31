@@ -2338,10 +2338,9 @@ function setupStorytellerGuide(types=[]){
       <select id='storyGuideType' class='story-guide-select'>
         ${ordered.map(name=>`<option value='${escapeHtml(name)}'>${escapeHtml(name)}</option>`).join('')}
       </select>
-      <div class='story-guide-dialogue'>
+      <div class='story-guide-dialogue' id='storyGuideDialogue' role='button' tabindex='0' aria-label='Show next writing tip'>
         <p class='story-guide-speaker'>The Storyteller</p>
         <p class='story-guide-tip' id='storyGuideTip'></p>
-        <button type='button' class='story-guide-next-btn' id='storyGuideNextBtn'>Another idea</button>
       </div>
     </div>
     <figure class='story-guide-art'><video class='story-guide-art-video' muted loop playsinline preload='metadata' poster='/images/the-storyteller.png'><source src='/videos/the-storyteller-hover.mp4' type='video/mp4'></video></figure>`;
@@ -2354,7 +2353,7 @@ function setupStorytellerGuide(types=[]){
   const intro=root.querySelector('.story-guide-intro');
   const select=root.querySelector('#storyGuideType');
   const tipEl=root.querySelector('#storyGuideTip');
-  const nextBtn=root.querySelector('#storyGuideNextBtn');
+  const dialogue=root.querySelector('#storyGuideDialogue');
   const speaker=root.querySelector('.story-guide-speaker');
   const artVideo=root.querySelector('.story-guide-art-video');
   const closeBtn=root.querySelector('.story-guide-close');
@@ -2438,7 +2437,8 @@ function setupStorytellerGuide(types=[]){
   };
 
   select?.addEventListener('change',()=>renderCoach(true));
-  nextBtn?.addEventListener('click',nextTip);
+  dialogue?.addEventListener('click',nextTip);
+  dialogue?.addEventListener('keydown',(e)=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();nextTip();}});
   renderCoach(true);
 
   closeBtn?.addEventListener('click',()=>{
