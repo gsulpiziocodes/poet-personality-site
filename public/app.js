@@ -1256,7 +1256,10 @@ function setupPoemUploader(targetId='funnel',types=[]){
       </div>
       <div class='analysis-stage stage-3'>
         <div class='analysis-prose'>
-          <h3>Why this personality fits</h3>
+          <div class='analysis-prose-head'>
+            <h3>Why this personality fits</h3>
+            ${!deepMode?`<button class='btn primary analysis-action-btn is-gold' id='runDeepInlineBtn' type='button'>Deep Analysis</button>`:''}
+          </div>
           <p>${a.commentary}</p>
         </div>
       </div>
@@ -1299,15 +1302,14 @@ function setupPoemUploader(targetId='funnel',types=[]){
       ${deepMode&&nextReads?`<div class='analysis-stage stage-12'><div class='analysis-prose'><h3>Next reads</h3><ul class='analysis-list'>${nextReads}</ul></div></div>`:''}
       <div class='analysis-stage stage-13'>
         <div class='analysis-end-action'>
-          ${!deepMode?`<button class='btn primary analysis-action-btn is-gold' id='runDeepAnalysisBtn' type='button'>Deep Analysis</button>`:''}
           <a class='btn secondary' href='${archetypeHref}'>Learn more</a>
         </div>
       </div>`;
 
     const stages=[...analysisResult.querySelectorAll('.analysis-stage')];
     stages.forEach((node,idx)=>setTimeout(()=>node.classList.add('in'),140*idx+120));
-    const deepBtn=analysisResult.querySelector('#runDeepAnalysisBtn');
-    deepBtn?.addEventListener('click',()=>runAnalysis({deep:true}));
+    const deepInlineBtn=analysisResult.querySelector('#runDeepInlineBtn');
+    deepInlineBtn?.addEventListener('click',()=>runAnalysis({deep:true}));
     setAnalysisCache(payload,deepMode?'deep':'short');
   };
 
