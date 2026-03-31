@@ -124,10 +124,14 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .analysis-zone{margin-top:14px;padding:16px 6px 4px}
 .analysis-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .analysis-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;min-width:min(480px,100%)}
+.analysis-actions-under-summary{margin-top:10px;min-width:0}
 .analysis-action-btn{height:44px;padding:0 16px;border-radius:12px;font-size:.94rem;font-weight:600;letter-spacing:.01em;border:1px solid transparent;transition:all .18s ease;box-shadow:0 1px 0 rgba(70,42,16,.04)}
 .analysis-action-btn.is-primary{background:linear-gradient(180deg,#8a4d1f,#744017);color:#fff;border-color:#6b3813}
 .analysis-action-btn.is-primary:hover{transform:translateY(-1px);filter:saturate(1.05);box-shadow:0 6px 14px rgba(93,54,20,.18)}
 .analysis-action-btn.is-primary:active{transform:translateY(0);box-shadow:0 2px 6px rgba(93,54,20,.18)}
+.analysis-action-btn.is-gold{background:linear-gradient(180deg,#f2d88b,#d6a93e);color:#3f2a14;border-color:#b88a2e;box-shadow:0 2px 0 rgba(115,81,20,.12), 0 8px 18px rgba(191,145,49,.24)}
+.analysis-action-btn.is-gold:hover{transform:translateY(-1px);filter:saturate(1.08) brightness(1.01);box-shadow:0 3px 0 rgba(115,81,20,.16), 0 12px 22px rgba(191,145,49,.3)}
+.analysis-action-btn.is-gold:active{transform:translateY(0);box-shadow:0 2px 0 rgba(115,81,20,.14), 0 5px 12px rgba(191,145,49,.22)}
 .analysis-action-btn.is-secondary,
 .analysis-action-btn.is-tertiary{background:#f8f2e9;color:#4e331e;border-color:#dbc8b1}
 .analysis-action-btn.is-secondary:hover,
