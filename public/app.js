@@ -1177,11 +1177,12 @@ function setupPoemUploader(targetId='funnel',types=[]){
     return [...new Set(base)].slice(0,6);
   };
 
-  const renderAnalysis=(payload,{deep=false,summaryOnly=false}={})=>{
+  const renderAnalysis=(payload,{deep=false,summaryOnly=false,selectedPoemTitle=''}={})=>{
     const a=payload?.analysis;
     if(!a){analysisResult.innerHTML='No analysis yet.';return;}
     const deepMode=Boolean(deep);
     const summaryMode=Boolean(summaryOnly);
+    const chosenTitle=String(selectedPoemTitle||'').trim();
     const chips=pickTraitChips(a);
     const archetypeHref=a.personalitySlug?`/type/${a.personalitySlug}`:'/types';
     analysisResult.classList.remove('muted');
@@ -1200,7 +1201,7 @@ function setupPoemUploader(targetId='funnel',types=[]){
         <div class='analysis-stage stage-1 in'>
           <div class='analysis-hero'>
             <p class='kicker'>Poet Summary</p>
-            <h2>${a.personalityTitle}</h2>
+            <h2>${chosenTitle||a.personalityTitle}</h2>
             <p class='lead'>${a.summary}</p>
           </div>
         </div>
@@ -1218,8 +1219,8 @@ function setupPoemUploader(targetId='funnel',types=[]){
       <div class='analysis-stage stage-1'>
         <div class='analysis-hero analysis-hero-with-image'>
           <div>
-            <p class='kicker'>Matched Archetype</p>
-            <h2>${a.personalityTitle}</h2>
+            <p class='kicker'>${chosenTitle?'Selected Poem':'Matched Archetype'}</p>
+            <h2>${chosenTitle||a.personalityTitle}</h2>
             <p class='lead'>${a.summary}</p>
           </div>
           ${personalityImageSrc?`<figure class='analysis-hero-art'><img src='${personalityImageSrc}' alt='${a.personalityTitle} personality illustration' loading='lazy'/></figure>`:''}
@@ -1336,7 +1337,8 @@ function setupPoemUploader(targetId='funnel',types=[]){
         throw new Error('analysis_failed');
       }
       localStorage.setItem('poet_personality_email',email);
-      renderAnalysis(data,{deep,summaryOnly});
+      const selectedPoemTitle=singleMode?(poems[poemIndex]?.title||`Untitled poem ${(Number(poemIndex)||0)+1}`):'';
+      renderAnalysis(data,{deep,summaryOnly,selectedPoemTitle});
       if(data?.emailSent===true){
         syncStatus('Results emailed.');
       }
