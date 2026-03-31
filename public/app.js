@@ -1237,7 +1237,7 @@ function setupPoemUploader(targetId='funnel',types=[]){
         </div></div></div>`:''}`;
       const deepInlineBtn=analysisResult.querySelector('#runDeepInlineBtn');
       deepInlineBtn?.addEventListener('click',()=>runAnalysis({deep:true,summaryOnly:true}));
-      setAnalysisCache(payload,'summary');
+      setAnalysisCache(payload,deepMode?'summary_deep':'summary');
       return;
     }
 
@@ -1426,7 +1426,11 @@ function setupPoemUploader(targetId='funnel',types=[]){
 
   const cachedAnalysis=getAnalysisCache();
   if(cachedAnalysis?.payload && (!cachedAnalysis.token || cachedAnalysis.token===token)){
-    renderAnalysis(cachedAnalysis.payload,{deep:cachedAnalysis.mode==='deep'||cachedAnalysis.mode==='summary',summaryOnly:cachedAnalysis.mode==='summary'});
+    const mode=String(cachedAnalysis.mode||'');
+    renderAnalysis(cachedAnalysis.payload,{
+      deep:mode==='deep'||mode==='summary_deep',
+      summaryOnly:mode==='summary'||mode==='summary_deep'
+    });
   }
 
   if(token){
