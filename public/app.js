@@ -888,7 +888,10 @@ function setupPoemUploader(targetId='funnel',types=[]){
   <section class='analysis-zone'>
     <div class='analysis-top'>
       <h3>Reveal your poet personality</h3>
-      <button class='btn primary' id='analyzePoemsBtn' type='button'>Analyze</button>
+      <div class='analysis-actions'>
+        <button class='btn primary' id='analyzePoemsBtn' type='button'>Analyze</button>
+        <button class='btn secondary' id='deepAnalyzePoemsBtn' type='button'>Deep Analysis</button>
+      </div>
     </div>
     <input id='analysisEmail' type='email' autocomplete='email' hidden />
     <div id='analysisResult' class='analysis-result muted'>Write a few poems, then run analysis for an identity-level reading.</div>
@@ -899,6 +902,7 @@ function setupPoemUploader(targetId='funnel',types=[]){
   const editor=box.querySelector('#poemEditorPane');
   const addBtn=box.querySelector('#newPoemBtn');
   const analyzeBtn=box.querySelector('#analyzePoemsBtn');
+  const deepAnalyzeBtn=box.querySelector('#deepAnalyzePoemsBtn');
   const analysisResult=box.querySelector('#analysisResult');
   const analysisEmail=box.querySelector('#analysisEmail');
   const status=box.querySelector('#poemSaveStatus');
@@ -1118,6 +1122,7 @@ function setupPoemUploader(targetId='funnel',types=[]){
     const improve=(a.whatToImprove||[]).map((x)=>`<li>${escapeHtml(x)}</li>`).join('');
     const inferences=(a.poetInferences||[]).map((x)=>`<li>${escapeHtml(x)}</li>`).join('');
     const snapshot=a.styleSnapshot||{};
+    const deepDive=a.deepDive||null;
     const poets=(a.recommendedPoets||[]).map((p)=>`<article class='analysis-poet-card'><h4>${escapeHtml(p.name||'')}</h4><p class='analysis-poet-match'>${escapeHtml(String(p.match||''))}% match</p><p>${escapeHtml(p.why||'')}</p></article>`).join('');
     const nextReads=(a.nextReads||[]).map((x)=>`<li>${escapeHtml(x)}</li>`).join('');
 
@@ -1167,9 +1172,15 @@ function setupPoemUploader(targetId='funnel',types=[]){
         <div><h4>Themes</h4><p>${escapeHtml((snapshot.themes||[]).join(' · '))}</p></div>
         <div><h4>Form + rhythm</h4><p>${escapeHtml(`${snapshot.form||''} ${snapshot.rhythm||''}`.trim())}</p></div>
       </div></div></div>`:''}
-      ${poets?`<div class='analysis-stage stage-10'><div class='analysis-prose'><h3>Recommended poets</h3><div class='analysis-poet-grid'>${poets}</div></div></div>`:''}
-      ${nextReads?`<div class='analysis-stage stage-11'><div class='analysis-prose'><h3>Next reads</h3><ul class='analysis-list'>${nextReads}</ul></div></div>`:''}
-      <div class='analysis-stage stage-12'>
+      ${deepDive?`<div class='analysis-stage stage-10'><div class='analysis-prose'><h3>Deep analysis</h3><p>${escapeHtml(deepDive.patternSummary||'')}</p><div class='analysis-grid'>
+        <div><h4>Lexical variation</h4><p>${escapeHtml(deepDive.lexicalVariation||'')}</p></div>
+        <div><h4>Emotional balance</h4><p>${escapeHtml(deepDive.emotionalBalance||'')}</p></div>
+        <div><h4>Line-shape dynamics</h4><p>${escapeHtml(deepDive.lineShape||'')}</p></div>
+        <div><h4>Revision focus</h4><p>${escapeHtml(deepDive.revisionFocus||'')}</p></div>
+      </div></div></div>`:''}
+      ${poets?`<div class='analysis-stage stage-11'><div class='analysis-prose'><h3>Recommended poets</h3><div class='analysis-poet-grid'>${poets}</div></div></div>`:''}
+      ${nextReads?`<div class='analysis-stage stage-12'><div class='analysis-prose'><h3>Next reads</h3><ul class='analysis-list'>${nextReads}</ul></div></div>`:''}
+      <div class='analysis-stage stage-13'>
         <div class='analysis-end-action'><a class='btn secondary' href='${archetypeHref}'>Learn more</a></div>
       </div>`;
 
@@ -1179,7 +1190,8 @@ function setupPoemUploader(targetId='funnel',types=[]){
   };
 
   addBtn.addEventListener('click',()=>addPoem({title:'',text:''}));
-  analyzeBtn.addEventListener('click',async ()=>{
+
+  const runAnalysis=async ({deep=false}={})=>{
     const payload=poems.map((p)=>({title:(p.title||'').trim(),text:(p.text||'').trim()})).filter((p)=>p.text);
 
     let email=String(analysisEmail?.value||'').trim().toLowerCase();
@@ -1198,10 +1210,11 @@ function setupPoemUploader(targetId='funnel',types=[]){
 
     if(!payload.length){analysisResult.classList.add('muted');analysisResult.textContent='Add poem text first, then analyze.';return;}
     analyzeBtn.disabled=true;
+    if(deepAnalyzeBtn) deepAnalyzeBtn.disabled=true;
     analysisResult.classList.add('muted');
-    analysisResult.innerHTML=`<div class='analysis-loading'><span class='pulse-dot'></span><span>Analyzing voice, themes, and poetic identity…</span></div>`;
+    analysisResult.innerHTML=`<div class='analysis-loading'><span class='pulse-dot'></span><span>${deep?'Running deep analysis on voice, craft, and structure…':'Analyzing voice, themes, and poetic identity…'}</span></div>`;
     try{
-      const res=await fetch('/api/poems/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({collectionToken:getCollectionToken(),poems:payload,email})});
+      const res=await fetch('/api/poems/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({collectionToken:getCollectionToken(),poems:payload,email,deep})});
       const data=await res.json();
       if(!res.ok||!data.ok){
         if(data?.error==='invalid_email'){
@@ -1221,8 +1234,14 @@ function setupPoemUploader(targetId='funnel',types=[]){
         analysisResult.classList.add('muted');
         analysisResult.textContent='Could not analyze right now. Please try again.';
       }
-    }finally{analyzeBtn.disabled=false;}
-  });
+    }finally{
+      analyzeBtn.disabled=false;
+      if(deepAnalyzeBtn) deepAnalyzeBtn.disabled=false;
+    }
+  };
+
+  analyzeBtn.addEventListener('click',()=>runAnalysis({deep:false}));
+  deepAnalyzeBtn?.addEventListener('click',()=>runAnalysis({deep:true}));
 
   const cachedAnalysis=getAnalysisCache();
   if(cachedAnalysis?.payload && (!cachedAnalysis.token || cachedAnalysis.token===token)){

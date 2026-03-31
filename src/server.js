@@ -695,7 +695,8 @@ function buildStyleProfileFromPoems(poems = []) {
   };
 }
 
-function analyzePoemCorpus(poems = []) {
+function analyzePoemCorpus(poems = [], options = {}) {
+  const deep = Boolean(options?.deep);
   const corpus = poems.map((p) => String(p?.text || "").trim()).filter(Boolean).join("\n");
   const words = corpus.toLowerCase().match(/[a-z']+/g) || [];
   const lines = corpus.split("\n").map((x) => x.trim()).filter(Boolean);
@@ -868,6 +869,26 @@ function analyzePoemCorpus(poems = []) {
     "A craft text focused on line breaks and revision"
   ];
 
+  const uniqueWordCount = new Set(words).size;
+  const lexicalRatio = words.length ? uniqueWordCount / words.length : 0;
+  const lineStdDev = (() => {
+    if (!lines.length) return 0;
+    const lengths = lines.map((line) => line.split(/\s+/).filter(Boolean).length);
+    const mean = lengths.reduce((sum, n) => sum + n, 0) / lengths.length;
+    const variance = lengths.reduce((sum, n) => sum + (n - mean) ** 2, 0) / lengths.length;
+    return Math.sqrt(variance);
+  })();
+
+  const deepDive = deep
+    ? {
+        patternSummary: `Your poems show a ${topType.name} center with ${top3Themes.join(", ")} pressure points. The voice remains ${tone}, while structure swings between compression and release.`,
+        lexicalVariation: `${Math.round(lexicalRatio * 100)}% unique-word ratio (${uniqueWordCount} distinct words across ${words.length} total words).`,
+        emotionalBalance: `First-person rate ${(firstPersonRate * 100).toFixed(1)}% vs second-person ${(secondPersonRate * 100).toFixed(1)}% suggests ${firstPersonRate > secondPersonRate ? "inward processing" : "outward address"} as your default emotional stance.`,
+        lineShape: `Average line length ${avgLineLength.toFixed(1)} words with variance ${lineStdDev.toFixed(1)} indicates ${lineStdDev > 4 ? "high rhythmic swing" : "controlled rhythmic consistency"}.`,
+        revisionFocus: `For your next draft, keep ${topType.name} tone but tighten one stanza around a single recurring image, then add one deliberate tonal pivot in the final third.`
+      }
+    : null;
+
   return {
     personalityKey: topSlug,
     personalitySlug: topSlug,
@@ -888,7 +909,8 @@ function analyzePoemCorpus(poems = []) {
     styleSnapshot,
     recommendedPoets,
     similarPoems,
-    nextReads
+    nextReads,
+    deepDive
   };
 }
 
@@ -1065,6 +1087,7 @@ app.post("/api/poems/analyze", rateLimit({ keyPrefix: "poems", windowMs: 60_000,
     let poems = Array.isArray(req.body?.poems) ? req.body.poems : [];
     const token = String(req.body?.collectionToken || "").trim();
     const email = normalizeEmail(req.body?.email);
+    const deep = Boolean(req.body?.deep);
 
     if (!email || !email.includes("@")) return res.status(400).json({ ok: false, error: "invalid_email" });
     if (!poems.length && token) poems = await getPoemsByCollectionToken(token);
@@ -1075,7 +1098,7 @@ app.post("/api/poems/analyze", rateLimit({ keyPrefix: "poems", windowMs: 60_000,
 
     if (!valid.length) return res.status(400).json({ ok: false, error: "no_poems_to_analyze" });
 
-    const analysis = analyzePoemCorpus(valid);
+    const analysis = analyzePoemCorpus(valid, { deep });
 
     let emailSent = false;
     let emailReason = "not_attempted";
