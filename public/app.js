@@ -895,7 +895,7 @@ function setupPoemUploader(targetId='funnel',types=[]){
     </div>
     <div class='analysis-poem-deep-row'>
       <select id='deepPoemSelect' aria-label='Choose poem for deep analysis'></select>
-      <button class='btn secondary' id='deepAnalyzeSingleBtn' type='button'>Deep Analyze Selected Poem</button>
+      <button class='btn secondary' id='deepAnalyzeSingleBtn' type='button'>Deep Analyze Selection</button>
     </div>
     <input id='analysisEmail' type='email' autocomplete='email' hidden />
     <div id='analysisResult' class='analysis-result muted'>Write a few poems, then run analysis for an identity-level reading.</div>
@@ -1068,18 +1068,18 @@ function setupPoemUploader(targetId='funnel',types=[]){
   const syncDeepPoemOptions=()=>{
     if(!deepPoemSelect) return;
     if(!poems.length){
-      deepPoemSelect.innerHTML="<option value=''>No poems available</option>";
+      deepPoemSelect.innerHTML="<option value='summary'>Poet Summary (All Poems)</option>";
       deepPoemSelect.disabled=true;
       if(deepAnalyzeSingleBtn) deepAnalyzeSingleBtn.disabled=true;
       return;
     }
     deepPoemSelect.disabled=false;
     if(deepAnalyzeSingleBtn) deepAnalyzeSingleBtn.disabled=false;
-    deepPoemSelect.innerHTML=poems.map((poem,idx)=>{
+    deepPoemSelect.innerHTML=`<option value='summary'>Poet Summary (All Poems)</option>`+poems.map((poem,idx)=>{
       const title=(poem.title||`Untitled poem ${idx+1}`).trim();
       return `<option value='${idx}'>${escapeHtml(title)}</option>`;
     }).join('');
-    const preferred=selected>=0?String(selected):'0';
+    const preferred=selected>=0?String(selected):'summary';
     deepPoemSelect.value=preferred;
   };
 
@@ -1136,10 +1136,11 @@ function setupPoemUploader(targetId='funnel',types=[]){
     return [...new Set(base)].slice(0,6);
   };
 
-  const renderAnalysis=(payload,{deep=false}={})=>{
+  const renderAnalysis=(payload,{deep=false,summaryOnly=false}={})=>{
     const a=payload?.analysis;
     if(!a){analysisResult.innerHTML='No analysis yet.';return;}
     const deepMode=Boolean(deep);
+    const summaryMode=Boolean(summaryOnly);
     const chips=pickTraitChips(a);
     const archetypeHref=a.personalitySlug?`/type/${a.personalitySlug}`:'/types';
     analysisResult.classList.remove('muted');
@@ -1152,6 +1153,25 @@ function setupPoemUploader(targetId='funnel',types=[]){
     const deepDive=a.deepDive||null;
     const poets=(a.recommendedPoets||[]).map((p)=>`<article class='analysis-poet-card'><h4>${escapeHtml(p.name||'')}</h4><p class='analysis-poet-match'>${escapeHtml(String(p.match||''))}% match</p><p>${escapeHtml(p.why||'')}</p></article>`).join('');
     const nextReads=(a.nextReads||[]).map((x)=>`<li>${escapeHtml(x)}</li>`).join('');
+
+    if(summaryMode){
+      analysisResult.innerHTML=`
+        <div class='analysis-stage stage-1 in'>
+          <div class='analysis-hero'>
+            <p class='kicker'>Poet Summary</p>
+            <h2>${a.personalityTitle}</h2>
+            <p class='lead'>${a.summary}</p>
+          </div>
+        </div>
+        ${deepDive?`<div class='analysis-stage stage-2 in'><div class='analysis-prose'><h3>Deep analysis summary</h3><p>${escapeHtml(deepDive.patternSummary||'')}</p><div class='analysis-grid'>
+          <div><h4>Lexical variation</h4><p>${escapeHtml(deepDive.lexicalVariation||'')}</p></div>
+          <div><h4>Emotional balance</h4><p>${escapeHtml(deepDive.emotionalBalance||'')}</p></div>
+          <div><h4>Line-shape dynamics</h4><p>${escapeHtml(deepDive.lineShape||'')}</p></div>
+          <div><h4>Revision focus</h4><p>${escapeHtml(deepDive.revisionFocus||'')}</p></div>
+        </div></div></div>`:''}`;
+      setAnalysisCache(payload,'summary');
+      return;
+    }
 
     analysisResult.innerHTML=`
       <div class='analysis-stage stage-1'>
@@ -1231,9 +1251,9 @@ function setupPoemUploader(targetId='funnel',types=[]){
 
   addBtn.addEventListener('click',()=>addPoem({title:'',text:''}));
 
-  const runAnalysis=async ({deep=false,poemIndex=null}={})=>{
+  const runAnalysis=async ({deep=false,poemIndex=null,summaryOnly=false}={})=>{
     const allPayload=poems.map((p)=>({title:(p.title||'').trim(),text:(p.text||'').trim()})).filter((p)=>p.text);
-    const singleMode=Number.isInteger(poemIndex);
+    const singleMode=Number.isInteger(poemIndex) && !summaryOnly;
     const payload=singleMode
       ? (()=>{
           const p=poems[poemIndex];
@@ -1263,7 +1283,7 @@ function setupPoemUploader(targetId='funnel',types=[]){
     if(deepAnalyzeBtn) deepAnalyzeBtn.disabled=true;
     if(deepAnalyzeSingleBtn) deepAnalyzeSingleBtn.disabled=true;
     analysisResult.classList.add('muted');
-    analysisResult.innerHTML=`<div class='analysis-loading'><span class='pulse-dot'></span><span>${singleMode?'Running deep analysis for selected poem…':deep?'Running deep analysis on voice, craft, and structure…':'Analyzing voice, themes, and poetic identity…'}</span></div>`;
+    analysisResult.innerHTML=`<div class='analysis-loading'><span class='pulse-dot'></span><span>${summaryOnly?'Building deep poet summary…':singleMode?'Running deep analysis for selected poem…':deep?'Running deep analysis on voice, craft, and structure…':'Analyzing voice, themes, and poetic identity…'}</span></div>`;
     try{
       const res=await fetch('/api/poems/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({collectionToken:getCollectionToken(),poems:payload,email,deep})});
       const data=await res.json();
@@ -1276,7 +1296,7 @@ function setupPoemUploader(targetId='funnel',types=[]){
         throw new Error('analysis_failed');
       }
       localStorage.setItem('poet_personality_email',email);
-      renderAnalysis(data,{deep});
+      renderAnalysis(data,{deep,summaryOnly});
       if(data?.emailSent===true){
         syncStatus('Results emailed.');
       }
@@ -1304,14 +1324,19 @@ function setupPoemUploader(targetId='funnel',types=[]){
   });
 
   deepAnalyzeSingleBtn?.addEventListener('click',()=>{
-    const idx=Number(deepPoemSelect?.value);
+    const value=String(deepPoemSelect?.value||'');
+    if(value==='summary'){
+      runAnalysis({deep:true,summaryOnly:true});
+      return;
+    }
+    const idx=Number(value);
     if(!Number.isInteger(idx)) return;
     runAnalysis({deep:true,poemIndex:idx});
   });
 
   const cachedAnalysis=getAnalysisCache();
   if(cachedAnalysis?.payload && (!cachedAnalysis.token || cachedAnalysis.token===token)){
-    renderAnalysis(cachedAnalysis.payload,{deep:cachedAnalysis.mode==='deep'});
+    renderAnalysis(cachedAnalysis.payload,{deep:cachedAnalysis.mode==='deep'||cachedAnalysis.mode==='summary',summaryOnly:cachedAnalysis.mode==='summary'});
   }
 
   if(token){
