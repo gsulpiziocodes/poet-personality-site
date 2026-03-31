@@ -1226,6 +1226,7 @@ function setupPoemUploader(targetId='funnel',types=[]){
             <p class='kicker'>Poet Summary</p>
             <h2>${a.personalityTitle}</h2>
             ${chosenTitle?`<p class='lead'>“${escapeHtml(chosenTitle)}” aligns with <strong>${escapeHtml(a.personalityTitle)}</strong>.</p>`:`<p class='lead'>${a.summary}</p>`}
+            ${!deepMode?`<div class='analysis-summary-actions'><button class='btn primary analysis-action-btn is-gold' id='runDeepInlineBtn' type='button'>Deep Analysis</button></div>`:''}
           </div>
         </div>
         ${deepDive?`<div class='analysis-stage stage-2 in'><div class='analysis-prose'><h3>Deep analysis summary</h3><p>${escapeHtml(deepDive.patternSummary||'')}</p><div class='analysis-grid'>
@@ -1234,6 +1235,8 @@ function setupPoemUploader(targetId='funnel',types=[]){
           <div><h4>Line-shape dynamics</h4><p>${escapeHtml(deepDive.lineShape||'')}</p></div>
           <div><h4>Revision focus</h4><p>${escapeHtml(deepDive.revisionFocus||'')}</p></div>
         </div></div></div>`:''}`;
+      const deepInlineBtn=analysisResult.querySelector('#runDeepInlineBtn');
+      deepInlineBtn?.addEventListener('click',()=>runAnalysis({deep:true,summaryOnly:true}));
       setAnalysisCache(payload,'summary');
       return;
     }
@@ -1393,7 +1396,7 @@ function setupPoemUploader(targetId='funnel',types=[]){
   analyzeBtn.addEventListener('click',()=>{
     if(deepPoemSelect) deepPoemSelect.value='summary';
     syncSelectionModeUI();
-    runAnalysis({deep:true,summaryOnly:true});
+    runAnalysis({deep:false,summaryOnly:true});
   });
   deepPoemSelect?.addEventListener('change',()=>{
     const value=String(deepPoemSelect.value||'summary');
