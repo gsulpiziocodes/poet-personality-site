@@ -1353,7 +1353,10 @@ function setupPoemUploader(targetId='funnel',types=[]){
     }
   };
 
-  analyzeBtn.addEventListener('click',()=>runAnalysis({deep:false}));
+  analyzeBtn.addEventListener('click',()=>{
+    if(deepPoemSelect) deepPoemSelect.value='summary';
+    runAnalysis({deep:true,summaryOnly:true});
+  });
   deepPoemSelect?.addEventListener('change',()=>{
     const idx=Number(deepPoemSelect.value);
     if(Number.isInteger(idx)){
