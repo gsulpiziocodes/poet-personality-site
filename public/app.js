@@ -2371,10 +2371,17 @@ function setupStorytellerGuide(types=[]){
     }
 
     const first=`Hi, I am ${rich.name}. ${rich.subtitle||''}`.trim();
+    const challengeTip=(challenge)=>{
+      const c=String(challenge||'').trim().toLowerCase();
+      if(!c) return '';
+      if(c.includes('guarded')) return 'Try one unguarded line with a concrete emotional detail.';
+      return `Craft stretch: ${challenge}.`;
+    };
+
     const dynamicTips=[
       rich.detects[0]?`Try opening with ${rich.detects[0]}.`:'',
       rich.strengths[0]?`Lean into your natural strength: ${rich.strengths[0]}.`:'',
-      rich.challenges[0]?`Quick watchout: ${rich.challenges[0]}.`:'',
+      challengeTip(rich.challenges[0]),
       rich.writingIntro||'',
       rich.idealTagline?`North star: ${rich.idealTagline}`:''
     ].filter(Boolean);
