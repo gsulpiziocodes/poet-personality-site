@@ -1118,7 +1118,7 @@ app.post("/api/poems/analyze", rateLimit({ keyPrefix: "poems", windowMs: 60_000,
       });
     }
 
-    return res.json({ ok: true, analysis, poemCount: valid.length, emailSent, emailReason });
+    return res.json({ ok: true, analysis, deep, poemCount: valid.length, emailSent, emailReason });
   } catch (error) {
     return res.status(500).json({ ok: false, error: "analysis_failed", details: error.message });
   }

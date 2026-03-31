@@ -151,7 +151,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .analysis-hero .kicker{font-size:.92rem;letter-spacing:.16em;font-weight:500}
 .analysis-hero h2{font-size:4.2rem;line-height:1.04;margin-bottom:8px;letter-spacing:.015em;font-weight:700}
 .analysis-hero .lead{font-size:1.2rem;line-height:1.35;margin:0;letter-spacing:.02em;font-weight:400;color:color-mix(in oklab,var(--ink) 84%, transparent)}
-.analysis-end-action{display:flex;justify-content:flex-end;margin-top:14px}
+.analysis-end-action{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:14px}
 .analysis-tchart{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
 .analysis-tchart-col{padding:10px 12px;border-radius:12px;border:1px solid #efe3d2;background:#fcf8f1}
 .analysis-tchart-col h4{margin:0 0 6px}
