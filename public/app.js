@@ -1137,7 +1137,7 @@ function setupPoemUploader(targetId='funnel',types=[]){
       deepAnalyzeSingleBtn.textContent='Analyze Poem';
       deepAnalyzeSingleBtn.classList.add('is-gold');
       deepAnalyzeSingleBtn.classList.remove('is-tertiary');
-      deepAnalyzeSingleBtn.style.display=poemSelected?'inline-flex':'none';
+      deepAnalyzeSingleBtn.style.display=poemSelected?'':'none';
     }
 
     if(poemSelected){

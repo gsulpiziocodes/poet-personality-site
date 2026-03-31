@@ -140,6 +140,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .analysis-action-btn.is-tertiary:active{transform:translateY(0);background:#efe3d3}
 .analysis-action-btn:focus-visible,.analysis-select:focus-visible{outline:none;box-shadow:0 0 0 3px color-mix(in oklab,var(--accent-soft) 28%, transparent)}
 .analysis-poem-deep-row{margin-top:10px;display:grid;grid-template-columns:minmax(0,1.55fr) minmax(220px,.75fr);gap:10px;align-items:center}
+.analysis-poem-deep-row .analysis-action-btn{width:100%;justify-self:stretch;text-align:center}
 .analysis-select{width:100%;height:44px;border:1px solid #dbc8b1;border-radius:12px;padding:0 12px;background:#fefbf6;color:#4f3824;font-size:.92rem}
 .analysis-email-row{margin-top:10px}
 #analysisEmail{width:100%;max-width:460px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.96rem;background:var(--surface);color:var(--ink)}
