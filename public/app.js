@@ -920,6 +920,7 @@ function setupPoemUploader(targetId='funnel',types=[]){
   let analysisStageTimers=[];
 
   const isValidEmail=(email)=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email||'').trim());
+  if(deepPoemSelect && !deepPoemSelect.dataset.lastValue) deepPoemSelect.dataset.lastValue='summary';
   const rememberedEmail=localStorage.getItem('poet_personality_email')||'';
   if(analysisEmail&&rememberedEmail) analysisEmail.value=rememberedEmail;
 
@@ -1123,8 +1124,10 @@ function setupPoemUploader(targetId='funnel',types=[]){
       const title=(poem.title||`Untitled poem ${idx+1}`).trim();
       return `<option value='${idx}'>${escapeHtml(title)}</option>`;
     }).join('');
-    const preferred=selected>=0?String(selected):'summary';
+    const previousValue=String(deepPoemSelect.dataset.lastValue||'summary');
+    const preferred=[...deepPoemSelect.options].some((opt)=>opt.value===previousValue)?previousValue:'summary';
     deepPoemSelect.value=preferred;
+    deepPoemSelect.dataset.lastValue=preferred;
   };
 
   const syncSelectionModeUI=()=>{
@@ -1394,12 +1397,16 @@ function setupPoemUploader(targetId='funnel',types=[]){
   };
 
   analyzeBtn.addEventListener('click',()=>{
-    if(deepPoemSelect) deepPoemSelect.value='summary';
+    if(deepPoemSelect){
+      deepPoemSelect.value='summary';
+      deepPoemSelect.dataset.lastValue='summary';
+    }
     syncSelectionModeUI();
     runAnalysis({deep:false,summaryOnly:true});
   });
   deepPoemSelect?.addEventListener('change',()=>{
     const value=String(deepPoemSelect.value||'summary');
+    deepPoemSelect.dataset.lastValue=value;
     if(value==='summary'){
       syncSelectionModeUI();
       return;
