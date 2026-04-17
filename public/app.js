@@ -1472,16 +1472,8 @@ function setupPoemUploader(targetId='funnel',types=[]){
     runAnalysis({deep:false,poemIndex:idx});
   });
 
-  // Only restore cached analysis when we have an explicit saved collection token.
-  // This prevents brand-new users from seeing auto-loaded results on first visit.
-  const cachedAnalysis=getAnalysisCache();
-  if(token && cachedAnalysis?.payload && cachedAnalysis.token===token){
-    const mode=String(cachedAnalysis.mode||'');
-    renderAnalysis(cachedAnalysis.payload,{
-      deep:mode==='deep'||mode==='summary_deep',
-      summaryOnly:mode==='summary'||mode==='summary_deep'
-    });
-  }
+  // Intentionally do not auto-restore cached analysis on load.
+  // Users should see a clean Analyze state until they run analysis manually.
 
   if(token){
     fetch(`/api/poems?token=${encodeURIComponent(token)}`).then(r=>r.json()).then((data)=>{
