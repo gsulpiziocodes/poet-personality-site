@@ -1133,19 +1133,23 @@ function setupPoemUploader(targetId='funnel',types=[]){
   const syncSelectionModeUI=()=>{
     const value=String(deepPoemSelect?.value||'summary');
     const poemSelected=value!=='summary';
+    const summarySelected=value==='summary';
 
     if(analysisActionsRow) analysisActionsRow.style.display=poemSelected?'none':'grid';
 
     if(deepAnalyzeSingleBtn){
-      deepAnalyzeSingleBtn.textContent='Analyze Poem';
       deepAnalyzeSingleBtn.classList.add('is-gold');
       deepAnalyzeSingleBtn.classList.remove('is-tertiary');
-      deepAnalyzeSingleBtn.style.display=poemSelected?'':'none';
+      deepAnalyzeSingleBtn.style.display='';
+      deepAnalyzeSingleBtn.textContent=summarySelected?'Deep Analyze Summary':'Analyze Poem';
     }
 
     if(poemSelected){
       analysisResult.classList.add('muted');
       analysisResult.textContent='Selected poem ready. Click “Analyze Poem” to run analysis.';
+    } else if(summarySelected){
+      analysisResult.classList.add('muted');
+      analysisResult.textContent='Poet Summary selected. Click “Deep Analyze Summary” for all-poems deep analysis.';
     }
   };
 
