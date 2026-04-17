@@ -674,12 +674,12 @@ async function setupGlobalAccountButton(){
   const mobileLink=document.querySelector('#mobileNav a[href="/account"], #mobileNav a[href="/settings"]');
 
   if(desktopLink){
-    desktopLink.href='/settings';
+    desktopLink.href='/account';
     desktopLink.textContent='Account';
-    desktopLink.title=user?'Account settings':'Sign in';
+    desktopLink.title=user?'Account':'Sign in';
   }
   if(mobileLink){
-    mobileLink.href='/settings';
+    mobileLink.href='/account';
     mobileLink.textContent='Account';
   }
 }
@@ -754,28 +754,23 @@ function setupTopNav(){
 
   document.querySelectorAll('.site-top nav a[href^="/"], #mobileNav a[href^="/"]').forEach((a)=>{
     const hrefRaw=a.getAttribute('href')||'';
-    const normalizedHref=hrefRaw==='/'?'/':hrefRaw.replace(/\/+$/,'');
+    const href=hrefRaw==='/'?'/':hrefRaw.replace(/\/+$/,'');
     const baseLabel=(a.dataset.baseLabel||a.textContent||'').trim();
+    if(!a.dataset.baseLabel) a.dataset.baseLabel=baseLabel;
 
-    // Keep account navigation stable to avoid /account -> /settings flicker.
-    if(normalizedHref==='/account' || normalizedHref==='/settings' || /^account$/i.test(baseLabel)){
-      a.setAttribute('href','/settings');
+    // Keep label stable as "Account" even where href may be /settings.
+    if(href==='/account' || href==='/settings' || /^account$/i.test(baseLabel) || /^settings$/i.test(baseLabel)){
       a.dataset.baseLabel='Account';
-    }else if(!a.dataset.baseLabel){
-      a.dataset.baseLabel=baseLabel;
     }
 
-    const href=(a.getAttribute('href')||'').replace(/\/+$/,'') || '/';
     const isCurrent=activeHref===href;
-    const label=a.dataset.baseLabel||baseLabel;
-
     a.classList.toggle('active',isCurrent);
     if(isCurrent){
       a.setAttribute('aria-current','page');
     }else{
       a.removeAttribute('aria-current');
     }
-    a.textContent=label;
+    a.textContent=a.dataset.baseLabel;
   });
 
   const menu=document.getElementById('mobileNav');
@@ -1508,7 +1503,19 @@ async function setupAccountPage(){
   try{
     const res=await fetch('/api/auth/me');
     const data=await res.json();
-    if(data?.user){location.href='/settings';return;}
+    if(data?.user){
+      const displayName=(data.user.name||data.user.email||'Writer').trim().replace(/</g,'&lt;');
+      root.append(card(`<section class='hero'>
+        <p class='kicker'>Account</p>
+        <h1>Welcome back, ${displayName}</h1>
+        <p class='lead'>You’re signed in. Open settings or continue writing.</p>
+        <div class='cta-row'>
+          <a class='btn primary' href='/settings'>Open Settings</a>
+          <a class='btn secondary' href='/analyze'>Continue Writing</a>
+        </div>
+      </section>`));
+      return;
+    }
   }catch{}
 
   root.append(card(`<section class='auth-shell'>
