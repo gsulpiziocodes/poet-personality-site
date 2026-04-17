@@ -1221,6 +1221,12 @@ function setupPoemUploader(targetId='funnel',types=[]){
     const deepDive=a.deepDive||null;
     const poets=(a.recommendedPoets||[]).map((p)=>`<article class='analysis-poet-card'><h4>${escapeHtml(p.name||'')}</h4><p class='analysis-poet-match'>${escapeHtml(String(p.match||''))}% match</p><p>${escapeHtml(p.why||'')}</p></article>`).join('');
     const nextReads=(a.nextReads||[]).map((x)=>`<li>${escapeHtml(x)}</li>`).join('');
+    const authorAnalysis=(String(a.commentary||'')
+      .split(/\n\s*\n|\n/)
+      .map((p)=>p.trim())
+      .filter(Boolean)
+      .map((p)=>`<p>${escapeHtml(p)}</p>`)
+      .join('')) || `<p>${escapeHtml(a.summary||'')}</p>`;
 
     if(summaryMode){
       analysisResult.innerHTML=`
@@ -1232,7 +1238,8 @@ function setupPoemUploader(targetId='funnel',types=[]){
             ${!deepMode?`<div class='analysis-summary-actions'><button class='btn primary analysis-action-btn is-gold' id='runDeepInlineBtn' type='button'>Deep Analysis</button></div>`:''}
           </div>
         </div>
-        ${deepDive?`<div class='analysis-stage stage-2 in'><div class='analysis-prose'><h3>Deep analysis summary</h3><p>${escapeHtml(deepDive.patternSummary||'')}</p><div class='analysis-grid'>
+        <div class='analysis-stage stage-2 in'><div class='analysis-prose'><h3>Author’s analysis</h3>${authorAnalysis}</div></div>
+        ${deepDive?`<div class='analysis-stage stage-3 in'><div class='analysis-prose'><h3>Deep analysis summary</h3><p>${escapeHtml(deepDive.patternSummary||'')}</p><div class='analysis-grid'>
           <div><h4>Lexical variation</h4><p>${escapeHtml(deepDive.lexicalVariation||'')}</p></div>
           <div><h4>Emotional balance</h4><p>${escapeHtml(deepDive.emotionalBalance||'')}</p></div>
           <div><h4>Line-shape dynamics</h4><p>${escapeHtml(deepDive.lineShape||'')}</p></div>
@@ -1273,6 +1280,12 @@ function setupPoemUploader(targetId='funnel',types=[]){
         </div>
       </div>
       <div class='analysis-stage stage-4'>
+        <div class='analysis-prose'>
+          <h3>Author’s analysis</h3>
+          ${authorAnalysis}
+        </div>
+      </div>
+      <div class='analysis-stage stage-5'>
         <div class='analysis-grid'>
           <div><h4>Core emotional signature</h4><p>${a.observations?.emotionalPattern||''}</p></div>
           <div><h4>Recurring themes</h4><p>${(a.observations?.recurringThemes||[]).join(' · ')}</p></div>
@@ -1281,8 +1294,8 @@ function setupPoemUploader(targetId='funnel',types=[]){
           <div><h4>Worldview / poetic instincts</h4><p>${a.observations?.worldview||''}</p></div>
         </div>
       </div>
-      ${deepMode&&bestLines?`<div class='analysis-stage stage-5'><div class='analysis-prose'><h3>Best lines</h3>${bestLines}</div></div>`:''}
-      ${deepMode&&(works||improve)?`<div class='analysis-stage stage-6'><div class='analysis-prose'><h3>Craft T‑Chart</h3><div class='analysis-tchart'>
+      ${deepMode&&bestLines?`<div class='analysis-stage stage-6'><div class='analysis-prose'><h3>Best lines</h3>${bestLines}</div></div>`:''}
+      ${deepMode&&(works||improve)?`<div class='analysis-stage stage-7'><div class='analysis-prose'><h3>Craft T‑Chart</h3><div class='analysis-tchart'>
         <section class='analysis-tchart-col is-good'>
           <h4>What works</h4>
           <ul class='analysis-list'>${works||''}</ul>
@@ -1292,8 +1305,8 @@ function setupPoemUploader(targetId='funnel',types=[]){
           <ul class='analysis-list'>${improve||''}</ul>
         </section>
       </div></div></div>`:''}
-      ${deepMode&&inferences?`<div class='analysis-stage stage-8'><div class='analysis-prose'><h3>Poet inferences</h3><ul class='analysis-list'>${inferences}</ul></div></div>`:''}
-      ${deepMode&&snapshot&&Object.keys(snapshot).length?`<div class='analysis-stage stage-9'><div class='analysis-prose'><h3>Style snapshot</h3><div class='analysis-grid'>
+      ${deepMode&&inferences?`<div class='analysis-stage stage-9'><div class='analysis-prose'><h3>Poet inferences</h3><ul class='analysis-list'>${inferences}</ul></div></div>`:''}
+      ${deepMode&&snapshot&&Object.keys(snapshot).length?`<div class='analysis-stage stage-10'><div class='analysis-prose'><h3>Style snapshot</h3><div class='analysis-grid'>
         <div><h4>Diction</h4><p>${escapeHtml(snapshot.diction||'')}</p></div>
         <div><h4>Syntax</h4><p>${escapeHtml(snapshot.syntax||'')}</p></div>
         <div><h4>Imagery density</h4><p>${escapeHtml(snapshot.imageryDensity||'')}</p></div>
@@ -1301,15 +1314,15 @@ function setupPoemUploader(targetId='funnel',types=[]){
         <div><h4>Themes</h4><p>${escapeHtml((snapshot.themes||[]).join(' · '))}</p></div>
         <div><h4>Form + rhythm</h4><p>${escapeHtml(`${snapshot.form||''} ${snapshot.rhythm||''}`.trim())}</p></div>
       </div></div></div>`:''}
-      ${deepMode&&deepDive?`<div class='analysis-stage stage-10'><div class='analysis-prose'><h3>Deep analysis</h3><p>${escapeHtml(deepDive.patternSummary||'')}</p><div class='analysis-grid'>
+      ${deepMode&&deepDive?`<div class='analysis-stage stage-11'><div class='analysis-prose'><h3>Deep analysis</h3><p>${escapeHtml(deepDive.patternSummary||'')}</p><div class='analysis-grid'>
         <div><h4>Lexical variation</h4><p>${escapeHtml(deepDive.lexicalVariation||'')}</p></div>
         <div><h4>Emotional balance</h4><p>${escapeHtml(deepDive.emotionalBalance||'')}</p></div>
         <div><h4>Line-shape dynamics</h4><p>${escapeHtml(deepDive.lineShape||'')}</p></div>
         <div><h4>Revision focus</h4><p>${escapeHtml(deepDive.revisionFocus||'')}</p></div>
       </div></div></div>`:''}
-      ${deepMode&&poets?`<div class='analysis-stage stage-11'><div class='analysis-prose'><h3>Recommended poets</h3><div class='analysis-poet-grid'>${poets}</div></div></div>`:''}
-      ${deepMode&&nextReads?`<div class='analysis-stage stage-12'><div class='analysis-prose'><h3>Next reads</h3><ul class='analysis-list'>${nextReads}</ul></div></div>`:''}
-      <div class='analysis-stage stage-13'>
+      ${deepMode&&poets?`<div class='analysis-stage stage-12'><div class='analysis-prose'><h3>Recommended poets</h3><div class='analysis-poet-grid'>${poets}</div></div></div>`:''}
+      ${deepMode&&nextReads?`<div class='analysis-stage stage-13'><div class='analysis-prose'><h3>Next reads</h3><ul class='analysis-list'>${nextReads}</ul></div></div>`:''}
+      <div class='analysis-stage stage-14'>
         <div class='analysis-end-action'>
           <a class='btn secondary' href='${archetypeHref}'>Learn more</a>
         </div>
