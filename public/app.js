@@ -671,16 +671,15 @@ async function setupGlobalAccountButton(){
   }catch{}
 
   const desktopLink=document.getElementById('accountInlineBtn');
-  const mobileLink=document.querySelector('#mobileNav a[href="/account"]');
-  const href=user?'/settings':'/account';
+  const mobileLink=document.querySelector('#mobileNav a[href="/account"], #mobileNav a[href="/settings"]');
 
   if(desktopLink){
-    desktopLink.href=href;
+    desktopLink.href='/settings';
     desktopLink.textContent='Account';
     desktopLink.title=user?'Account settings':'Sign in';
   }
   if(mobileLink){
-    mobileLink.href=href;
+    mobileLink.href='/settings';
     mobileLink.textContent='Account';
   }
 }
@@ -755,17 +754,28 @@ function setupTopNav(){
 
   document.querySelectorAll('.site-top nav a[href^="/"], #mobileNav a[href^="/"]').forEach((a)=>{
     const hrefRaw=a.getAttribute('href')||'';
-    const href=hrefRaw==='/'?'/':hrefRaw.replace(/\/+$/,'');
-    const isCurrent=activeHref===href;
+    const normalizedHref=hrefRaw==='/'?'/':hrefRaw.replace(/\/+$/,'');
     const baseLabel=(a.dataset.baseLabel||a.textContent||'').trim();
-    a.dataset.baseLabel=baseLabel;
+
+    // Keep account navigation stable to avoid /account -> /settings flicker.
+    if(normalizedHref==='/account' || normalizedHref==='/settings' || /^account$/i.test(baseLabel)){
+      a.setAttribute('href','/settings');
+      a.dataset.baseLabel='Account';
+    }else if(!a.dataset.baseLabel){
+      a.dataset.baseLabel=baseLabel;
+    }
+
+    const href=(a.getAttribute('href')||'').replace(/\/+$/,'') || '/';
+    const isCurrent=activeHref===href;
+    const label=a.dataset.baseLabel||baseLabel;
+
     a.classList.toggle('active',isCurrent);
     if(isCurrent){
       a.setAttribute('aria-current','page');
     }else{
       a.removeAttribute('aria-current');
     }
-    a.textContent=baseLabel;
+    a.textContent=label;
   });
 
   const menu=document.getElementById('mobileNav');
