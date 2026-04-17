@@ -1472,8 +1472,10 @@ function setupPoemUploader(targetId='funnel',types=[]){
     runAnalysis({deep:false,poemIndex:idx});
   });
 
+  // Only restore cached analysis when we have an explicit saved collection token.
+  // This prevents brand-new users from seeing auto-loaded results on first visit.
   const cachedAnalysis=getAnalysisCache();
-  if(cachedAnalysis?.payload && (!cachedAnalysis.token || cachedAnalysis.token===token)){
+  if(token && cachedAnalysis?.payload && cachedAnalysis.token===token){
     const mode=String(cachedAnalysis.mode||'');
     renderAnalysis(cachedAnalysis.payload,{
       deep:mode==='deep'||mode==='summary_deep',
