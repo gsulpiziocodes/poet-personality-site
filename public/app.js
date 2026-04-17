@@ -1318,10 +1318,47 @@ function setupPoemUploader(targetId='funnel',types=[]){
     analysisStageTimers.forEach((t)=>clearTimeout(t));
     analysisStageTimers=[];
     const stages=[...analysisResult.querySelectorAll('.analysis-stage')];
-    stages.forEach((node,idx)=>{
-      const timer=setTimeout(()=>node.classList.add('in'),140*idx+120);
-      analysisStageTimers.push(timer);
-    });
+
+    // Scroll-based motion: first block appears immediately, others reveal as they enter viewport.
+    if(stages.length){
+      stages[0].classList.add('in');
+
+      const onScrollMotion=()=>{
+        stages.forEach((node,idx)=>{
+          if(idx===0) return;
+          const rect=node.getBoundingClientRect();
+          const vh=window.innerHeight||900;
+          const progress=Math.max(0,Math.min(1,(vh-rect.top)/(vh*0.9)));
+          const shift=((1-progress)*12).toFixed(2);
+          node.style.setProperty('--stage-shift',`${shift}px`);
+        });
+      };
+
+      const observer=new IntersectionObserver((entries)=>{
+        for(const entry of entries){
+          if(entry.isIntersecting){
+            entry.target.classList.add('in');
+            observer.unobserve(entry.target);
+          }
+        }
+        onScrollMotion();
+      },{root:null,rootMargin:'0px 0px -12% 0px',threshold:0.18});
+
+      stages.slice(1).forEach((node)=>observer.observe(node));
+      onScrollMotion();
+      window.requestAnimationFrame(onScrollMotion);
+
+      const cleanup=()=>{
+        observer.disconnect();
+        window.removeEventListener('scroll',onScrollMotion);
+        window.removeEventListener('resize',onScrollMotion);
+      };
+
+      window.addEventListener('scroll',onScrollMotion,{passive:true});
+      window.addEventListener('resize',onScrollMotion);
+      analysisStageTimers.push(setTimeout(cleanup,120000));
+    }
+
     const deepInlineBtn=analysisResult.querySelector('#runDeepInlineBtn');
     deepInlineBtn?.addEventListener('click',()=>runAnalysis({deep:true}));
     setAnalysisCache(payload,deepMode?'deep':'short');

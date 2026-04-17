@@ -171,8 +171,8 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;margin:0 0 10px;line-hei
 .pulse-dot{width:8px;height:8px;border-radius:999px;background:#9a6a36;animation:pulse 1.4s infinite}
 @keyframes pulse{0%{opacity:.25;transform:scale(.9)}50%{opacity:1;transform:scale(1.15)}100%{opacity:.25;transform:scale(.9)}}
 @keyframes analysisLoadSlide{0%{transform:translateX(-120%)}50%{transform:translateX(90%)}100%{transform:translateX(240%)}}
-.analysis-stage{opacity:0;transform:translateY(8px);transition:opacity .35s ease,transform .35s ease}
-.analysis-stage.in{opacity:1;transform:none}
+.analysis-stage{opacity:0;--stage-shift:0px;transform:translate3d(0,18px,0) scale(.985);transition:opacity .55s ease,transform .7s cubic-bezier(.2,.7,.2,1);will-change:transform,opacity}
+.analysis-stage.in{opacity:1;transform:translate3d(0,var(--stage-shift),0) scale(1)}
 .analysis-stage + .analysis-stage{position:relative;margin-top:18px;padding-top:18px}
 .analysis-stage + .analysis-stage::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,color-mix(in oklab,var(--line) 78%, var(--surface)),transparent)}
 @media print{
