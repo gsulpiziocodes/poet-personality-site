@@ -672,17 +672,16 @@ async function setupGlobalAccountButton(){
 
   const desktopLink=document.getElementById('accountInlineBtn');
   const mobileLink=document.querySelector('#mobileNav a[href="/account"]');
-  const userLabel=user?(user.name||String(user.email||'').split('@')[0]||'Account').trim():'Sign In';
   const href=user?'/settings':'/account';
 
   if(desktopLink){
     desktopLink.href=href;
-    desktopLink.textContent=userLabel;
+    desktopLink.textContent='Account';
     desktopLink.title=user?'Account settings':'Sign in';
   }
   if(mobileLink){
     mobileLink.href=href;
-    mobileLink.textContent=user?'Account':'Account';
+    mobileLink.textContent='Account';
   }
 }
 
